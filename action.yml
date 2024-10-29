@@ -1,0 +1,20 @@
+name: "Setup flatc"
+description: "Setup flatc for use in actions"
+author: "Nugine"
+inputs:
+  version:
+    description: "The version of flatc to install"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install flatc
+      shell: bash
+      run: |
+        mkdir -p /tmp/setup-flatc
+        cd /tmp/setup-flatc
+        wget https://github.com/google/flatbuffers/releases/download/v${{ inputs.version }}/Linux.flatc.binary.g++-13.zip
+        unzip Linux.flatc.binary.g++-13.zip
+        mv flatc /usr/local/bin/ 
+        chmod +x /usr/local/bin/flatc
+        flatc --version
