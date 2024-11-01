@@ -8,7 +8,8 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install flatc
+    - name: Install flatc on Linux
+      if: runner.os == 'Linux'
       shell: bash
       run: |
         mkdir -p /tmp/setup-flatc
@@ -16,5 +17,16 @@ runs:
         wget https://github.com/google/flatbuffers/releases/download/v${{ inputs.version }}/Linux.flatc.binary.g++-13.zip
         unzip Linux.flatc.binary.g++-13.zip
         mv flatc /usr/local/bin/ 
+        chmod +x /usr/local/bin/flatc
+        flatc --version
+    - name: Install flatc on macOS
+      if: runner.os == 'macOS'
+      shell: bash
+      run: |
+        mkdir -p /tmp/setup-flatc
+        cd /tmp/setup-flatc
+        wget https://github.com/google/flatbuffers/releases/download/v${{ inputs.version }}/Mac.flatc.binary.zip
+        unzip Mac.flatc.binary.zip
+        mv flatc /usr/local/bin/
         chmod +x /usr/local/bin/flatc
         flatc --version
