@@ -1,4 +1,4 @@
-name: Test
+name: CI
 
 on:
   push:
@@ -10,7 +10,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  test-setup-flatc:
+  deno:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/install-action@just
+      - uses: denoland/setup-deno@v2
+      - run: just ci
+
+  test:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
