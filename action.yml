@@ -1,10 +1,15 @@
 name: "Setup flatc"
 description: "Setup flatc for use in actions"
 author: "Nugine"
+branding:
+  icon: "arrow-down"
+  color: "white"
+
 inputs:
   version:
     description: "The version of flatc to install"
     required: true
+
 runs:
   using: "node20"
   main: "dist/main.js"
