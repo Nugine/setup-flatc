@@ -19500,12 +19500,12 @@ var require_platform = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var __importDefault2 = exports2 && exports2.__importDefault || function(mod) {
+    var __importDefault = exports2 && exports2.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
     };
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getDetails = exports2.isLinux = exports2.isMacOS = exports2.isWindows = exports2.arch = exports2.platform = void 0;
-    var os_1 = __importDefault2(require("os"));
+    var os_1 = __importDefault(require("os"));
     var exec = __importStar2(require_exec());
     var getWindowsInfo = () => __awaiter(void 0, void 0, void 0, function* () {
       const { stdout: version } = yield exec.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Version"', void 0, {
@@ -21311,7 +21311,7 @@ var require_tool_cache = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var __importDefault2 = exports2 && exports2.__importDefault || function(mod) {
+    var __importDefault = exports2 && exports2.__importDefault || function(mod) {
       return mod && mod.__esModule ? mod : { "default": mod };
     };
     Object.defineProperty(exports2, "__esModule", { value: true });
@@ -21327,7 +21327,7 @@ var require_tool_cache = __commonJS({
     var stream = __importStar2(require("stream"));
     var util = __importStar2(require("util"));
     var assert_1 = require("assert");
-    var v4_1 = __importDefault2(require_v4());
+    var v4_1 = __importDefault(require_v4());
     var exec_1 = require_exec();
     var retry_helper_1 = require_retry_helper();
     var HTTPError = class extends Error {
@@ -21828,22 +21828,18 @@ var __importStar = exports && exports.__importStar || function(mod) {
   __setModuleDefault(result, mod);
   return result;
 };
-var __importDefault = exports && exports.__importDefault || function(mod) {
-  return mod && mod.__esModule ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 require_dnt_polyfills();
 var core = __importStar(require_core());
 var tc = __importStar(require_tool_cache());
-var node_process_1 = __importDefault(require("node:process"));
 function getDownloadUrl(version) {
   const baseUrl = "https://github.com/google/flatbuffers/releases/download";
   let filename = null;
-  if (node_process_1.default.platform === "linux") {
+  if (core.platform.platform === "linux") {
     filename = "Linux.flatc.binary.g++-13.zip";
-  } else if (node_process_1.default.platform === "darwin") {
+  } else if (core.platform.platform === "darwin") {
     filename = "Mac.flatc.binary.zip";
-  } else if (node_process_1.default.platform === "win32") {
+  } else if (core.platform.platform === "win32") {
     filename = "Windows.flatc.binary.zip";
   } else {
     return null;
@@ -21854,7 +21850,7 @@ async function main() {
   const version = core.getInput("version");
   const url = getDownloadUrl(version);
   if (!url) {
-    core.setFailed(`Unsupported platform: ${node_process_1.default.platform}`);
+    core.setFailed(`Unsupported platform: ${core.platform.platform}`);
     return;
   }
   const downloadPath = await tc.downloadTool(url);

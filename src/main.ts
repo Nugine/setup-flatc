@@ -1,17 +1,16 @@
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
-import process from "node:process";
 
 function getDownloadUrl(version: string): string | null {
   const baseUrl = "https://github.com/google/flatbuffers/releases/download";
 
   let filename: string | null = null;
 
-  if (process.platform === "linux") {
+  if (core.platform.platform === "linux") {
     filename = "Linux.flatc.binary.g++-13.zip";
-  } else if (process.platform === "darwin") {
+  } else if (core.platform.platform === "darwin") {
     filename = "Mac.flatc.binary.zip";
-  } else if (process.platform === "win32") {
+  } else if (core.platform.platform === "win32") {
     filename = "Windows.flatc.binary.zip";
   } else {
     return null;
@@ -24,7 +23,7 @@ async function main() {
   const version = core.getInput("version");
   const url = getDownloadUrl(version);
   if (!url) {
-    core.setFailed(`Unsupported platform: ${process.platform}`);
+    core.setFailed(`Unsupported platform: ${core.platform.platform}`);
     return;
   }
   const downloadPath = await tc.downloadTool(url);
