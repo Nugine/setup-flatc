@@ -21848,15 +21848,24 @@ function getDownloadUrl(version) {
 }
 async function main() {
   const version = core.getInput("version");
+  core.info(`Specified version: ${version}`);
   const url = getDownloadUrl(version);
   if (!url) {
     core.setFailed(`Unsupported platform: ${core.platform.platform}`);
     return;
   }
-  const downloadPath = await tc.downloadTool(url);
-  const extractPath = await tc.extractZip(downloadPath);
-  const cachedPath = await tc.cacheDir(extractPath, "flatc", version);
+  let cachedPath = tc.find("flatc", version);
+  if (!cachedPath) {
+    core.info(`Downloading URL: ${url}`);
+    const downloadPath = await tc.downloadTool(url);
+    core.info(`Downloaded to: ${downloadPath}`);
+    const extractPath = await tc.extractZip(downloadPath);
+    core.info(`Extracted to: ${extractPath}`);
+    cachedPath = await tc.cacheDir(extractPath, "flatc", version);
+  }
+  core.info(`Cached at: ${cachedPath}`);
   core.addPath(cachedPath);
+  core.info("Added cached path to environment variables");
 }
 if (require.main === module) {
   main();
