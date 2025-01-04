@@ -4,7 +4,7 @@ import * as semver from "@std/semver";
 import { Octokit } from "octokit";
 
 async function resolveVersion(gh: Octokit, version: string): Promise<string> {
-  if (version === "latest") {
+  if (version === "*") {
     const resp = await gh.rest.repos.getLatestRelease({
       owner: "google",
       repo: "flatbuffers",
@@ -62,7 +62,7 @@ async function main() {
   const githubToken = core.getInput("github-token") ?? undefined;
   const gh = new Octokit({ auth: githubToken });
 
-  const inputVersion = core.getInput("version") ?? "latest";
+  const inputVersion = core.getInput("version") ?? "*";
   core.info(`Input version: ${inputVersion}`);
 
   const version = await resolveVersion(gh, inputVersion);

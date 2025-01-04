@@ -31424,7 +31424,7 @@ var tc = __importStar(require_tool_cache());
 var semver = __importStar(require_mod());
 var octokit_1 = (init_dist_bundle14(), __toCommonJS(dist_bundle_exports3));
 async function resolveVersion(gh, version) {
-  if (version === "latest") {
+  if (version === "*") {
     const resp = await gh.rest.repos.getLatestRelease({
       owner: "google",
       repo: "flatbuffers"
@@ -31469,7 +31469,7 @@ async function downloadFlatc(version, url) {
 async function main() {
   const githubToken = core.getInput("github-token") ?? void 0;
   const gh = new octokit_1.Octokit({ auth: githubToken });
-  const inputVersion = core.getInput("version") ?? "latest";
+  const inputVersion = core.getInput("version") ?? "*";
   core.info(`Input version: ${inputVersion}`);
   const version = await resolveVersion(gh, inputVersion);
   core.info(`Resolved version: ${version}`);

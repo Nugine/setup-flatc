@@ -9,7 +9,7 @@ inputs:
   version:
     description: "The version of flatc to install"
     required: false
-    default: "latest"
+    default: "*"
   github-token:
     description: "GITHUB_TOKEN"
     required: false
