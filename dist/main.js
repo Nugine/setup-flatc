@@ -31424,34 +31424,62 @@ var tc = __importStar(require_tool_cache());
 var semver = __importStar(require_mod());
 var octokit_1 = (init_dist_bundle14(), __toCommonJS(dist_bundle_exports3));
 async function resolveVersion(gh, version) {
-  if (version === "latest") {
+  if (version === "*") {
     const resp = await gh.rest.repos.getLatestRelease({
       owner: "google",
       repo: "flatbuffers"
     });
     version = resp.data.tag_name;
+    if (version.startsWith("v")) {
+      version = version.slice(1);
+    }
   }
-  if (version.startsWith("v")) {
-    version = version.slice(1);
+  if (semver.canParse(version)) {
+    return version;
   }
-  if (!semver.canParse(version)) {
-    throw new Error(`Invalid version: ${version}`);
+  const range = semver.tryParseRange(version);
+  if (range) {
+    const resp = await gh.rest.repos.listReleases({
+      owner: "google",
+      repo: "flatbuffers",
+      page: 1,
+      per_page: 100
+    });
+    for (const release of resp.data) {
+      version = release.tag_name;
+      if (version.startsWith("v")) {
+        version = version.slice(1);
+      }
+      const ver = semver.parse(version);
+      if (semver.satisfies(ver, range)) {
+        return version;
+      }
+    }
+    throw new Error("No matching version found for range");
   }
-  return version;
+  throw new Error(`Invalid version: ${version}`);
 }
-function getDownloadUrl(version) {
-  const repo = "google/flatbuffers";
-  const baseUrl = `https://github.com/${repo}/releases/download`;
+async function getDownloadUrl(gh, version) {
   const platformMap = {
-    linux: "Linux.flatc.binary.g++-13.zip",
-    darwin: "Mac.flatc.binary.zip",
-    win32: "Windows.flatc.binary.zip"
+    linux: /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
+    darwin: /Mac\.flatc\.binary\.zip/,
+    win32: /Windows\.flatc\.binary\.zip/
   };
-  const filename = platformMap[core.platform.platform];
-  if (!filename) {
+  const fileRegex = platformMap[core.platform.platform];
+  if (!fileRegex) {
     throw new Error(`Unsupported platform: ${core.platform.platform}`);
   }
-  return `${baseUrl}/v${version}/${filename}`;
+  const resp = await gh.rest.repos.getReleaseByTag({
+    owner: "google",
+    repo: "flatbuffers",
+    tag: `v${version}`
+  });
+  for (const asset of resp.data.assets) {
+    if (fileRegex.test(asset.name)) {
+      return asset.browser_download_url;
+    }
+  }
+  throw new Error("No matching asset found for platform");
 }
 async function downloadFlatc(version, url) {
   let cachedPath = tc.find("flatc", version);
@@ -31469,11 +31497,11 @@ async function downloadFlatc(version, url) {
 async function main() {
   const githubToken = core.getInput("github-token") ?? void 0;
   const gh = new octokit_1.Octokit({ auth: githubToken });
-  const inputVersion = core.getInput("version") ?? "latest";
+  const inputVersion = core.getInput("version") ?? "*";
   core.info(`Input version: ${inputVersion}`);
   const version = await resolveVersion(gh, inputVersion);
   core.info(`Resolved version: ${version}`);
-  const url = getDownloadUrl(version);
+  const url = await getDownloadUrl(gh, version);
   const cachedPath = await downloadFlatc(version, url);
   core.info(`Cached at: ${cachedPath}`);
   core.addPath(cachedPath);

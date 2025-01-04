@@ -20,3 +20,14 @@ Install a specific version:
   with:
     version: "24.12.23"
 ```
+
+Install by a semver range:
+
+```yaml
+- name: Install flatc
+  uses: Nugine/setup-flatc@v1
+  with:
+    version: "24.*"
+```
+
+Semver syntax: <https://jsr.io/@std/semver>

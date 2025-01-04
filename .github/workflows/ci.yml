@@ -38,7 +38,7 @@ jobs:
       - uses: ./
       - run: flatc --version
 
-  test-semver:
+  test-locked:
     strategy:
       matrix:
         os:
@@ -58,6 +58,32 @@ jobs:
         run: |
           ACTUAL=$(flatc --version)
           EXPECTED="flatc version ${{ matrix.version }}"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "Expected '$EXPECTED', got '$ACTUAL'"
+            exit 1
+          fi
+
+  test-range:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        version:
+          - ["24.*", "24.12.23"]
+          - ["24.3.*", "24.3.25"]
+          - ["23.*", "23.5.26"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          version: ${{ matrix.version[0] }}
+      - shell: bash
+        run: |
+          ACTUAL=$(flatc --version)
+          EXPECTED="flatc version ${{ matrix.version[1] }}"
           if [ "$ACTUAL" != "$EXPECTED" ]; then
             echo "Expected '$EXPECTED', got '$ACTUAL'"
             exit 1
