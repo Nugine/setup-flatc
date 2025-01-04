@@ -25,19 +25,40 @@ jobs:
           key: deno-${{ hashFiles('deno.lock') }}
       - run: just ci
 
-  test:
-    runs-on: ${{ matrix.os }}
+  test-default:
     strategy:
       matrix:
         os:
           - ubuntu-latest
           - macos-latest
           - windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - uses: ./
+      - run: flatc --version
 
+  test-semver:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        version:
+          - "24.12.23"
+          - "24.3.25"
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
       - uses: ./
         with:
-          version: "24.3.25"
-
-      - run: flatc --version
+          version: ${{ matrix.version }}
+      - shell: bash
+        run: |
+          ACTUAL=$(flatc --version)
+          EXPECTED="flatc version ${{ matrix.version }}"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "Expected '$EXPECTED', got '$ACTUAL'"
+            exit 1
+          fi

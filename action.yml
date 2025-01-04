@@ -8,7 +8,12 @@ branding:
 inputs:
   version:
     description: "The version of flatc to install"
-    required: true
+    required: false
+    default: "latest"
+  github-token:
+    description: "GITHUB_TOKEN"
+    required: false
+    default: ${{ github.token }}
 
 runs:
   using: "node20"
