@@ -31430,14 +31430,34 @@ async function resolveVersion(gh, version) {
       repo: "flatbuffers"
     });
     version = resp.data.tag_name;
+    if (version.startsWith("v")) {
+      version = version.slice(1);
+    }
   }
-  if (version.startsWith("v")) {
-    version = version.slice(1);
+  if (semver.canParse(version)) {
+    return version;
   }
-  if (!semver.canParse(version)) {
-    throw new Error(`Invalid version: ${version}`);
+  const range = semver.tryParseRange(version);
+  if (range) {
+    const resp = await gh.rest.repos.listReleases({
+      owner: "google",
+      repo: "flatbuffers",
+      page: 1,
+      per_page: 100
+    });
+    for (const release of resp.data) {
+      version = release.tag_name;
+      if (version.startsWith("v")) {
+        version = version.slice(1);
+      }
+      const ver = semver.parse(version);
+      if (semver.satisfies(ver, range)) {
+        return version;
+      }
+    }
+    throw new Error("No matching version found for range");
   }
-  return version;
+  throw new Error(`Invalid version: ${version}`);
 }
 function getDownloadUrl(version) {
   const repo = "google/flatbuffers";
