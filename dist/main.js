@@ -31459,19 +31459,27 @@ async function resolveVersion(gh, version) {
   }
   throw new Error(`Invalid version: ${version}`);
 }
-function getDownloadUrl(version) {
-  const repo = "google/flatbuffers";
-  const baseUrl = `https://github.com/${repo}/releases/download`;
+async function getDownloadUrl(gh, version) {
   const platformMap = {
-    linux: "Linux.flatc.binary.g++-13.zip",
-    darwin: "Mac.flatc.binary.zip",
-    win32: "Windows.flatc.binary.zip"
+    linux: /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
+    darwin: /Mac\.flatc\.binary\.zip/,
+    win32: /Windows\.flatc\.binary\.zip/
   };
-  const filename = platformMap[core.platform.platform];
-  if (!filename) {
+  const fileRegex = platformMap[core.platform.platform];
+  if (!fileRegex) {
     throw new Error(`Unsupported platform: ${core.platform.platform}`);
   }
-  return `${baseUrl}/v${version}/${filename}`;
+  const resp = await gh.rest.repos.getReleaseByTag({
+    owner: "google",
+    repo: "flatbuffers",
+    tag: `v${version}`
+  });
+  for (const asset of resp.data.assets) {
+    if (fileRegex.test(asset.name)) {
+      return asset.browser_download_url;
+    }
+  }
+  throw new Error("No matching asset found for platform");
 }
 async function downloadFlatc(version, url) {
   let cachedPath = tc.find("flatc", version);
@@ -31493,7 +31501,7 @@ async function main() {
   core.info(`Input version: ${inputVersion}`);
   const version = await resolveVersion(gh, inputVersion);
   core.info(`Resolved version: ${version}`);
-  const url = getDownloadUrl(version);
+  const url = await getDownloadUrl(gh, version);
   const cachedPath = await downloadFlatc(version, url);
   core.info(`Cached at: ${cachedPath}`);
   core.addPath(cachedPath);

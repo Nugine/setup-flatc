@@ -3,7 +3,6 @@ dev:
     deno lint
     deno check .
     just test
-    just bundle
 
 test:
     # deno test -A
@@ -17,4 +16,5 @@ assert_unchanged:
 
 ci:
     just dev
+    just bundle
     just assert_unchanged
