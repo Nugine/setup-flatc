@@ -13014,7 +13014,7 @@ var require_fetch = __commonJS({
         this.emit("terminated", error);
       }
     };
-    function fetch(input, init = {}) {
+    function fetch2(input, init = {}) {
       webidl.argumentLengthCheck(arguments, 1, { header: "globalThis.fetch" });
       const p = createDeferredPromise();
       let requestObject;
@@ -13944,7 +13944,7 @@ var require_fetch = __commonJS({
       }
     }
     module2.exports = {
-      fetch,
+      fetch: fetch2,
       Fetch,
       fetching,
       finalizeAndReportTiming
@@ -17214,7 +17214,7 @@ var require_undici = __commonJS({
     module2.exports.getGlobalDispatcher = getGlobalDispatcher;
     if (util.nodeMajor > 16 || util.nodeMajor === 16 && util.nodeMinor >= 8) {
       let fetchImpl = null;
-      module2.exports.fetch = async function fetch(resource) {
+      module2.exports.fetch = async function fetch2(resource) {
         if (!fetchImpl) {
           fetchImpl = require_fetch().fetch;
         }
@@ -21002,7 +21002,7 @@ var require_manifest = __commonJS({
     };
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2._readLinuxVersionFile = exports2._getOsVersion = exports2._findMatch = void 0;
-    var semver = __importStar2(require_semver());
+    var semver2 = __importStar2(require_semver());
     var core_1 = require_core();
     var os = require("os");
     var cp = require("child_process");
@@ -21016,7 +21016,7 @@ var require_manifest = __commonJS({
         for (const candidate of candidates) {
           const version = candidate.version;
           core_1.debug(`check ${version} satisfies ${versionSpec}`);
-          if (semver.satisfies(version, versionSpec) && (!stable || candidate.stable === stable)) {
+          if (semver2.satisfies(version, versionSpec) && (!stable || candidate.stable === stable)) {
             file = candidate.files.find((item) => {
               core_1.debug(`${item.arch}===${archFilter} && ${item.platform}===${platFilter}`);
               let chk = item.arch === archFilter && item.platform === platFilter;
@@ -21025,7 +21025,7 @@ var require_manifest = __commonJS({
                 if (osVersion === item.platform_version) {
                   chk = true;
                 } else {
-                  chk = semver.satisfies(osVersion, item.platform_version);
+                  chk = semver2.satisfies(osVersion, item.platform_version);
                 }
               }
               return chk;
@@ -21323,7 +21323,7 @@ var require_tool_cache = __commonJS({
     var os = __importStar2(require("os"));
     var path = __importStar2(require("path"));
     var httpm = __importStar2(require_lib());
-    var semver = __importStar2(require_semver());
+    var semver2 = __importStar2(require_semver());
     var stream = __importStar2(require("stream"));
     var util = __importStar2(require("util"));
     var assert_1 = require("assert");
@@ -21598,7 +21598,7 @@ var require_tool_cache = __commonJS({
     }
     function cacheDir(sourceDir, tool, version, arch) {
       return __awaiter(this, void 0, void 0, function* () {
-        version = semver.clean(version) || version;
+        version = semver2.clean(version) || version;
         arch = arch || os.arch();
         core2.debug(`Caching tool ${tool} ${version} ${arch}`);
         core2.debug(`source dir: ${sourceDir}`);
@@ -21617,7 +21617,7 @@ var require_tool_cache = __commonJS({
     exports2.cacheDir = cacheDir;
     function cacheFile(sourceFile, targetFile, tool, version, arch) {
       return __awaiter(this, void 0, void 0, function* () {
-        version = semver.clean(version) || version;
+        version = semver2.clean(version) || version;
         arch = arch || os.arch();
         core2.debug(`Caching tool ${tool} ${version} ${arch}`);
         core2.debug(`source file: ${sourceFile}`);
@@ -21648,7 +21648,7 @@ var require_tool_cache = __commonJS({
       }
       let toolPath = "";
       if (versionSpec) {
-        versionSpec = semver.clean(versionSpec) || "";
+        versionSpec = semver2.clean(versionSpec) || "";
         const cachePath = path.join(_getCacheDirectory(), toolName, versionSpec, arch);
         core2.debug(`checking cache: ${cachePath}`);
         if (fs.existsSync(cachePath) && fs.existsSync(`${cachePath}.complete`)) {
@@ -21732,7 +21732,7 @@ var require_tool_cache = __commonJS({
     }
     function _createToolPath(tool, version, arch) {
       return __awaiter(this, void 0, void 0, function* () {
-        const folderPath = path.join(_getCacheDirectory(), tool, semver.clean(version) || version, arch || "");
+        const folderPath = path.join(_getCacheDirectory(), tool, semver2.clean(version) || version, arch || "");
         core2.debug(`destination ${folderPath}`);
         const markerPath = `${folderPath}.complete`;
         yield io.rmRF(folderPath);
@@ -21742,15 +21742,15 @@ var require_tool_cache = __commonJS({
       });
     }
     function _completeToolPath(tool, version, arch) {
-      const folderPath = path.join(_getCacheDirectory(), tool, semver.clean(version) || version, arch || "");
+      const folderPath = path.join(_getCacheDirectory(), tool, semver2.clean(version) || version, arch || "");
       const markerPath = `${folderPath}.complete`;
       fs.writeFileSync(markerPath, "");
       core2.debug("finished caching tool");
     }
     function isExplicitVersion(versionSpec) {
-      const c = semver.clean(versionSpec) || "";
+      const c = semver2.clean(versionSpec) || "";
       core2.debug(`isExplicit: ${c}`);
-      const valid = semver.valid(c) != null;
+      const valid = semver2.valid(c) != null;
       core2.debug(`explicit? ${valid}`);
       return valid;
     }
@@ -21759,14 +21759,14 @@ var require_tool_cache = __commonJS({
       let version = "";
       core2.debug(`evaluating ${versions.length} versions`);
       versions = versions.sort((a, b) => {
-        if (semver.gt(a, b)) {
+        if (semver2.gt(a, b)) {
           return 1;
         }
         return -1;
       });
       for (let i = versions.length - 1; i >= 0; i--) {
         const potential = versions[i];
-        const satisfied = semver.satisfies(potential, versionSpec);
+        const satisfied = semver2.satisfies(potential, versionSpec);
         if (satisfied) {
           version = potential;
           break;
@@ -21800,6 +21800,1188 @@ var require_tool_cache = __commonJS({
   }
 });
 
+// npm/script/deps/jsr.io/@std/semver/1.0.3/_shared.js
+var require_shared = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/_shared.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.MAX_LENGTH = exports2.COMPARATOR_REGEXP = exports2.OPERATOR_XRANGE_REGEXP = exports2.XRANGE = exports2.FULL_REGEXP = void 0;
+    exports2.compareNumber = compareNumber;
+    exports2.checkIdentifier = checkIdentifier;
+    exports2.compareIdentifier = compareIdentifier;
+    exports2.isValidNumber = isValidNumber;
+    exports2.isValidString = isValidString;
+    exports2.parsePrerelease = parsePrerelease;
+    exports2.parseBuild = parseBuild;
+    exports2.parseNumber = parseNumber;
+    exports2.isWildcardComparator = isWildcardComparator;
+    function compareNumber(a, b) {
+      if (isNaN(a) || isNaN(b)) {
+        throw new Error("Cannot compare against non-numbers");
+      }
+      return a === b ? 0 : a < b ? -1 : 1;
+    }
+    function checkIdentifier(v1 = [], v2 = []) {
+      if (v1.length && !v2.length)
+        return -1;
+      if (!v1.length && v2.length)
+        return 1;
+      return 0;
+    }
+    function compareIdentifier(v1 = [], v2 = []) {
+      const length = Math.max(v1.length, v2.length);
+      for (let i = 0; i < length; i++) {
+        const a = v1[i];
+        const b = v2[i];
+        if (a === void 0 && b === void 0)
+          return 0;
+        if (b === void 0)
+          return 1;
+        if (a === void 0)
+          return -1;
+        if (typeof a === "string" && typeof b === "number")
+          return 1;
+        if (typeof a === "number" && typeof b === "string")
+          return -1;
+        if (a < b)
+          return -1;
+        if (a > b)
+          return 1;
+      }
+      return 0;
+    }
+    var NUMERIC_IDENTIFIER = "0|[1-9]\\d*";
+    var NON_NUMERIC_IDENTIFIER = "\\d*[a-zA-Z-][a-zA-Z0-9-]*";
+    var VERSION_CORE = `(?<major>${NUMERIC_IDENTIFIER})\\.(?<minor>${NUMERIC_IDENTIFIER})\\.(?<patch>${NUMERIC_IDENTIFIER})`;
+    var PRERELEASE_IDENTIFIER = `(?:${NUMERIC_IDENTIFIER}|${NON_NUMERIC_IDENTIFIER})`;
+    var PRERELEASE = `(?:-(?<prerelease>${PRERELEASE_IDENTIFIER}(?:\\.${PRERELEASE_IDENTIFIER})*))`;
+    var BUILD_IDENTIFIER = "[0-9A-Za-z-]+";
+    var BUILD = `(?:\\+(?<buildmetadata>${BUILD_IDENTIFIER}(?:\\.${BUILD_IDENTIFIER})*))`;
+    var FULL_VERSION = `v?${VERSION_CORE}${PRERELEASE}?${BUILD}?`;
+    exports2.FULL_REGEXP = new RegExp(`^${FULL_VERSION}$`);
+    var COMPARATOR = "(?:<|>)?=?";
+    var WILDCARD_IDENTIFIER = `x|X|\\*`;
+    var XRANGE_IDENTIFIER = `${NUMERIC_IDENTIFIER}|${WILDCARD_IDENTIFIER}`;
+    exports2.XRANGE = `[v=\\s]*(?<major>${XRANGE_IDENTIFIER})(?:\\.(?<minor>${XRANGE_IDENTIFIER})(?:\\.(?<patch>${XRANGE_IDENTIFIER})${PRERELEASE}?${BUILD}?)?)?`;
+    exports2.OPERATOR_XRANGE_REGEXP = new RegExp(`^(?<operator>~>?|\\^|${COMPARATOR})\\s*${exports2.XRANGE}$`);
+    exports2.COMPARATOR_REGEXP = new RegExp(`^(?<operator>${COMPARATOR})\\s*(${FULL_VERSION})$|^$`);
+    function isValidNumber(value) {
+      return typeof value === "number" && !Number.isNaN(value) && (!Number.isFinite(value) || 0 <= value && value <= Number.MAX_SAFE_INTEGER);
+    }
+    exports2.MAX_LENGTH = 256;
+    function isValidString(value) {
+      return typeof value === "string" && value.length > 0 && value.length <= exports2.MAX_LENGTH && /[0-9A-Za-z-]+/.test(value);
+    }
+    var NUMERIC_IDENTIFIER_REGEXP = new RegExp(`^${NUMERIC_IDENTIFIER}$`);
+    function parsePrerelease(prerelease) {
+      return prerelease.split(".").filter(Boolean).map((id) => {
+        if (NUMERIC_IDENTIFIER_REGEXP.test(id)) {
+          const number = Number(id);
+          if (isValidNumber(number))
+            return number;
+        }
+        return id;
+      });
+    }
+    function parseBuild(buildmetadata) {
+      return buildmetadata.split(".").filter(Boolean);
+    }
+    function parseNumber(input, errorMessage) {
+      const number = Number(input);
+      if (!isValidNumber(number))
+        throw new TypeError(errorMessage);
+      return number;
+    }
+    function isWildcardComparator(c) {
+      return Number.isNaN(c.major) && Number.isNaN(c.minor) && Number.isNaN(c.patch) && (c.prerelease === void 0 || c.prerelease.length === 0) && (c.build === void 0 || c.build.length === 0);
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/compare.js
+var require_compare = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/compare.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.compare = compare;
+    var _shared_js_1 = require_shared();
+    function compare(version1, version2) {
+      if (version1 === version2)
+        return 0;
+      return (0, _shared_js_1.compareNumber)(version1.major, version2.major) || (0, _shared_js_1.compareNumber)(version1.minor, version2.minor) || (0, _shared_js_1.compareNumber)(version1.patch, version2.patch) || (0, _shared_js_1.checkIdentifier)(version1.prerelease, version2.prerelease) || (0, _shared_js_1.compareIdentifier)(version1.prerelease, version2.prerelease);
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/difference.js
+var require_difference = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/difference.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.difference = difference;
+    var _shared_js_1 = require_shared();
+    function difference(version1, version2) {
+      const hasPrerelease = version1.prerelease?.length || version2.prerelease?.length;
+      if (version1.major !== version2.major) {
+        return hasPrerelease ? "premajor" : "major";
+      }
+      if (version1.minor !== version2.minor) {
+        return hasPrerelease ? "preminor" : "minor";
+      }
+      if (version1.patch !== version2.patch) {
+        return hasPrerelease ? "prepatch" : "patch";
+      }
+      if ((0, _shared_js_1.compareIdentifier)(version1.prerelease, version2.prerelease) !== 0) {
+        return "prerelease";
+      }
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/format.js
+var require_format = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/format.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.format = format;
+    function formatNumber(value) {
+      return value.toFixed(0);
+    }
+    function format(version) {
+      const major = formatNumber(version.major);
+      const minor = formatNumber(version.minor);
+      const patch = formatNumber(version.patch);
+      const pre = version.prerelease?.join(".") ?? "";
+      const build = version.build?.join(".") ?? "";
+      const primary = `${major}.${minor}.${patch}`;
+      const release = [primary, pre].filter((v) => v).join("-");
+      return [release, build].filter((v) => v).join("+");
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/_test_comparator_set.js
+var require_test_comparator_set = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/_test_comparator_set.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.testComparatorSet = testComparatorSet;
+    var _shared_js_1 = require_shared();
+    var compare_js_1 = require_compare();
+    function testComparator(version, comparator) {
+      if ((0, _shared_js_1.isWildcardComparator)(comparator)) {
+        return true;
+      }
+      const cmp = (0, compare_js_1.compare)(version, comparator);
+      switch (comparator.operator) {
+        case "=":
+        case void 0: {
+          return cmp === 0;
+        }
+        case "!=": {
+          return cmp !== 0;
+        }
+        case ">": {
+          return cmp > 0;
+        }
+        case "<": {
+          return cmp < 0;
+        }
+        case ">=": {
+          return cmp >= 0;
+        }
+        case "<=": {
+          return cmp <= 0;
+        }
+      }
+    }
+    function testComparatorSet(version, set) {
+      for (const comparator of set) {
+        if (!testComparator(version, comparator)) {
+          return false;
+        }
+      }
+      if (version.prerelease && version.prerelease.length > 0) {
+        for (const comparator of set) {
+          if ((0, _shared_js_1.isWildcardComparator)(comparator)) {
+            continue;
+          }
+          const { major, minor, patch, prerelease } = comparator;
+          if (prerelease && prerelease.length > 0) {
+            if (version.major === major && version.minor === minor && version.patch === patch) {
+              return true;
+            }
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/satisfies.js
+var require_satisfies = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/satisfies.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.satisfies = satisfies;
+    var _test_comparator_set_js_1 = require_test_comparator_set();
+    function satisfies(version, range) {
+      return range.some((set) => (0, _test_comparator_set_js_1.testComparatorSet)(version, set));
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/increment.js
+var require_increment = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/increment.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.increment = increment;
+    var _shared_js_1 = require_shared();
+    function bumpPrereleaseNumber(prerelease = []) {
+      const values = [...prerelease];
+      let index = values.length;
+      while (index >= 0) {
+        const value = values[index];
+        if (typeof value === "number") {
+          values[index] = value + 1;
+          break;
+        }
+        index -= 1;
+      }
+      if (index === -1)
+        values.push(0);
+      return values;
+    }
+    function bumpPrerelease(prerelease = [], identifier) {
+      let values = bumpPrereleaseNumber(prerelease);
+      if (!identifier)
+        return values;
+      if (values[0] !== identifier || isNaN(values[1])) {
+        values = [identifier, 0];
+      }
+      return values;
+    }
+    function increment(version, release, options = {}) {
+      const build = options.build !== void 0 ? (0, _shared_js_1.parseBuild)(options.build) : version.build ?? [];
+      switch (release) {
+        case "premajor":
+          return {
+            major: version.major + 1,
+            minor: 0,
+            patch: 0,
+            prerelease: bumpPrerelease(version.prerelease, options.prerelease),
+            build
+          };
+        case "preminor":
+          return {
+            major: version.major,
+            minor: version.minor + 1,
+            patch: 0,
+            prerelease: bumpPrerelease(version.prerelease, options.prerelease),
+            build
+          };
+        case "prepatch":
+          return {
+            major: version.major,
+            minor: version.minor,
+            patch: version.patch + 1,
+            prerelease: bumpPrerelease(version.prerelease, options.prerelease),
+            build
+          };
+        case "prerelease": {
+          const isPrerelease = (version.prerelease ?? []).length === 0;
+          const patch = isPrerelease ? version.patch + 1 : version.patch;
+          return {
+            major: version.major,
+            minor: version.minor,
+            patch,
+            prerelease: bumpPrerelease(version.prerelease, options.prerelease),
+            build
+          };
+        }
+        case "major": {
+          const isPrerelease = (version.prerelease ?? []).length === 0;
+          const major = isPrerelease || version.minor !== 0 || version.patch !== 0 ? version.major + 1 : version.major;
+          return {
+            major,
+            minor: 0,
+            patch: 0,
+            prerelease: [],
+            build
+          };
+        }
+        case "minor": {
+          const isPrerelease = (version.prerelease ?? []).length === 0;
+          const minor = isPrerelease || version.patch !== 0 ? version.minor + 1 : version.minor;
+          return {
+            major: version.major,
+            minor,
+            patch: 0,
+            prerelease: [],
+            build
+          };
+        }
+        case "patch": {
+          const isPrerelease = (version.prerelease ?? []).length === 0;
+          const patch = isPrerelease ? version.patch + 1 : version.patch;
+          return {
+            major: version.major,
+            minor: version.minor,
+            patch,
+            prerelease: [],
+            build
+          };
+        }
+        case "pre": {
+          return {
+            major: version.major,
+            minor: version.minor,
+            patch: version.patch,
+            prerelease: bumpPrerelease(version.prerelease, options.prerelease),
+            build
+          };
+        }
+        default:
+          throw new TypeError(`Cannot increment version: invalid argument ${release}`);
+      }
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/_constants.js
+var require_constants6 = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/_constants.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.OPERATORS = exports2.ALL = exports2.ANY = exports2.MIN = void 0;
+    exports2.MIN = {
+      major: 0,
+      minor: 0,
+      patch: 0,
+      prerelease: [],
+      build: []
+    };
+    exports2.ANY = {
+      major: Number.NaN,
+      minor: Number.NaN,
+      patch: Number.NaN,
+      prerelease: [],
+      build: []
+    };
+    exports2.ALL = {
+      operator: void 0,
+      ...exports2.ANY
+    };
+    exports2.OPERATORS = [
+      void 0,
+      "=",
+      "!=",
+      ">",
+      ">=",
+      "<",
+      "<="
+    ];
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/is_semver.js
+var require_is_semver = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/is_semver.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.isSemVer = isSemVer;
+    var _constants_js_1 = require_constants6();
+    var _shared_js_1 = require_shared();
+    function isSemVer(value) {
+      if (value === null || value === void 0)
+        return false;
+      if (Array.isArray(value))
+        return false;
+      if (typeof value !== "object")
+        return false;
+      if (value === _constants_js_1.ANY)
+        return true;
+      const { major, minor, patch, build = [], prerelease = [] } = value;
+      return (0, _shared_js_1.isValidNumber)(major) && (0, _shared_js_1.isValidNumber)(minor) && (0, _shared_js_1.isValidNumber)(patch) && Array.isArray(prerelease) && prerelease.every((v) => (0, _shared_js_1.isValidString)(v) || (0, _shared_js_1.isValidNumber)(v)) && Array.isArray(build) && build.every(_shared_js_1.isValidString);
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/greater_than.js
+var require_greater_than = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/greater_than.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.greaterThan = greaterThan;
+    var compare_js_1 = require_compare();
+    function greaterThan(version1, version2) {
+      return (0, compare_js_1.compare)(version1, version2) > 0;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/max_satisfying.js
+var require_max_satisfying = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/max_satisfying.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.maxSatisfying = maxSatisfying;
+    var satisfies_js_1 = require_satisfies();
+    var greater_than_js_1 = require_greater_than();
+    function maxSatisfying(versions, range) {
+      let max;
+      for (const version of versions) {
+        if (!(0, satisfies_js_1.satisfies)(version, range))
+          continue;
+        max = max && (0, greater_than_js_1.greaterThan)(max, version) ? max : version;
+      }
+      return max;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/less_than.js
+var require_less_than = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/less_than.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.lessThan = lessThan;
+    var compare_js_1 = require_compare();
+    function lessThan(version1, version2) {
+      return (0, compare_js_1.compare)(version1, version2) < 0;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/min_satisfying.js
+var require_min_satisfying = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/min_satisfying.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.minSatisfying = minSatisfying;
+    var satisfies_js_1 = require_satisfies();
+    var less_than_js_1 = require_less_than();
+    function minSatisfying(versions, range) {
+      let min;
+      for (const version of versions) {
+        if (!(0, satisfies_js_1.satisfies)(version, range))
+          continue;
+        min = min && (0, less_than_js_1.lessThan)(min, version) ? min : version;
+      }
+      return min;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/parse_range.js
+var require_parse_range = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/parse_range.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.parseRange = parseRange;
+    var _shared_js_1 = require_shared();
+    var _constants_js_1 = require_constants6();
+    function parseComparator(comparator) {
+      const match = comparator.match(_shared_js_1.COMPARATOR_REGEXP);
+      const groups = match?.groups;
+      if (!groups)
+        return null;
+      const { operator, prerelease, buildmetadata } = groups;
+      const semver2 = groups.major ? {
+        major: (0, _shared_js_1.parseNumber)(groups.major, `Cannot parse comparator ${comparator}: invalid major version`),
+        minor: (0, _shared_js_1.parseNumber)(groups.minor, `Cannot parse comparator ${comparator}: invalid minor version`),
+        patch: (0, _shared_js_1.parseNumber)(groups.patch, `Cannot parse comparator ${comparator}: invalid patch version`),
+        prerelease: prerelease ? (0, _shared_js_1.parsePrerelease)(prerelease) : [],
+        build: buildmetadata ? (0, _shared_js_1.parseBuild)(buildmetadata) : []
+      } : _constants_js_1.ANY;
+      return { operator: operator || void 0, ...semver2 };
+    }
+    function isWildcard(id) {
+      return !id || id.toLowerCase() === "x" || id === "*";
+    }
+    function handleLeftHyphenRangeGroups(leftGroup) {
+      if (isWildcard(leftGroup.major))
+        return;
+      if (isWildcard(leftGroup.minor)) {
+        return {
+          operator: ">=",
+          major: +leftGroup.major,
+          minor: 0,
+          patch: 0,
+          prerelease: [],
+          build: []
+        };
+      }
+      if (isWildcard(leftGroup.patch)) {
+        return {
+          operator: ">=",
+          major: +leftGroup.major,
+          minor: +leftGroup.minor,
+          patch: 0,
+          prerelease: [],
+          build: []
+        };
+      }
+      return {
+        operator: ">=",
+        major: +leftGroup.major,
+        minor: +leftGroup.minor,
+        patch: +leftGroup.patch,
+        prerelease: leftGroup.prerelease ? (0, _shared_js_1.parsePrerelease)(leftGroup.prerelease) : [],
+        build: []
+      };
+    }
+    function handleRightHyphenRangeGroups(rightGroups) {
+      if (isWildcard(rightGroups.major)) {
+        return;
+      }
+      if (isWildcard(rightGroups.minor)) {
+        return {
+          operator: "<",
+          major: +rightGroups.major + 1,
+          minor: 0,
+          patch: 0,
+          prerelease: [],
+          build: []
+        };
+      }
+      if (isWildcard(rightGroups.patch)) {
+        return {
+          operator: "<",
+          major: +rightGroups.major,
+          minor: +rightGroups.minor + 1,
+          patch: 0,
+          prerelease: [],
+          build: []
+        };
+      }
+      if (rightGroups.prerelease) {
+        return {
+          operator: "<=",
+          major: +rightGroups.major,
+          minor: +rightGroups.minor,
+          patch: +rightGroups.patch,
+          prerelease: (0, _shared_js_1.parsePrerelease)(rightGroups.prerelease),
+          build: []
+        };
+      }
+      return {
+        operator: "<=",
+        major: +rightGroups.major,
+        minor: +rightGroups.minor,
+        patch: +rightGroups.patch,
+        prerelease: rightGroups.prerelease ? (0, _shared_js_1.parsePrerelease)(rightGroups.prerelease) : [],
+        build: []
+      };
+    }
+    function parseHyphenRange(range) {
+      const leftMatch = range.match(new RegExp(`^${_shared_js_1.XRANGE}`));
+      const leftGroup = leftMatch?.groups;
+      if (!leftGroup)
+        return;
+      const leftLength = leftMatch[0].length;
+      const hyphenMatch = range.slice(leftLength).match(/^\s+-\s+/);
+      if (!hyphenMatch)
+        return;
+      const hyphenLength = hyphenMatch[0].length;
+      const rightMatch = range.slice(leftLength + hyphenLength).match(new RegExp(`^${_shared_js_1.XRANGE}\\s*$`));
+      const rightGroups = rightMatch?.groups;
+      if (!rightGroups)
+        return;
+      const from = handleLeftHyphenRangeGroups(leftGroup);
+      const to = handleRightHyphenRangeGroups(rightGroups);
+      return [from, to].filter(Boolean);
+    }
+    function handleCaretOperator(groups) {
+      const majorIsWildcard = isWildcard(groups.major);
+      const minorIsWildcard = isWildcard(groups.minor);
+      const patchIsWildcard = isWildcard(groups.patch);
+      const major = +groups.major;
+      const minor = +groups.minor;
+      const patch = +groups.patch;
+      if (majorIsWildcard)
+        return [_constants_js_1.ALL];
+      if (minorIsWildcard) {
+        return [
+          { operator: ">=", major, minor: 0, patch: 0 },
+          { operator: "<", major: major + 1, minor: 0, patch: 0 }
+        ];
+      }
+      if (patchIsWildcard) {
+        if (major === 0) {
+          return [
+            { operator: ">=", major, minor, patch: 0 },
+            { operator: "<", major, minor: minor + 1, patch: 0 }
+          ];
+        }
+        return [
+          { operator: ">=", major, minor, patch: 0 },
+          { operator: "<", major: major + 1, minor: 0, patch: 0 }
+        ];
+      }
+      const prerelease = (0, _shared_js_1.parsePrerelease)(groups.prerelease ?? "");
+      if (major === 0) {
+        if (minor === 0) {
+          return [
+            { operator: ">=", major, minor, patch, prerelease },
+            { operator: "<", major, minor, patch: patch + 1 }
+          ];
+        }
+        return [
+          { operator: ">=", major, minor, patch, prerelease },
+          { operator: "<", major, minor: minor + 1, patch: 0 }
+        ];
+      }
+      return [
+        { operator: ">=", major, minor, patch, prerelease },
+        { operator: "<", major: major + 1, minor: 0, patch: 0 }
+      ];
+    }
+    function handleTildeOperator(groups) {
+      const majorIsWildcard = isWildcard(groups.major);
+      const minorIsWildcard = isWildcard(groups.minor);
+      const patchIsWildcard = isWildcard(groups.patch);
+      const major = +groups.major;
+      const minor = +groups.minor;
+      const patch = +groups.patch;
+      if (majorIsWildcard)
+        return [_constants_js_1.ALL];
+      if (minorIsWildcard) {
+        return [
+          { operator: ">=", major, minor: 0, patch: 0 },
+          { operator: "<", major: major + 1, minor: 0, patch: 0 }
+        ];
+      }
+      if (patchIsWildcard) {
+        return [
+          { operator: ">=", major, minor, patch: 0 },
+          { operator: "<", major, minor: minor + 1, patch: 0 }
+        ];
+      }
+      const prerelease = (0, _shared_js_1.parsePrerelease)(groups.prerelease ?? "");
+      return [
+        { operator: ">=", major, minor, patch, prerelease },
+        { operator: "<", major, minor: minor + 1, patch: 0 }
+      ];
+    }
+    function handleLessThanOperator(groups) {
+      const majorIsWildcard = isWildcard(groups.major);
+      const minorIsWildcard = isWildcard(groups.minor);
+      const patchIsWildcard = isWildcard(groups.patch);
+      const major = +groups.major;
+      const minor = +groups.minor;
+      const patch = +groups.patch;
+      if (majorIsWildcard)
+        return [{ operator: "<", major: 0, minor: 0, patch: 0 }];
+      if (minorIsWildcard) {
+        if (patchIsWildcard)
+          return [{ operator: "<", major, minor: 0, patch: 0 }];
+        return [{ operator: "<", major, minor, patch: 0 }];
+      }
+      if (patchIsWildcard)
+        return [{ operator: "<", major, minor, patch: 0 }];
+      const prerelease = (0, _shared_js_1.parsePrerelease)(groups.prerelease ?? "");
+      const build = (0, _shared_js_1.parseBuild)(groups.build ?? "");
+      return [{ operator: "<", major, minor, patch, prerelease, build }];
+    }
+    function handleLessThanOrEqualOperator(groups) {
+      const minorIsWildcard = isWildcard(groups.minor);
+      const patchIsWildcard = isWildcard(groups.patch);
+      const major = +groups.major;
+      const minor = +groups.minor;
+      const patch = +groups.patch;
+      if (minorIsWildcard) {
+        if (patchIsWildcard) {
+          return [{ operator: "<", major: major + 1, minor: 0, patch: 0 }];
+        }
+        return [{ operator: "<", major, minor: minor + 1, patch: 0 }];
+      }
+      if (patchIsWildcard) {
+        return [{ operator: "<", major, minor: minor + 1, patch: 0 }];
+      }
+      const prerelease = (0, _shared_js_1.parsePrerelease)(groups.prerelease ?? "");
+      const build = (0, _shared_js_1.parseBuild)(groups.build ?? "");
+      return [{ operator: "<=", major, minor, patch, prerelease, build }];
+    }
+    function handleGreaterThanOperator(groups) {
+      const majorIsWildcard = isWildcard(groups.major);
+      const minorIsWildcard = isWildcard(groups.minor);
+      const patchIsWildcard = isWildcard(groups.patch);
+      const major = +groups.major;
+      const minor = +groups.minor;
+      const patch = +groups.patch;
+      if (majorIsWildcard)
+        return [{ operator: "<", major: 0, minor: 0, patch: 0 }];
+      if (minorIsWildcard) {
+        return [{ operator: ">=", major: major + 1, minor: 0, patch: 0 }];
+      }
+      if (patchIsWildcard) {
+        return [{ operator: ">=", major, minor: minor + 1, patch: 0 }];
+      }
+      const prerelease = (0, _shared_js_1.parsePrerelease)(groups.prerelease ?? "");
+      const build = (0, _shared_js_1.parseBuild)(groups.build ?? "");
+      return [{ operator: ">", major, minor, patch, prerelease, build }];
+    }
+    function handleGreaterOrEqualOperator(groups) {
+      const majorIsWildcard = isWildcard(groups.major);
+      const minorIsWildcard = isWildcard(groups.minor);
+      const patchIsWildcard = isWildcard(groups.patch);
+      const major = +groups.major;
+      const minor = +groups.minor;
+      const patch = +groups.patch;
+      if (majorIsWildcard)
+        return [_constants_js_1.ALL];
+      if (minorIsWildcard) {
+        if (patchIsWildcard)
+          return [{ operator: ">=", major, minor: 0, patch: 0 }];
+        return [{ operator: ">=", major, minor, patch: 0 }];
+      }
+      if (patchIsWildcard)
+        return [{ operator: ">=", major, minor, patch: 0 }];
+      const prerelease = (0, _shared_js_1.parsePrerelease)(groups.prerelease ?? "");
+      const build = (0, _shared_js_1.parseBuild)(groups.build ?? "");
+      return [{ operator: ">=", major, minor, patch, prerelease, build }];
+    }
+    function handleEqualOperator(groups) {
+      const majorIsWildcard = isWildcard(groups.major);
+      const minorIsWildcard = isWildcard(groups.minor);
+      const patchIsWildcard = isWildcard(groups.patch);
+      const major = +groups.major;
+      const minor = +groups.minor;
+      const patch = +groups.patch;
+      if (majorIsWildcard)
+        return [_constants_js_1.ALL];
+      if (minorIsWildcard) {
+        return [
+          { operator: ">=", major, minor: 0, patch: 0 },
+          { operator: "<", major: major + 1, minor: 0, patch: 0 }
+        ];
+      }
+      if (patchIsWildcard) {
+        return [
+          { operator: ">=", major, minor, patch: 0 },
+          { operator: "<", major, minor: minor + 1, patch: 0 }
+        ];
+      }
+      const prerelease = (0, _shared_js_1.parsePrerelease)(groups.prerelease ?? "");
+      const build = (0, _shared_js_1.parseBuild)(groups.build ?? "");
+      return [{ operator: void 0, major, minor, patch, prerelease, build }];
+    }
+    function parseOperatorRange(string) {
+      const groups = string.match(_shared_js_1.OPERATOR_XRANGE_REGEXP)?.groups;
+      if (!groups)
+        return parseComparator(string);
+      switch (groups.operator) {
+        case "^":
+          return handleCaretOperator(groups);
+        case "~":
+        case "~>":
+          return handleTildeOperator(groups);
+        case "<":
+          return handleLessThanOperator(groups);
+        case "<=":
+          return handleLessThanOrEqualOperator(groups);
+        case ">":
+          return handleGreaterThanOperator(groups);
+        case ">=":
+          return handleGreaterOrEqualOperator(groups);
+        case "=":
+        case "":
+          return handleEqualOperator(groups);
+        default:
+          throw new Error(`Cannot parse version range: '${groups.operator}' is not a valid operator`);
+      }
+    }
+    function parseOperatorRanges(string) {
+      return string.split(/\s+/).flatMap(parseOperatorRange);
+    }
+    function parseRange(value) {
+      const result = value.replaceAll(/(?<=<|>|=|~|\^)(\s+)/g, "").split(/\s*\|\|\s*/).map((string) => parseHyphenRange(string) || parseOperatorRanges(string));
+      if (result.some((r) => r.includes(null))) {
+        throw new TypeError(`Cannot parse version range: range "${value}" is invalid`);
+      }
+      return result;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/parse.js
+var require_parse2 = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/parse.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.parse = parse;
+    var _shared_js_1 = require_shared();
+    var _shared_js_2 = require_shared();
+    function parse(value) {
+      if (typeof value !== "string") {
+        throw new TypeError(`Cannot parse version as version must be a string: received ${typeof value}`);
+      }
+      if (value.length > _shared_js_2.MAX_LENGTH) {
+        throw new TypeError(`Cannot parse version as version length is too long: length is ${value.length}, max length is ${_shared_js_2.MAX_LENGTH}`);
+      }
+      value = value.trim();
+      const groups = value.match(_shared_js_2.FULL_REGEXP)?.groups;
+      if (!groups)
+        throw new TypeError(`Cannot parse version: ${value}`);
+      const major = (0, _shared_js_1.parseNumber)(groups.major, `Cannot parse version ${value}: invalid major version`);
+      const minor = (0, _shared_js_1.parseNumber)(groups.minor, `Cannot parse version ${value}: invalid minor version`);
+      const patch = (0, _shared_js_1.parseNumber)(groups.patch, `Cannot parse version ${value}: invalid patch version`);
+      const prerelease = groups.prerelease ? (0, _shared_js_1.parsePrerelease)(groups.prerelease) : [];
+      const build = groups.buildmetadata ? (0, _shared_js_1.parseBuild)(groups.buildmetadata) : [];
+      return { major, minor, patch, prerelease, build };
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/range_intersects.js
+var require_range_intersects = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/range_intersects.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.rangeIntersects = rangeIntersects;
+    var _shared_js_1 = require_shared();
+    var compare_js_1 = require_compare();
+    var satisfies_js_1 = require_satisfies();
+    function comparatorIntersects(comparator1, comparator2) {
+      const op0 = comparator1.operator;
+      const op1 = comparator2.operator;
+      if (op0 === void 0) {
+        if ((0, _shared_js_1.isWildcardComparator)(comparator1))
+          return true;
+        return (0, satisfies_js_1.satisfies)(comparator1, [[comparator2]]);
+      }
+      if (op1 === void 0) {
+        if ((0, _shared_js_1.isWildcardComparator)(comparator2))
+          return true;
+        return (0, satisfies_js_1.satisfies)(comparator2, [[comparator1]]);
+      }
+      const cmp = (0, compare_js_1.compare)(comparator1, comparator2);
+      const sameDirectionIncreasing = (op0 === ">=" || op0 === ">") && (op1 === ">=" || op1 === ">");
+      const sameDirectionDecreasing = (op0 === "<=" || op0 === "<") && (op1 === "<=" || op1 === "<");
+      const sameSemVer = cmp === 0;
+      const differentDirectionsInclusive = (op0 === ">=" || op0 === "<=") && (op1 === ">=" || op1 === "<=");
+      const oppositeDirectionsLessThan = cmp === -1 && (op0 === ">=" || op0 === ">") && (op1 === "<=" || op1 === "<");
+      const oppositeDirectionsGreaterThan = cmp === 1 && (op0 === "<=" || op0 === "<") && (op1 === ">=" || op1 === ">");
+      return sameDirectionIncreasing || sameDirectionDecreasing || sameSemVer && differentDirectionsInclusive || oppositeDirectionsLessThan || oppositeDirectionsGreaterThan;
+    }
+    function rangesSatisfiable(ranges) {
+      return ranges.every((r) => {
+        return r.some((comparators) => comparatorsSatisfiable(comparators));
+      });
+    }
+    function comparatorsSatisfiable(comparators) {
+      for (let i = 0; i < comparators.length - 1; i++) {
+        const comparator1 = comparators[i];
+        for (const comparator2 of comparators.slice(i + 1)) {
+          if (!comparatorIntersects(comparator1, comparator2)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    }
+    function rangeIntersects(range1, range2) {
+      return rangesSatisfiable([range1, range2]) && range1.some((range10) => {
+        return range2.some((r11) => {
+          return range10.every((comparator1) => {
+            return r11.every((comparator2) => comparatorIntersects(comparator1, comparator2));
+          });
+        });
+      });
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/types.js
+var require_types = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/types.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/try_parse_range.js
+var require_try_parse_range = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/try_parse_range.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.tryParseRange = tryParseRange;
+    var parse_range_js_1 = require_parse_range();
+    function tryParseRange(value) {
+      try {
+        return (0, parse_range_js_1.parseRange)(value);
+      } catch {
+        return void 0;
+      }
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/is_range.js
+var require_is_range = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/is_range.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.isRange = isRange;
+    var _constants_js_1 = require_constants6();
+    var _constants_js_2 = require_constants6();
+    var is_semver_js_1 = require_is_semver();
+    function isComparator(value) {
+      if (value === null || value === void 0 || Array.isArray(value) || typeof value !== "object")
+        return false;
+      if (value === _constants_js_2.ALL)
+        return true;
+      const { operator } = value;
+      return (operator === void 0 || _constants_js_1.OPERATORS.includes(operator)) && (0, is_semver_js_1.isSemVer)(value);
+    }
+    function isRange(value) {
+      return Array.isArray(value) && value.every((r) => Array.isArray(r) && r.every((c) => isComparator(c)));
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/can_parse.js
+var require_can_parse = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/can_parse.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.canParse = canParse;
+    var parse_js_1 = require_parse2();
+    function canParse(value) {
+      try {
+        (0, parse_js_1.parse)(value);
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/try_parse.js
+var require_try_parse = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/try_parse.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.tryParse = tryParse;
+    var parse_js_1 = require_parse2();
+    function tryParse(value) {
+      try {
+        return (0, parse_js_1.parse)(value);
+      } catch {
+        return void 0;
+      }
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/format_range.js
+var require_format_range = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/format_range.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.formatRange = formatRange;
+    var format_js_1 = require_format();
+    var _shared_js_1 = require_shared();
+    function formatComparator(comparator) {
+      const { operator } = comparator;
+      return `${operator === void 0 ? "" : operator}${(0, _shared_js_1.isWildcardComparator)(comparator) ? "*" : (0, format_js_1.format)(comparator)}`;
+    }
+    function formatRange(range) {
+      return range.map((c) => c.map((c2) => formatComparator(c2)).join(" ")).join("||");
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/equals.js
+var require_equals = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/equals.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.equals = equals;
+    var compare_js_1 = require_compare();
+    function equals(version1, version2) {
+      return (0, compare_js_1.compare)(version1, version2) === 0;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/not_equals.js
+var require_not_equals = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/not_equals.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.notEquals = notEquals;
+    var compare_js_1 = require_compare();
+    function notEquals(version1, version2) {
+      return (0, compare_js_1.compare)(version1, version2) !== 0;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/greater_than_range.js
+var require_greater_than_range = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/greater_than_range.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.greaterThanRange = greaterThanRange;
+    var _test_comparator_set_js_1 = require_test_comparator_set();
+    var _shared_js_1 = require_shared();
+    var compare_js_1 = require_compare();
+    function greaterThanRange(version, range) {
+      return range.every((comparatorSet) => greaterThanComparatorSet(version, comparatorSet));
+    }
+    function greaterThanComparatorSet(version, comparatorSet) {
+      if (comparatorSet.some(_shared_js_1.isWildcardComparator))
+        return false;
+      if ((0, _test_comparator_set_js_1.testComparatorSet)(version, comparatorSet))
+        return false;
+      if (comparatorSet.some((comparator) => lessThanComparator(version, comparator)))
+        return false;
+      return true;
+    }
+    function lessThanComparator(version, comparator) {
+      const cmp = (0, compare_js_1.compare)(version, comparator);
+      switch (comparator.operator) {
+        case "=":
+        case void 0:
+          return cmp < 0;
+        case "!=":
+          return false;
+        case ">":
+          return cmp <= 0;
+        case "<":
+          return false;
+        case ">=":
+          return cmp < 0;
+        case "<=":
+          return false;
+      }
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/greater_or_equal.js
+var require_greater_or_equal = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/greater_or_equal.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.greaterOrEqual = greaterOrEqual;
+    var compare_js_1 = require_compare();
+    function greaterOrEqual(version1, version2) {
+      return (0, compare_js_1.compare)(version1, version2) >= 0;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/less_than_range.js
+var require_less_than_range = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/less_than_range.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.lessThanRange = lessThanRange;
+    var _test_comparator_set_js_1 = require_test_comparator_set();
+    var _shared_js_1 = require_shared();
+    var compare_js_1 = require_compare();
+    function lessThanRange(version, range) {
+      return range.every((comparatorSet) => lessThanComparatorSet(version, comparatorSet));
+    }
+    function lessThanComparatorSet(version, comparatorSet) {
+      if (comparatorSet.some(_shared_js_1.isWildcardComparator))
+        return false;
+      if ((0, _test_comparator_set_js_1.testComparatorSet)(version, comparatorSet))
+        return false;
+      if (comparatorSet.some((comparator) => greaterThanComparator(version, comparator)))
+        return false;
+      return true;
+    }
+    function greaterThanComparator(version, comparator) {
+      const cmp = (0, compare_js_1.compare)(version, comparator);
+      switch (comparator.operator) {
+        case "=":
+        case void 0:
+          return cmp > 0;
+        case "!=":
+          return false;
+        case ">":
+          return false;
+        case "<":
+          return cmp >= 0;
+        case ">=":
+          return false;
+        case "<=":
+          return cmp > 0;
+      }
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/less_or_equal.js
+var require_less_or_equal = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/less_or_equal.js"(exports2) {
+    "use strict";
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.lessOrEqual = lessOrEqual;
+    var compare_js_1 = require_compare();
+    function lessOrEqual(version1, version2) {
+      return (0, compare_js_1.compare)(version1, version2) <= 0;
+    }
+  }
+});
+
+// npm/script/deps/jsr.io/@std/semver/1.0.3/mod.js
+var require_mod = __commonJS({
+  "npm/script/deps/jsr.io/@std/semver/1.0.3/mod.js"(exports2) {
+    "use strict";
+    var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
+    } : function(o, m, k, k2) {
+      if (k2 === void 0) k2 = k;
+      o[k2] = m[k];
+    });
+    var __exportStar = exports2 && exports2.__exportStar || function(m, exports3) {
+      for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports3, p)) __createBinding2(exports3, m, p);
+    };
+    Object.defineProperty(exports2, "__esModule", { value: true });
+    __exportStar(require_compare(), exports2);
+    __exportStar(require_difference(), exports2);
+    __exportStar(require_format(), exports2);
+    __exportStar(require_satisfies(), exports2);
+    __exportStar(require_increment(), exports2);
+    __exportStar(require_is_semver(), exports2);
+    __exportStar(require_max_satisfying(), exports2);
+    __exportStar(require_min_satisfying(), exports2);
+    __exportStar(require_parse_range(), exports2);
+    __exportStar(require_parse2(), exports2);
+    __exportStar(require_range_intersects(), exports2);
+    __exportStar(require_types(), exports2);
+    __exportStar(require_try_parse_range(), exports2);
+    __exportStar(require_is_range(), exports2);
+    __exportStar(require_can_parse(), exports2);
+    __exportStar(require_try_parse(), exports2);
+    __exportStar(require_format_range(), exports2);
+    __exportStar(require_equals(), exports2);
+    __exportStar(require_not_equals(), exports2);
+    __exportStar(require_greater_than(), exports2);
+    __exportStar(require_greater_than_range(), exports2);
+    __exportStar(require_greater_or_equal(), exports2);
+    __exportStar(require_less_than(), exports2);
+    __exportStar(require_less_than_range(), exports2);
+    __exportStar(require_less_or_equal(), exports2);
+  }
+});
+
 // npm/script/main.js
 var __createBinding = exports && exports.__createBinding || (Object.create ? function(o, m, k, k2) {
   if (k2 === void 0) k2 = k;
@@ -21829,46 +23011,81 @@ var __importStar = exports && exports.__importStar || function(mod) {
   return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.resolveVersion = resolveVersion;
 require_dnt_polyfills();
 var core = __importStar(require_core());
 var tc = __importStar(require_tool_cache());
+var semver = __importStar(require_mod());
+var REPO = "google/flatbuffers";
+async function fetchJson(url) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch JSON from ${url} ${response.statusText}`);
+  }
+  const value = await response.json();
+  return value;
+}
+async function resolveVersion(version) {
+  if (version === "latest") {
+    const apiUrl = `https://api.github.com/repos/${REPO}/releases/latest`;
+    const resp = await fetchJson(apiUrl);
+    version = resp.tag_name;
+  }
+  if (version.startsWith("v")) {
+    version = version.slice(1);
+  }
+  if (!semver.canParse(version)) {
+    throw new Error(`Invalid version: ${version}`);
+  }
+  return version;
+}
 function getDownloadUrl(version) {
-  const baseUrl = "https://github.com/google/flatbuffers/releases/download";
-  let filename = null;
-  if (core.platform.platform === "linux") {
-    filename = "Linux.flatc.binary.g++-13.zip";
-  } else if (core.platform.platform === "darwin") {
-    filename = "Mac.flatc.binary.zip";
-  } else if (core.platform.platform === "win32") {
-    filename = "Windows.flatc.binary.zip";
-  } else {
-    return null;
+  const baseUrl = `https://github.com/${REPO}/releases/download`;
+  const platformMap = {
+    linux: "Linux.flatc.binary.g++-13.zip",
+    darwin: "Mac.flatc.binary.zip",
+    win32: "Windows.flatc.binary.zip"
+  };
+  const filename = platformMap[core.platform.platform];
+  if (!filename) {
+    throw new Error(`Unsupported platform: ${core.platform.platform}`);
   }
   return `${baseUrl}/v${version}/${filename}`;
 }
-async function main() {
-  const version = core.getInput("version");
-  core.info(`Specified version: ${version}`);
-  const url = getDownloadUrl(version);
-  if (!url) {
-    core.setFailed(`Unsupported platform: ${core.platform.platform}`);
-    return;
-  }
+async function downloadFlatc(version, url) {
   let cachedPath = tc.find("flatc", version);
-  if (!cachedPath) {
-    core.info(`Downloading URL: ${url}`);
-    const downloadPath = await tc.downloadTool(url);
-    core.info(`Downloaded to: ${downloadPath}`);
-    const extractPath = await tc.extractZip(downloadPath);
-    core.info(`Extracted to: ${extractPath}`);
-    cachedPath = await tc.cacheDir(extractPath, "flatc", version);
+  if (cachedPath) {
+    return cachedPath;
   }
+  core.info(`Downloading URL: ${url}`);
+  const downloadPath = await tc.downloadTool(url);
+  core.info(`Downloaded to: ${downloadPath}`);
+  const extractPath = await tc.extractZip(downloadPath);
+  core.info(`Extracted to: ${extractPath}`);
+  cachedPath = await tc.cacheDir(extractPath, "flatc", version);
+  return cachedPath;
+}
+async function main() {
+  const inputVersion = core.getInput("version") ?? "latest";
+  core.info(`Input version: ${inputVersion}`);
+  const version = await resolveVersion(inputVersion);
+  core.info(`Resolved version: ${version}`);
+  const url = getDownloadUrl(version);
+  const cachedPath = await downloadFlatc(version, url);
   core.info(`Cached at: ${cachedPath}`);
   core.addPath(cachedPath);
   core.info("Added cached path to environment variables");
 }
 if (require.main === module) {
-  main();
+  try {
+    main();
+  } catch (error) {
+    if (error instanceof Error) {
+      core.setFailed(error);
+    } else {
+      core.setFailed(`An unknown error occurred: ${error}`);
+    }
+  }
 }
 /*! Bundled license information:
 
