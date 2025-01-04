@@ -1,24 +1,15 @@
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import * as semver from "@std/semver";
+import { Octokit } from "octokit";
 
-const REPO = "google/flatbuffers";
-
-async function fetchJson<T>(url: string): Promise<T> {
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch JSON from ${url} ${response.statusText}`);
-  }
-  // deno-lint-ignore no-explicit-any
-  const value: any = await response.json();
-  return value;
-}
-
-export async function resolveVersion(version: string): Promise<string> {
+async function resolveVersion(gh: Octokit, version: string): Promise<string> {
   if (version === "latest") {
-    const apiUrl = `https://api.github.com/repos/${REPO}/releases/latest`;
-    const resp = await fetchJson<{ tag_name: string }>(apiUrl);
-    version = resp.tag_name;
+    const resp = await gh.rest.repos.getLatestRelease({
+      owner: "google",
+      repo: "flatbuffers",
+    });
+    version = resp.data.tag_name;
   }
 
   if (version.startsWith("v")) {
@@ -33,7 +24,8 @@ export async function resolveVersion(version: string): Promise<string> {
 }
 
 function getDownloadUrl(version: string): string {
-  const baseUrl = `https://github.com/${REPO}/releases/download`;
+  const repo = "google/flatbuffers";
+  const baseUrl = `https://github.com/${repo}/releases/download`;
 
   const platformMap: Record<string, string | undefined> = {
     linux: "Linux.flatc.binary.g++-13.zip",
@@ -67,10 +59,13 @@ async function downloadFlatc(version: string, url: string): Promise<string> {
 }
 
 async function main() {
+  const githubToken = core.getInput("github-token") ?? undefined;
+  const gh = new Octokit({ auth: githubToken });
+
   const inputVersion = core.getInput("version") ?? "latest";
   core.info(`Input version: ${inputVersion}`);
 
-  const version = await resolveVersion(inputVersion);
+  const version = await resolveVersion(gh, inputVersion);
   core.info(`Resolved version: ${version}`);
 
   const url = getDownloadUrl(version);
