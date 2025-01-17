@@ -1,4 +1,5 @@
 import * as core from "@actions/core";
+import * as exec from "@actions/exec";
 import * as tc from "@actions/tool-cache";
 import * as semver from "@std/semver";
 import { Octokit } from "octokit";
@@ -49,15 +50,14 @@ async function downloadFlatc(gh: Octokit, version: string): Promise<string> {
   core.info(JSON.stringify(platformDetails));
 
   const platformMap: Record<string, RegExp | undefined> = {
-    linux: /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
-    darwin: /Mac\.flatc\.binary\.zip/,
-    win32: /Windows\.flatc\.binary\.zip/,
+    "linux-x64": /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
+    "darwin-arm64": /Mac\.flatc\.binary\.zip/,
+    "darwin-x64": /MacIntel\.flatc\.binary\.zip/,
+    "win32-x64": /Windows\.flatc\.binary\.zip/,
   };
 
-  const fileRegex = platformMap[core.platform.platform];
-  if (!fileRegex) {
-    throw new Error(`Unsupported platform: ${core.platform.platform}`);
-  }
+  const key = `${platformDetails.platform}-${platformDetails.arch}`;
+  const fileRegex = platformMap[key];
 
   const resp = await gh.rest.repos.getReleaseByTag({
     owner: "google",
@@ -65,25 +65,45 @@ async function downloadFlatc(gh: Octokit, version: string): Promise<string> {
     tag: `v${version}`,
   });
 
-  let url: string | null = null;
-  for (const asset of resp.data.assets) {
-    if (fileRegex.test(asset.name)) {
-      url = asset.browser_download_url;
+  if (fileRegex) {
+    let url: string | null = null;
+    for (const asset of resp.data.assets) {
+      if (fileRegex.test(asset.name)) {
+        url = asset.browser_download_url;
+      }
     }
+    if (!url) {
+      throw new Error("No matching asset found for platform");
+    }
+
+    core.info(`Downloading URL: ${url}`);
+    const downloadPath = await tc.downloadTool(url);
+    core.info(`Downloaded to: ${downloadPath}`);
+
+    const extractPath = await tc.extractZip(downloadPath);
+    core.info(`Extracted to: ${extractPath}`);
+
+    return await tc.cacheDir(extractPath, "flatc", version);
+  } else {
+    const url = resp.data.tarball_url;
+    if (!url) {
+      throw new Error("No tarball found for platform");
+    }
+
+    core.info(`Downloading URL: ${url}`);
+    const downloadPath = await tc.downloadTool(url);
+    core.info(`Downloaded to: ${downloadPath}`);
+
+    const extractPath = await tc.extractTar(downloadPath);
+    core.info(`Extracted to: ${extractPath}`);
+
+    core.info("Building flatc from source");
+    await exec.exec("cmake", ["-G", "'Unix Makefiles'"], { cwd: extractPath });
+    await exec.exec("make", ["-j"], { cwd: extractPath });
+    core.info("Built flatc from source");
+
+    return await tc.cacheDir(extractPath, "flatc", version);
   }
-
-  if (!url) {
-    throw new Error("No matching asset found for platform");
-  }
-
-  core.info(`Downloading URL: ${url}`);
-  const downloadPath = await tc.downloadTool(url);
-  core.info(`Downloaded to: ${downloadPath}`);
-
-  const extractPath = await tc.extractZip(downloadPath);
-  core.info(`Extracted to: ${extractPath}`);
-
-  return await tc.cacheDir(extractPath, "flatc", version);
 }
 
 async function main() {
