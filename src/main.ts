@@ -3,6 +3,7 @@ import * as exec from "@actions/exec";
 import * as tc from "@actions/tool-cache";
 import * as semver from "@std/semver";
 import { Octokit } from "octokit";
+import type { Buffer } from "node:buffer";
 
 async function resolveVersion(gh: Octokit, version: string): Promise<string> {
   if (version === "*") {
@@ -97,14 +98,28 @@ async function downloadFlatc(gh: Octokit, version: string): Promise<string> {
     const extractPath = await tc.extractTar(downloadPath);
     core.info(`Extracted to: ${extractPath}`);
 
+    const sourcePath = extractPath + "/" + (await ls(extractPath)).trim();
+
     core.info("Building flatc from source");
-    await exec.exec("ls", ["-al"], { cwd: extractPath });
-    await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: extractPath });
-    await exec.exec("make", ["-j"], { cwd: extractPath });
+    await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: sourcePath });
+    await exec.exec("make", ["-j"], { cwd: sourcePath });
     core.info("Built flatc from source");
 
     return await tc.cacheDir(extractPath, "flatc", version);
   }
+}
+
+async function ls(path: string): Promise<string> {
+  let stdout = "";
+  const options = {
+    listeners: {
+      stdout: (data: Buffer) => {
+        stdout += data.toString();
+      },
+    },
+  };
+  await exec.exec("ls", [path], options);
+  return stdout;
 }
 
 async function main() {

@@ -31574,13 +31574,25 @@ async function downloadFlatc(gh, version) {
     core.info(`Downloaded to: ${downloadPath}`);
     const extractPath = await tc.extractTar(downloadPath);
     core.info(`Extracted to: ${extractPath}`);
+    const sourcePath = extractPath + "/" + (await ls(extractPath)).trim();
     core.info("Building flatc from source");
-    await exec.exec("ls", ["-al"], { cwd: extractPath });
-    await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: extractPath });
-    await exec.exec("make", ["-j"], { cwd: extractPath });
+    await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: sourcePath });
+    await exec.exec("make", ["-j"], { cwd: sourcePath });
     core.info("Built flatc from source");
     return await tc.cacheDir(extractPath, "flatc", version);
   }
+}
+async function ls(path) {
+  let stdout = "";
+  const options = {
+    listeners: {
+      stdout: (data) => {
+        stdout += data.toString();
+      }
+    }
+  };
+  await exec.exec("ls", [path], options);
+  return stdout;
 }
 async function main() {
   const githubToken = core.getInput("github-token") ?? void 0;
