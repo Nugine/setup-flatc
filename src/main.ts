@@ -43,7 +43,11 @@ async function resolveVersion(gh: Octokit, version: string): Promise<string> {
   throw new Error(`Invalid version: ${version}`);
 }
 
-async function getDownloadUrl(gh: Octokit, version: string): Promise<string> {
+async function downloadFlatc(gh: Octokit, version: string): Promise<string> {
+  // https://github.com/actions/toolkit/tree/main/packages/core#platform-helper
+  const platformDetails = await core.platform.getDetails();
+  core.debug(JSON.stringify(platformDetails));
+
   const platformMap: Record<string, RegExp | undefined> = {
     linux: /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
     darwin: /Mac\.flatc\.binary\.zip/,
@@ -61,18 +65,15 @@ async function getDownloadUrl(gh: Octokit, version: string): Promise<string> {
     tag: `v${version}`,
   });
 
+  let url: string | null = null;
   for (const asset of resp.data.assets) {
     if (fileRegex.test(asset.name)) {
-      return asset.browser_download_url;
+      url = asset.browser_download_url;
     }
   }
-  throw new Error("No matching asset found for platform");
-}
 
-async function downloadFlatc(version: string, url: string): Promise<string> {
-  let cachedPath = tc.find("flatc", version);
-  if (cachedPath) {
-    return cachedPath;
+  if (!url) {
+    throw new Error("No matching asset found for platform");
   }
 
   core.info(`Downloading URL: ${url}`);
@@ -82,8 +83,7 @@ async function downloadFlatc(version: string, url: string): Promise<string> {
   const extractPath = await tc.extractZip(downloadPath);
   core.info(`Extracted to: ${extractPath}`);
 
-  cachedPath = await tc.cacheDir(extractPath, "flatc", version);
-  return cachedPath;
+  return await tc.cacheDir(extractPath, "flatc", version);
 }
 
 async function main() {
@@ -96,8 +96,10 @@ async function main() {
   const version = await resolveVersion(gh, inputVersion);
   core.info(`Resolved version: ${version}`);
 
-  const url = await getDownloadUrl(gh, version);
-  const cachedPath = await downloadFlatc(version, url);
+  let cachedPath = tc.find("flatc", version);
+  if (!cachedPath) {
+    cachedPath = await downloadFlatc(gh, version);
+  }
   core.info(`Cached at: ${cachedPath}`);
 
   core.addPath(cachedPath);
