@@ -98,6 +98,7 @@ async function downloadFlatc(gh: Octokit, version: string): Promise<string> {
     core.info(`Extracted to: ${extractPath}`);
 
     core.info("Building flatc from source");
+    await exec.exec("ls", ["-al"], { cwd: extractPath });
     await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: extractPath });
     await exec.exec("make", ["-j"], { cwd: extractPath });
     core.info("Built flatc from source");
