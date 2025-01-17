@@ -19430,7 +19430,7 @@ var require_exec = __commonJS({
     exports2.getExecOutput = exports2.exec = void 0;
     var string_decoder_1 = require("string_decoder");
     var tr = __importStar2(require_toolrunner());
-    function exec(commandLine, args, options) {
+    function exec2(commandLine, args, options) {
       return __awaiter(this, void 0, void 0, function* () {
         const commandArgs = tr.argStringToArray(commandLine);
         if (commandArgs.length === 0) {
@@ -19442,7 +19442,7 @@ var require_exec = __commonJS({
         return runner.exec();
       });
     }
-    exports2.exec = exec;
+    exports2.exec = exec2;
     function getExecOutput(commandLine, args, options) {
       var _a, _b;
       return __awaiter(this, void 0, void 0, function* () {
@@ -19465,7 +19465,7 @@ var require_exec = __commonJS({
           }
         };
         const listeners = Object.assign(Object.assign({}, options === null || options === void 0 ? void 0 : options.listeners), { stdout: stdOutListener, stderr: stdErrListener });
-        const exitCode = yield exec(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
+        const exitCode = yield exec2(commandLine, args, Object.assign(Object.assign({}, options), { listeners }));
         stdout += stdoutDecoder.end();
         stderr += stderrDecoder.end();
         return {
@@ -19543,12 +19543,12 @@ var require_platform = __commonJS({
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.getDetails = exports2.isLinux = exports2.isMacOS = exports2.isWindows = exports2.arch = exports2.platform = void 0;
     var os_1 = __importDefault(require("os"));
-    var exec = __importStar2(require_exec());
+    var exec2 = __importStar2(require_exec());
     var getWindowsInfo = () => __awaiter(void 0, void 0, void 0, function* () {
-      const { stdout: version } = yield exec.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Version"', void 0, {
+      const { stdout: version } = yield exec2.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Version"', void 0, {
         silent: true
       });
-      const { stdout: name } = yield exec.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Caption"', void 0, {
+      const { stdout: name } = yield exec2.getExecOutput('powershell -command "(Get-CimInstance -ClassName Win32_OperatingSystem).Caption"', void 0, {
         silent: true
       });
       return {
@@ -19558,7 +19558,7 @@ var require_platform = __commonJS({
     });
     var getMacOsInfo = () => __awaiter(void 0, void 0, void 0, function* () {
       var _a, _b, _c, _d;
-      const { stdout } = yield exec.getExecOutput("sw_vers", void 0, {
+      const { stdout } = yield exec2.getExecOutput("sw_vers", void 0, {
         silent: true
       });
       const version = (_b = (_a = stdout.match(/ProductVersion:\s*(.+)/)) === null || _a === void 0 ? void 0 : _a[1]) !== null && _b !== void 0 ? _b : "";
@@ -19569,7 +19569,7 @@ var require_platform = __commonJS({
       };
     });
     var getLinuxInfo = () => __awaiter(void 0, void 0, void 0, function* () {
-      const { stdout } = yield exec.getExecOutput("lsb_release", ["-i", "-r", "-s"], {
+      const { stdout } = yield exec2.getExecOutput("lsb_release", ["-i", "-r", "-s"], {
         silent: true
       });
       const [name, version] = stdout.trim().split("\n");
@@ -31492,6 +31492,7 @@ var __importStar = exports && exports.__importStar || function(mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 require_dnt_polyfills();
 var core = __importStar(require_core());
+var exec = __importStar(require_exec());
 var tc = __importStar(require_tool_cache());
 var semver = __importStar(require_mod());
 var octokit_1 = (init_dist_bundle14(), __toCommonJS(dist_bundle_exports3));
@@ -31531,40 +31532,67 @@ async function resolveVersion(gh, version) {
   }
   throw new Error(`Invalid version: ${version}`);
 }
-async function getDownloadUrl(gh, version) {
+async function downloadFlatc(gh, version) {
+  const platformDetails = await core.platform.getDetails();
+  core.info(JSON.stringify(platformDetails));
   const platformMap = {
-    linux: /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
-    darwin: /Mac\.flatc\.binary\.zip/,
-    win32: /Windows\.flatc\.binary\.zip/
+    "linux-x64": /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
+    "darwin-arm64": /Mac\.flatc\.binary\.zip/,
+    "darwin-x64": /MacIntel\.flatc\.binary\.zip/,
+    "win32-x64": /Windows\.flatc\.binary\.zip/
   };
-  const fileRegex = platformMap[core.platform.platform];
-  if (!fileRegex) {
-    throw new Error(`Unsupported platform: ${core.platform.platform}`);
-  }
+  const key = `${platformDetails.platform}-${platformDetails.arch}`;
+  const fileRegex = platformMap[key];
   const resp = await gh.rest.repos.getReleaseByTag({
     owner: "google",
     repo: "flatbuffers",
     tag: `v${version}`
   });
-  for (const asset of resp.data.assets) {
-    if (fileRegex.test(asset.name)) {
-      return asset.browser_download_url;
+  if (fileRegex) {
+    let url = null;
+    for (const asset of resp.data.assets) {
+      if (fileRegex.test(asset.name)) {
+        url = asset.browser_download_url;
+      }
     }
+    if (!url) {
+      throw new Error("No matching asset found for platform");
+    }
+    core.info(`Downloading URL: ${url}`);
+    const downloadPath = await tc.downloadTool(url);
+    core.info(`Downloaded to: ${downloadPath}`);
+    const extractPath = await tc.extractZip(downloadPath);
+    core.info(`Extracted to: ${extractPath}`);
+    return await tc.cacheDir(extractPath, "flatc", version);
+  } else {
+    const url = resp.data.tarball_url;
+    if (!url) {
+      throw new Error("No tarball found for platform");
+    }
+    core.info(`Downloading URL: ${url}`);
+    const downloadPath = await tc.downloadTool(url);
+    core.info(`Downloaded to: ${downloadPath}`);
+    const extractPath = await tc.extractTar(downloadPath);
+    core.info(`Extracted to: ${extractPath}`);
+    const sourcePath = extractPath + "/" + (await ls(extractPath)).trim();
+    core.info("Building flatc from source");
+    await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: sourcePath });
+    await exec.exec("make", ["-j"], { cwd: sourcePath });
+    core.info("Built flatc from source");
+    return await tc.cacheDir(sourcePath, "flatc", version);
   }
-  throw new Error("No matching asset found for platform");
 }
-async function downloadFlatc(version, url) {
-  let cachedPath = tc.find("flatc", version);
-  if (cachedPath) {
-    return cachedPath;
-  }
-  core.info(`Downloading URL: ${url}`);
-  const downloadPath = await tc.downloadTool(url);
-  core.info(`Downloaded to: ${downloadPath}`);
-  const extractPath = await tc.extractZip(downloadPath);
-  core.info(`Extracted to: ${extractPath}`);
-  cachedPath = await tc.cacheDir(extractPath, "flatc", version);
-  return cachedPath;
+async function ls(path) {
+  let stdout = "";
+  const options = {
+    listeners: {
+      stdout: (data) => {
+        stdout += data.toString();
+      }
+    }
+  };
+  await exec.exec("ls", [path], options);
+  return stdout;
 }
 async function main() {
   const githubToken = core.getInput("github-token") ?? void 0;
@@ -31573,8 +31601,10 @@ async function main() {
   core.info(`Input version: ${inputVersion}`);
   const version = await resolveVersion(gh, inputVersion);
   core.info(`Resolved version: ${version}`);
-  const url = await getDownloadUrl(gh, version);
-  const cachedPath = await downloadFlatc(version, url);
+  let cachedPath = tc.find("flatc", version);
+  if (!cachedPath) {
+    cachedPath = await downloadFlatc(gh, version);
+  }
   core.info(`Cached at: ${cachedPath}`);
   core.addPath(cachedPath);
   core.info("Added cached path to environment variables");

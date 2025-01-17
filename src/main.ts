@@ -1,7 +1,9 @@
 import * as core from "@actions/core";
+import * as exec from "@actions/exec";
 import * as tc from "@actions/tool-cache";
 import * as semver from "@std/semver";
 import { Octokit } from "octokit";
+import type { Buffer } from "node:buffer";
 
 async function resolveVersion(gh: Octokit, version: string): Promise<string> {
   if (version === "*") {
@@ -43,17 +45,20 @@ async function resolveVersion(gh: Octokit, version: string): Promise<string> {
   throw new Error(`Invalid version: ${version}`);
 }
 
-async function getDownloadUrl(gh: Octokit, version: string): Promise<string> {
+async function downloadFlatc(gh: Octokit, version: string): Promise<string> {
+  // https://github.com/actions/toolkit/tree/main/packages/core#platform-helper
+  const platformDetails = await core.platform.getDetails();
+  core.info(JSON.stringify(platformDetails));
+
   const platformMap: Record<string, RegExp | undefined> = {
-    linux: /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
-    darwin: /Mac\.flatc\.binary\.zip/,
-    win32: /Windows\.flatc\.binary\.zip/,
+    "linux-x64": /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
+    "darwin-arm64": /Mac\.flatc\.binary\.zip/,
+    "darwin-x64": /MacIntel\.flatc\.binary\.zip/,
+    "win32-x64": /Windows\.flatc\.binary\.zip/,
   };
 
-  const fileRegex = platformMap[core.platform.platform];
-  if (!fileRegex) {
-    throw new Error(`Unsupported platform: ${core.platform.platform}`);
-  }
+  const key = `${platformDetails.platform}-${platformDetails.arch}`;
+  const fileRegex = platformMap[key];
 
   const resp = await gh.rest.repos.getReleaseByTag({
     owner: "google",
@@ -61,29 +66,60 @@ async function getDownloadUrl(gh: Octokit, version: string): Promise<string> {
     tag: `v${version}`,
   });
 
-  for (const asset of resp.data.assets) {
-    if (fileRegex.test(asset.name)) {
-      return asset.browser_download_url;
+  if (fileRegex) {
+    let url: string | null = null;
+    for (const asset of resp.data.assets) {
+      if (fileRegex.test(asset.name)) {
+        url = asset.browser_download_url;
+      }
     }
+    if (!url) {
+      throw new Error("No matching asset found for platform");
+    }
+
+    core.info(`Downloading URL: ${url}`);
+    const downloadPath = await tc.downloadTool(url);
+    core.info(`Downloaded to: ${downloadPath}`);
+
+    const extractPath = await tc.extractZip(downloadPath);
+    core.info(`Extracted to: ${extractPath}`);
+
+    return await tc.cacheDir(extractPath, "flatc", version);
+  } else {
+    const url = resp.data.tarball_url;
+    if (!url) {
+      throw new Error("No tarball found for platform");
+    }
+
+    core.info(`Downloading URL: ${url}`);
+    const downloadPath = await tc.downloadTool(url);
+    core.info(`Downloaded to: ${downloadPath}`);
+
+    const extractPath = await tc.extractTar(downloadPath);
+    core.info(`Extracted to: ${extractPath}`);
+
+    const sourcePath = extractPath + "/" + (await ls(extractPath)).trim();
+
+    core.info("Building flatc from source");
+    await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: sourcePath });
+    await exec.exec("make", ["-j"], { cwd: sourcePath });
+    core.info("Built flatc from source");
+
+    return await tc.cacheDir(sourcePath, "flatc", version);
   }
-  throw new Error("No matching asset found for platform");
 }
 
-async function downloadFlatc(version: string, url: string): Promise<string> {
-  let cachedPath = tc.find("flatc", version);
-  if (cachedPath) {
-    return cachedPath;
-  }
-
-  core.info(`Downloading URL: ${url}`);
-  const downloadPath = await tc.downloadTool(url);
-  core.info(`Downloaded to: ${downloadPath}`);
-
-  const extractPath = await tc.extractZip(downloadPath);
-  core.info(`Extracted to: ${extractPath}`);
-
-  cachedPath = await tc.cacheDir(extractPath, "flatc", version);
-  return cachedPath;
+async function ls(path: string): Promise<string> {
+  let stdout = "";
+  const options = {
+    listeners: {
+      stdout: (data: Buffer) => {
+        stdout += data.toString();
+      },
+    },
+  };
+  await exec.exec("ls", [path], options);
+  return stdout;
 }
 
 async function main() {
@@ -96,8 +132,10 @@ async function main() {
   const version = await resolveVersion(gh, inputVersion);
   core.info(`Resolved version: ${version}`);
 
-  const url = await getDownloadUrl(gh, version);
-  const cachedPath = await downloadFlatc(version, url);
+  let cachedPath = tc.find("flatc", version);
+  if (!cachedPath) {
+    cachedPath = await downloadFlatc(gh, version);
+  }
   core.info(`Cached at: ${cachedPath}`);
 
   core.addPath(cachedPath);

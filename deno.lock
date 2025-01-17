@@ -23,6 +23,7 @@
     "jsr:@ts-morph/bootstrap@0.24": "0.24.0",
     "jsr:@ts-morph/common@0.24": "0.24.0",
     "npm:@actions/core@^1.11.1": "1.11.1",
+    "npm:@actions/exec@^1.1.1": "1.1.1",
     "npm:@actions/tool-cache@^2.0.2": "2.0.2",
     "npm:@types/node@*": "22.5.4",
     "npm:esbuild@~0.24.2": "0.24.2",
@@ -521,6 +522,7 @@
       "jsr:@deno/dnt@~0.41.3",
       "jsr:@std/semver@^1.0.3",
       "npm:@actions/core@^1.11.1",
+      "npm:@actions/exec@^1.1.1",
       "npm:@actions/tool-cache@^2.0.2",
       "npm:esbuild@~0.24.2",
       "npm:octokit@^4.0.3"

@@ -27,10 +27,13 @@ jobs:
 
   test-default:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
+          - ubuntu-24.04-arm
           - macos-latest
+          - macos-13
           - windows-latest
     runs-on: ${{ matrix.os }}
     steps:
@@ -40,10 +43,13 @@ jobs:
 
   test-locked:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
+          - ubuntu-24.04-arm
           - macos-latest
+          - macos-13
           - windows-latest
         version:
           - "24.12.23"
@@ -65,10 +71,13 @@ jobs:
 
   test-range:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
+          - ubuntu-24.04-arm
           - macos-latest
+          - macos-13
           - windows-latest
         version:
           - ["24.*", "24.12.23"]

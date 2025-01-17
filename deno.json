@@ -5,6 +5,7 @@
   ],
   "imports": {
     "@actions/core": "npm:@actions/core@^1.11.1",
+    "@actions/exec": "npm:@actions/exec@^1.1.1",
     "@actions/tool-cache": "npm:@actions/tool-cache@^2.0.2",
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@std/semver": "jsr:@std/semver@^1.0.3",
