@@ -5286,6 +5286,13 @@ var require_body = __commonJS({
     var { isUint8Array, isArrayBuffer } = require("util/types");
     var { File: UndiciFile } = require_file();
     var { parseMIMEType, serializeAMimeType } = require_dataURL();
+    var random;
+    try {
+      const crypto = require("node:crypto");
+      random = (max) => crypto.randomInt(0, max);
+    } catch {
+      random = (max) => Math.floor(Math.random(max));
+    }
     var ReadableStream = globalThis.ReadableStream;
     var File = NativeFile ?? UndiciFile;
     var textEncoder = new TextEncoder();
@@ -5328,7 +5335,7 @@ var require_body = __commonJS({
       } else if (ArrayBuffer.isView(object)) {
         source = new Uint8Array(object.buffer.slice(object.byteOffset, object.byteOffset + object.byteLength));
       } else if (util.isFormDataLike(object)) {
-        const boundary = `----formdata-undici-0${`${Math.floor(Math.random() * 1e11)}`.padStart(11, "0")}`;
+        const boundary = `----formdata-undici-0${`${random(1e11)}`.padStart(11, "0")}`;
         const prefix = `--${boundary}\r
 Content-Disposition: form-data`;
         const escape = (str) => str.replace(/\n/g, "%0A").replace(/\r/g, "%0D").replace(/"/g, "%22");
@@ -20982,9 +20989,13 @@ var require_manifest = __commonJS({
     "use strict";
     var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
-      Object.defineProperty(o, k2, { enumerable: true, get: function() {
-        return m[k];
-      } });
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
     } : function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
@@ -20998,7 +21009,7 @@ var require_manifest = __commonJS({
       if (mod && mod.__esModule) return mod;
       var result = {};
       if (mod != null) {
-        for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
+        for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
       }
       __setModuleDefault2(result, mod);
       return result;
@@ -21045,10 +21056,10 @@ var require_manifest = __commonJS({
         let file;
         for (const candidate of candidates) {
           const version = candidate.version;
-          core_1.debug(`check ${version} satisfies ${versionSpec}`);
+          (0, core_1.debug)(`check ${version} satisfies ${versionSpec}`);
           if (semver2.satisfies(version, versionSpec) && (!stable || candidate.stable === stable)) {
             file = candidate.files.find((item) => {
-              core_1.debug(`${item.arch}===${archFilter} && ${item.platform}===${platFilter}`);
+              (0, core_1.debug)(`${item.arch}===${archFilter} && ${item.platform}===${platFilter}`);
               let chk = item.arch === archFilter && item.platform === platFilter;
               if (chk && item.platform_version) {
                 const osVersion = module2.exports._getOsVersion();
@@ -21061,7 +21072,7 @@ var require_manifest = __commonJS({
               return chk;
             });
             if (file) {
-              core_1.debug(`matched ${candidate.version}`);
+              (0, core_1.debug)(`matched ${candidate.version}`);
               match = candidate;
               break;
             }
@@ -21111,89 +21122,19 @@ var require_manifest = __commonJS({
   }
 });
 
-// npm/node_modules/uuid/lib/rng.js
-var require_rng = __commonJS({
-  "npm/node_modules/uuid/lib/rng.js"(exports2, module2) {
-    var crypto = require("crypto");
-    module2.exports = function nodeRNG() {
-      return crypto.randomBytes(16);
-    };
-  }
-});
-
-// npm/node_modules/uuid/lib/bytesToUuid.js
-var require_bytesToUuid = __commonJS({
-  "npm/node_modules/uuid/lib/bytesToUuid.js"(exports2, module2) {
-    var byteToHex = [];
-    for (i = 0; i < 256; ++i) {
-      byteToHex[i] = (i + 256).toString(16).substr(1);
-    }
-    var i;
-    function bytesToUuid(buf, offset) {
-      var i2 = offset || 0;
-      var bth = byteToHex;
-      return [
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        "-",
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        "-",
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        "-",
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        "-",
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        bth[buf[i2++]],
-        bth[buf[i2++]]
-      ].join("");
-    }
-    module2.exports = bytesToUuid;
-  }
-});
-
-// npm/node_modules/uuid/v4.js
-var require_v4 = __commonJS({
-  "npm/node_modules/uuid/v4.js"(exports2, module2) {
-    var rng = require_rng();
-    var bytesToUuid = require_bytesToUuid();
-    function v4(options, buf, offset) {
-      var i = buf && offset || 0;
-      if (typeof options == "string") {
-        buf = options === "binary" ? new Array(16) : null;
-        options = null;
-      }
-      options = options || {};
-      var rnds = options.random || (options.rng || rng)();
-      rnds[6] = rnds[6] & 15 | 64;
-      rnds[8] = rnds[8] & 63 | 128;
-      if (buf) {
-        for (var ii = 0; ii < 16; ++ii) {
-          buf[i + ii] = rnds[ii];
-        }
-      }
-      return buf || bytesToUuid(rnds);
-    }
-    module2.exports = v4;
-  }
-});
-
 // npm/node_modules/@actions/tool-cache/lib/retry-helper.js
 var require_retry_helper = __commonJS({
   "npm/node_modules/@actions/tool-cache/lib/retry-helper.js"(exports2) {
     "use strict";
     var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
-      Object.defineProperty(o, k2, { enumerable: true, get: function() {
-        return m[k];
-      } });
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
     } : function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
@@ -21207,7 +21148,7 @@ var require_retry_helper = __commonJS({
       if (mod && mod.__esModule) return mod;
       var result = {};
       if (mod != null) {
-        for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
+        for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
       }
       __setModuleDefault2(result, mod);
       return result;
@@ -21293,9 +21234,13 @@ var require_tool_cache = __commonJS({
     "use strict";
     var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
-      Object.defineProperty(o, k2, { enumerable: true, get: function() {
-        return m[k];
-      } });
+      var desc = Object.getOwnPropertyDescriptor(m, k);
+      if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function() {
+          return m[k];
+        } };
+      }
+      Object.defineProperty(o, k2, desc);
     } : function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
       o[k2] = m[k];
@@ -21309,7 +21254,7 @@ var require_tool_cache = __commonJS({
       if (mod && mod.__esModule) return mod;
       var result = {};
       if (mod != null) {
-        for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
+        for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding2(result, mod, k);
       }
       __setModuleDefault2(result, mod);
       return result;
@@ -21341,13 +21286,11 @@ var require_tool_cache = __commonJS({
         step((generator = generator.apply(thisArg, _arguments || [])).next());
       });
     };
-    var __importDefault = exports2 && exports2.__importDefault || function(mod) {
-      return mod && mod.__esModule ? mod : { "default": mod };
-    };
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.evaluateVersions = exports2.isExplicitVersion = exports2.findFromManifest = exports2.getManifestFromRepo = exports2.findAllVersions = exports2.find = exports2.cacheFile = exports2.cacheDir = exports2.extractZip = exports2.extractXar = exports2.extractTar = exports2.extract7z = exports2.downloadTool = exports2.HTTPError = void 0;
     var core2 = __importStar2(require_core());
     var io = __importStar2(require_io());
+    var crypto = __importStar2(require("crypto"));
     var fs = __importStar2(require("fs"));
     var mm = __importStar2(require_manifest());
     var os = __importStar2(require("os"));
@@ -21357,7 +21300,6 @@ var require_tool_cache = __commonJS({
     var stream = __importStar2(require("stream"));
     var util = __importStar2(require("util"));
     var assert_1 = require("assert");
-    var v4_1 = __importDefault(require_v4());
     var exec_1 = require_exec();
     var retry_helper_1 = require_retry_helper();
     var HTTPError = class extends Error {
@@ -21373,7 +21315,7 @@ var require_tool_cache = __commonJS({
     var userAgent2 = "actions/tool-cache";
     function downloadTool(url, dest, auth7, headers) {
       return __awaiter(this, void 0, void 0, function* () {
-        dest = dest || path.join(_getTempDirectory(), v4_1.default());
+        dest = dest || path.join(_getTempDirectory(), crypto.randomUUID());
         yield io.mkdirP(path.dirname(dest));
         core2.debug(`Downloading ${url}`);
         core2.debug(`Destination ${dest}`);
@@ -21438,8 +21380,8 @@ var require_tool_cache = __commonJS({
     }
     function extract7z(file, dest, _7zPath) {
       return __awaiter(this, void 0, void 0, function* () {
-        assert_1.ok(IS_WINDOWS, "extract7z() not supported on current OS");
-        assert_1.ok(file, 'parameter "file" is required');
+        (0, assert_1.ok)(IS_WINDOWS, "extract7z() not supported on current OS");
+        (0, assert_1.ok)(file, 'parameter "file" is required');
         dest = yield _createExtractFolder(dest);
         const originalCwd = process.cwd();
         process.chdir(dest);
@@ -21456,7 +21398,7 @@ var require_tool_cache = __commonJS({
             const options = {
               silent: true
             };
-            yield exec_1.exec(`"${_7zPath}"`, args, options);
+            yield (0, exec_1.exec)(`"${_7zPath}"`, args, options);
           } finally {
             process.chdir(originalCwd);
           }
@@ -21480,7 +21422,7 @@ var require_tool_cache = __commonJS({
           };
           try {
             const powershellPath = yield io.which("powershell", true);
-            yield exec_1.exec(`"${powershellPath}"`, args, options);
+            yield (0, exec_1.exec)(`"${powershellPath}"`, args, options);
           } finally {
             process.chdir(originalCwd);
           }
@@ -21497,7 +21439,7 @@ var require_tool_cache = __commonJS({
         dest = yield _createExtractFolder(dest);
         core2.debug("Checking tar --version");
         let versionOutput = "";
-        yield exec_1.exec("tar --version", [], {
+        yield (0, exec_1.exec)("tar --version", [], {
           ignoreReturnCode: true,
           silent: true,
           listeners: {
@@ -21528,15 +21470,15 @@ var require_tool_cache = __commonJS({
           args.push("--overwrite");
         }
         args.push("-C", destArg, "-f", fileArg);
-        yield exec_1.exec(`tar`, args);
+        yield (0, exec_1.exec)(`tar`, args);
         return dest;
       });
     }
     exports2.extractTar = extractTar;
     function extractXar(file, dest, flags = []) {
       return __awaiter(this, void 0, void 0, function* () {
-        assert_1.ok(IS_MAC, "extractXar() not supported on current OS");
-        assert_1.ok(file, 'parameter "file" is required');
+        (0, assert_1.ok)(IS_MAC, "extractXar() not supported on current OS");
+        (0, assert_1.ok)(file, 'parameter "file" is required');
         dest = yield _createExtractFolder(dest);
         let args;
         if (flags instanceof Array) {
@@ -21549,7 +21491,7 @@ var require_tool_cache = __commonJS({
           args.push("-v");
         }
         const xarPath = yield io.which("xar", true);
-        yield exec_1.exec(`"${xarPath}"`, _unique(args));
+        yield (0, exec_1.exec)(`"${xarPath}"`, _unique(args));
         return dest;
       });
     }
@@ -21591,7 +21533,7 @@ var require_tool_cache = __commonJS({
             pwshCommand
           ];
           core2.debug(`Using pwsh at path: ${pwshPath}`);
-          yield exec_1.exec(`"${pwshPath}"`, args);
+          yield (0, exec_1.exec)(`"${pwshPath}"`, args);
         } else {
           const powershellCommand = [
             `$ErrorActionPreference = 'Stop' ;`,
@@ -21611,7 +21553,7 @@ var require_tool_cache = __commonJS({
           ];
           const powershellPath = yield io.which("powershell", true);
           core2.debug(`Using powershell at path: ${powershellPath}`);
-          yield exec_1.exec(`"${powershellPath}"`, args);
+          yield (0, exec_1.exec)(`"${powershellPath}"`, args);
         }
       });
     }
@@ -21623,7 +21565,7 @@ var require_tool_cache = __commonJS({
           args.unshift("-q");
         }
         args.unshift("-o");
-        yield exec_1.exec(`"${unzipPath}"`, args, { cwd: dest });
+        yield (0, exec_1.exec)(`"${unzipPath}"`, args, { cwd: dest });
       });
     }
     function cacheDir(sourceDir, tool, version, arch) {
@@ -21754,7 +21696,7 @@ var require_tool_cache = __commonJS({
     function _createExtractFolder(dest) {
       return __awaiter(this, void 0, void 0, function* () {
         if (!dest) {
-          dest = path.join(_getTempDirectory(), v4_1.default());
+          dest = path.join(_getTempDirectory(), crypto.randomUUID());
         }
         yield io.mkdirP(dest);
         return dest;
@@ -21812,12 +21754,12 @@ var require_tool_cache = __commonJS({
     exports2.evaluateVersions = evaluateVersions;
     function _getCacheDirectory() {
       const cacheDirectory = process.env["RUNNER_TOOL_CACHE"] || "";
-      assert_1.ok(cacheDirectory, "Expected RUNNER_TOOL_CACHE to be defined");
+      (0, assert_1.ok)(cacheDirectory, "Expected RUNNER_TOOL_CACHE to be defined");
       return cacheDirectory;
     }
     function _getTempDirectory() {
       const tempDirectory = process.env["RUNNER_TEMP"] || "";
-      assert_1.ok(tempDirectory, "Expected RUNNER_TEMP to be defined");
+      (0, assert_1.ok)(tempDirectory, "Expected RUNNER_TEMP to be defined");
       return tempDirectory;
     }
     function _getGlobal(key, defaultValue) {
@@ -23725,7 +23667,7 @@ async function getResponseData(response) {
     return response.text().catch(() => "");
   }
   const mimetype = (0, import_fast_content_type_parse.safeParse)(contentType);
-  if (mimetype.type === "application/json") {
+  if (isJSONResponse(mimetype)) {
     let text = "";
     try {
       text = await response.text();
@@ -23738,6 +23680,9 @@ async function getResponseData(response) {
   } else {
     return response.arrayBuffer().catch(() => new ArrayBuffer(0));
   }
+}
+function isJSONResponse(mimetype) {
+  return mimetype.type === "application/json" || mimetype.type === "application/scim+json";
 }
 function toErrorMessage(data) {
   if (typeof data === "string") {
@@ -24378,7 +24323,7 @@ var init_dist_bundle6 = __esm({
 var VERSION6;
 var init_version2 = __esm({
   "npm/node_modules/@octokit/plugin-rest-endpoint-methods/dist-src/version.js"() {
-    VERSION6 = "13.2.6";
+    VERSION6 = "13.3.0";
   }
 });
 
@@ -24393,6 +24338,9 @@ var init_endpoints = __esm({
         ],
         addCustomLabelsToSelfHostedRunnerForRepo: [
           "POST /repos/{owner}/{repo}/actions/runners/{runner_id}/labels"
+        ],
+        addRepoAccessToSelfHostedRunnerGroupInOrg: [
+          "PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}"
         ],
         addSelectedRepoToOrgSecret: [
           "PUT /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}"
@@ -24822,6 +24770,9 @@ var init_endpoints = __esm({
         getGithubActionsBillingUser: [
           "GET /users/{username}/settings/billing/actions"
         ],
+        getGithubBillingUsageReportOrg: [
+          "GET /organizations/{org}/settings/billing/usage"
+        ],
         getGithubPackagesBillingOrg: ["GET /orgs/{org}/settings/billing/packages"],
         getGithubPackagesBillingUser: [
           "GET /users/{username}/settings/billing/packages"
@@ -24858,8 +24809,20 @@ var init_endpoints = __esm({
         update: ["PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}"]
       },
       codeScanning: {
+        commitAutofix: [
+          "POST /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/autofix/commits"
+        ],
+        createAutofix: [
+          "POST /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/autofix"
+        ],
+        createVariantAnalysis: [
+          "POST /repos/{owner}/{repo}/code-scanning/codeql/variant-analyses"
+        ],
         deleteAnalysis: [
           "DELETE /repos/{owner}/{repo}/code-scanning/analyses/{analysis_id}{?confirm_delete}"
+        ],
+        deleteCodeqlDatabase: [
+          "DELETE /repos/{owner}/{repo}/code-scanning/codeql/databases/{language}"
         ],
         getAlert: [
           "GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}",
@@ -24869,11 +24832,20 @@ var init_endpoints = __esm({
         getAnalysis: [
           "GET /repos/{owner}/{repo}/code-scanning/analyses/{analysis_id}"
         ],
+        getAutofix: [
+          "GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/autofix"
+        ],
         getCodeqlDatabase: [
           "GET /repos/{owner}/{repo}/code-scanning/codeql/databases/{language}"
         ],
         getDefaultSetup: ["GET /repos/{owner}/{repo}/code-scanning/default-setup"],
         getSarif: ["GET /repos/{owner}/{repo}/code-scanning/sarifs/{sarif_id}"],
+        getVariantAnalysis: [
+          "GET /repos/{owner}/{repo}/code-scanning/codeql/variant-analyses/{codeql_variant_analysis_id}"
+        ],
+        getVariantAnalysisRepoTask: [
+          "GET /repos/{owner}/{repo}/code-scanning/codeql/variant-analyses/{codeql_variant_analysis_id}/repos/{repo_owner}/{repo_name}"
+        ],
         listAlertInstances: [
           "GET /repos/{owner}/{repo}/code-scanning/alerts/{alert_number}/instances"
         ],
@@ -24895,6 +24867,64 @@ var init_endpoints = __esm({
           "PATCH /repos/{owner}/{repo}/code-scanning/default-setup"
         ],
         uploadSarif: ["POST /repos/{owner}/{repo}/code-scanning/sarifs"]
+      },
+      codeSecurity: {
+        attachConfiguration: [
+          "POST /orgs/{org}/code-security/configurations/{configuration_id}/attach"
+        ],
+        attachEnterpriseConfiguration: [
+          "POST /enterprises/{enterprise}/code-security/configurations/{configuration_id}/attach"
+        ],
+        createConfiguration: ["POST /orgs/{org}/code-security/configurations"],
+        createConfigurationForEnterprise: [
+          "POST /enterprises/{enterprise}/code-security/configurations"
+        ],
+        deleteConfiguration: [
+          "DELETE /orgs/{org}/code-security/configurations/{configuration_id}"
+        ],
+        deleteConfigurationForEnterprise: [
+          "DELETE /enterprises/{enterprise}/code-security/configurations/{configuration_id}"
+        ],
+        detachConfiguration: [
+          "DELETE /orgs/{org}/code-security/configurations/detach"
+        ],
+        getConfiguration: [
+          "GET /orgs/{org}/code-security/configurations/{configuration_id}"
+        ],
+        getConfigurationForRepository: [
+          "GET /repos/{owner}/{repo}/code-security-configuration"
+        ],
+        getConfigurationsForEnterprise: [
+          "GET /enterprises/{enterprise}/code-security/configurations"
+        ],
+        getConfigurationsForOrg: ["GET /orgs/{org}/code-security/configurations"],
+        getDefaultConfigurations: [
+          "GET /orgs/{org}/code-security/configurations/defaults"
+        ],
+        getDefaultConfigurationsForEnterprise: [
+          "GET /enterprises/{enterprise}/code-security/configurations/defaults"
+        ],
+        getRepositoriesForConfiguration: [
+          "GET /orgs/{org}/code-security/configurations/{configuration_id}/repositories"
+        ],
+        getRepositoriesForEnterpriseConfiguration: [
+          "GET /enterprises/{enterprise}/code-security/configurations/{configuration_id}/repositories"
+        ],
+        getSingleConfigurationForEnterprise: [
+          "GET /enterprises/{enterprise}/code-security/configurations/{configuration_id}"
+        ],
+        setConfigurationAsDefault: [
+          "PUT /orgs/{org}/code-security/configurations/{configuration_id}/defaults"
+        ],
+        setConfigurationAsDefaultForEnterprise: [
+          "PUT /enterprises/{enterprise}/code-security/configurations/{configuration_id}/defaults"
+        ],
+        updateConfiguration: [
+          "PATCH /orgs/{org}/code-security/configurations/{configuration_id}"
+        ],
+        updateEnterpriseConfiguration: [
+          "PATCH /enterprises/{enterprise}/code-security/configurations/{configuration_id}"
+        ]
       },
       codesOfConduct: {
         getAllCodesOfConduct: ["GET /codes_of_conduct"],
@@ -25026,12 +25056,13 @@ var init_endpoints = __esm({
         cancelCopilotSeatAssignmentForUsers: [
           "DELETE /orgs/{org}/copilot/billing/selected_users"
         ],
+        copilotMetricsForOrganization: ["GET /orgs/{org}/copilot/metrics"],
+        copilotMetricsForTeam: ["GET /orgs/{org}/team/{team_slug}/copilot/metrics"],
         getCopilotOrganizationDetails: ["GET /orgs/{org}/copilot/billing"],
         getCopilotSeatDetailsForUser: [
           "GET /orgs/{org}/members/{username}/copilot"
         ],
         listCopilotSeats: ["GET /orgs/{org}/copilot/billing/seats"],
-        usageMetricsForEnterprise: ["GET /enterprises/{enterprise}/copilot/usage"],
         usageMetricsForOrg: ["GET /orgs/{org}/copilot/usage"],
         usageMetricsForTeam: ["GET /orgs/{org}/team/{team_slug}/copilot/usage"]
       },
@@ -25162,6 +25193,9 @@ var init_endpoints = __esm({
           "POST /repos/{owner}/{repo}/issues/{issue_number}/assignees"
         ],
         addLabels: ["POST /repos/{owner}/{repo}/issues/{issue_number}/labels"],
+        addSubIssue: [
+          "POST /repos/{owner}/{repo}/issues/{issue_number}/sub_issues"
+        ],
         checkUserCanBeAssigned: ["GET /repos/{owner}/{repo}/assignees/{assignee}"],
         checkUserCanBeAssignedToIssue: [
           "GET /repos/{owner}/{repo}/issues/{issue_number}/assignees/{assignee}"
@@ -25204,6 +25238,9 @@ var init_endpoints = __esm({
           "GET /repos/{owner}/{repo}/issues/{issue_number}/labels"
         ],
         listMilestones: ["GET /repos/{owner}/{repo}/milestones"],
+        listSubIssues: [
+          "GET /repos/{owner}/{repo}/issues/{issue_number}/sub_issues"
+        ],
         lock: ["PUT /repos/{owner}/{repo}/issues/{issue_number}/lock"],
         removeAllLabels: [
           "DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels"
@@ -25213,6 +25250,12 @@ var init_endpoints = __esm({
         ],
         removeLabel: [
           "DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels/{name}"
+        ],
+        removeSubIssue: [
+          "DELETE /repos/{owner}/{repo}/issues/{issue_number}/sub_issue"
+        ],
+        reprioritizeSubIssue: [
+          "PATCH /repos/{owner}/{repo}/issues/{issue_number}/sub_issues/priority"
         ],
         setLabels: ["PUT /repos/{owner}/{repo}/issues/{issue_number}/labels"],
         unlock: ["DELETE /repos/{owner}/{repo}/issues/{issue_number}/lock"],
@@ -25287,7 +25330,11 @@ var init_endpoints = __esm({
       },
       orgs: {
         addSecurityManagerTeam: [
-          "PUT /orgs/{org}/security-managers/teams/{team_slug}"
+          "PUT /orgs/{org}/security-managers/teams/{team_slug}",
+          {},
+          {
+            deprecated: "octokit.rest.orgs.addSecurityManagerTeam() is deprecated, see https://docs.github.com/rest/orgs/security-managers#add-a-security-manager-team"
+          }
         ],
         assignTeamToOrgRole: [
           "PUT /orgs/{org}/organization-roles/teams/{team_slug}/{role_id}"
@@ -25303,7 +25350,6 @@ var init_endpoints = __esm({
         convertMemberToOutsideCollaborator: [
           "PUT /orgs/{org}/outside_collaborators/{username}"
         ],
-        createCustomOrganizationRole: ["POST /orgs/{org}/organization-roles"],
         createInvitation: ["POST /orgs/{org}/invitations"],
         createOrUpdateCustomProperties: ["PATCH /orgs/{org}/properties/schema"],
         createOrUpdateCustomPropertiesValuesForRepos: [
@@ -25314,12 +25360,13 @@ var init_endpoints = __esm({
         ],
         createWebhook: ["POST /orgs/{org}/hooks"],
         delete: ["DELETE /orgs/{org}"],
-        deleteCustomOrganizationRole: [
-          "DELETE /orgs/{org}/organization-roles/{role_id}"
-        ],
         deleteWebhook: ["DELETE /orgs/{org}/hooks/{hook_id}"],
         enableOrDisableSecurityProductOnAllOrgRepos: [
-          "POST /orgs/{org}/{security_product}/{enablement}"
+          "POST /orgs/{org}/{security_product}/{enablement}",
+          {},
+          {
+            deprecated: "octokit.rest.orgs.enableOrDisableSecurityProductOnAllOrgRepos() is deprecated, see https://docs.github.com/rest/orgs/orgs#enable-or-disable-a-security-feature-for-an-organization"
+          }
         ],
         get: ["GET /orgs/{org}"],
         getAllCustomProperties: ["GET /orgs/{org}/properties/schema"],
@@ -25336,6 +25383,7 @@ var init_endpoints = __esm({
         ],
         list: ["GET /organizations"],
         listAppInstallations: ["GET /orgs/{org}/installations"],
+        listAttestations: ["GET /orgs/{org}/attestations/{subject_digest}"],
         listBlockedUsers: ["GET /orgs/{org}/blocks"],
         listCustomPropertiesValuesForRepos: ["GET /orgs/{org}/properties/values"],
         listFailedInvitations: ["GET /orgs/{org}/failed_invitations"],
@@ -25361,12 +25409,15 @@ var init_endpoints = __esm({
         listPatGrants: ["GET /orgs/{org}/personal-access-tokens"],
         listPendingInvitations: ["GET /orgs/{org}/invitations"],
         listPublicMembers: ["GET /orgs/{org}/public_members"],
-        listSecurityManagerTeams: ["GET /orgs/{org}/security-managers"],
+        listSecurityManagerTeams: [
+          "GET /orgs/{org}/security-managers",
+          {},
+          {
+            deprecated: "octokit.rest.orgs.listSecurityManagerTeams() is deprecated, see https://docs.github.com/rest/orgs/security-managers#list-security-manager-teams"
+          }
+        ],
         listWebhookDeliveries: ["GET /orgs/{org}/hooks/{hook_id}/deliveries"],
         listWebhooks: ["GET /orgs/{org}/hooks"],
-        patchCustomOrganizationRole: [
-          "PATCH /orgs/{org}/organization-roles/{role_id}"
-        ],
         pingWebhook: ["POST /orgs/{org}/hooks/{hook_id}/pings"],
         redeliverWebhookDelivery: [
           "POST /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}/attempts"
@@ -25383,7 +25434,11 @@ var init_endpoints = __esm({
           "DELETE /orgs/{org}/public_members/{username}"
         ],
         removeSecurityManagerTeam: [
-          "DELETE /orgs/{org}/security-managers/teams/{team_slug}"
+          "DELETE /orgs/{org}/security-managers/teams/{team_slug}",
+          {},
+          {
+            deprecated: "octokit.rest.orgs.removeSecurityManagerTeam() is deprecated, see https://docs.github.com/rest/orgs/security-managers#remove-a-security-manager-team"
+          }
         ],
         reviewPatGrantRequest: [
           "POST /orgs/{org}/personal-access-token-requests/{pat_request_id}"
@@ -25507,6 +25562,18 @@ var init_endpoints = __esm({
         ],
         restorePackageVersionForUser: [
           "POST /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}/restore"
+        ]
+      },
+      privateRegistries: {
+        createOrgPrivateRegistry: ["POST /orgs/{org}/private-registries"],
+        deleteOrgPrivateRegistry: [
+          "DELETE /orgs/{org}/private-registries/{secret_name}"
+        ],
+        getOrgPrivateRegistry: ["GET /orgs/{org}/private-registries/{secret_name}"],
+        getOrgPublicKey: ["GET /orgs/{org}/private-registries/public-key"],
+        listOrgPrivateRegistries: ["GET /orgs/{org}/private-registries"],
+        updateOrgPrivateRegistry: [
+          "PATCH /orgs/{org}/private-registries/{secret_name}"
         ]
       },
       projects: {
@@ -25711,6 +25778,7 @@ var init_endpoints = __esm({
         compareCommitsWithBasehead: [
           "GET /repos/{owner}/{repo}/compare/{basehead}"
         ],
+        createAttestation: ["POST /repos/{owner}/{repo}/attestations"],
         createAutolink: ["POST /repos/{owner}/{repo}/autolinks"],
         createCommitComment: [
           "POST /repos/{owner}/{repo}/commits/{commit_sha}/comments"
@@ -25746,7 +25814,6 @@ var init_endpoints = __esm({
         createPagesSite: ["POST /repos/{owner}/{repo}/pages"],
         createRelease: ["POST /repos/{owner}/{repo}/releases"],
         createRepoRuleset: ["POST /repos/{owner}/{repo}/rulesets"],
-        createTagProtection: ["POST /repos/{owner}/{repo}/tags/protection"],
         createUsingTemplate: [
           "POST /repos/{template_owner}/{template_repo}/generate"
         ],
@@ -25798,9 +25865,6 @@ var init_endpoints = __esm({
           "DELETE /repos/{owner}/{repo}/releases/assets/{asset_id}"
         ],
         deleteRepoRuleset: ["DELETE /repos/{owner}/{repo}/rulesets/{ruleset_id}"],
-        deleteTagProtection: [
-          "DELETE /repos/{owner}/{repo}/tags/protection/{tag_protection_id}"
-        ],
         deleteWebhook: ["DELETE /repos/{owner}/{repo}/hooks/{hook_id}"],
         disableAutomatedSecurityFixes: [
           "DELETE /repos/{owner}/{repo}/automated-security-fixes"
@@ -25935,6 +25999,9 @@ var init_endpoints = __esm({
           "GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}"
         ],
         listActivities: ["GET /repos/{owner}/{repo}/activity"],
+        listAttestations: [
+          "GET /repos/{owner}/{repo}/attestations/{subject_digest}"
+        ],
         listAutolinks: ["GET /repos/{owner}/{repo}/autolinks"],
         listBranches: ["GET /repos/{owner}/{repo}/branches"],
         listBranchesForHeadCommit: [
@@ -25977,7 +26044,6 @@ var init_endpoints = __esm({
           "GET /repos/{owner}/{repo}/releases/{release_id}/assets"
         ],
         listReleases: ["GET /repos/{owner}/{repo}/releases"],
-        listTagProtection: ["GET /repos/{owner}/{repo}/tags/protection"],
         listTags: ["GET /repos/{owner}/{repo}/tags"],
         listTeams: ["GET /repos/{owner}/{repo}/teams"],
         listWebhookDeliveries: [
@@ -26092,9 +26158,13 @@ var init_endpoints = __esm({
         users: ["GET /search/users"]
       },
       secretScanning: {
+        createPushProtectionBypass: [
+          "POST /repos/{owner}/{repo}/secret-scanning/push-protection-bypasses"
+        ],
         getAlert: [
           "GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}"
         ],
+        getScanHistory: ["GET /repos/{owner}/{repo}/secret-scanning/scan-history"],
         listAlertsForEnterprise: [
           "GET /enterprises/{enterprise}/secret-scanning/alerts"
         ],
@@ -26248,6 +26318,7 @@ var init_endpoints = __esm({
         ],
         follow: ["PUT /user/following/{username}"],
         getAuthenticated: ["GET /user"],
+        getById: ["GET /user/{account_id}"],
         getByUsername: ["GET /users/{username}"],
         getContextForUser: ["GET /users/{username}/hovercard"],
         getGpgKeyForAuthenticated: [
@@ -26266,6 +26337,7 @@ var init_endpoints = __esm({
           "GET /user/ssh_signing_keys/{ssh_signing_key_id}"
         ],
         list: ["GET /users"],
+        listAttestations: ["GET /users/{username}/attestations/{subject_digest}"],
         listBlockedByAuthenticated: [
           "GET /user/blocks",
           {},
@@ -28038,6 +28110,8 @@ var init_dist_bundle8 = __esm({
       "/repos/{owner}/{repo}/commits/{commit_sha}/comments",
       "/repos/{owner}/{repo}/issues",
       "/repos/{owner}/{repo}/issues/{issue_number}/comments",
+      "/repos/{owner}/{repo}/issues/{issue_number}/sub_issue",
+      "/repos/{owner}/{repo}/issues/{issue_number}/sub_issues/priority",
       "/repos/{owner}/{repo}/pulls",
       "/repos/{owner}/{repo}/pulls/{pull_number}/comments",
       "/repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies",
@@ -28678,8 +28752,7 @@ async function auth3(state, options = {}) {
         request: state.request
       });
     } catch (error) {
-      if (error.status !== 404)
-        throw error;
+      if (error.status !== 404) throw error;
     }
     state.authentication.invalid = true;
     return state.authentication;
@@ -28800,8 +28873,7 @@ async function hook4(state, request2, route, parameters) {
   try {
     return await request2(endpoint2);
   } catch (error) {
-    if (error.status !== 401)
-      throw error;
+    if (error.status !== 401) throw error;
     error.message = `[@octokit/auth-oauth-app] "${endpoint2.method} ${endpoint2.url}" does not support clientId/clientSecret basic authentication.`;
     throw error;
   }
@@ -29550,7 +29622,7 @@ var init_dist_node = __esm({
     ];
     REGEX = routeMatcher2(PATHS);
     FIVE_SECONDS_IN_MS = 5 * 1e3;
-    VERSION12 = "7.1.3";
+    VERSION12 = "7.1.4";
   }
 });
 
@@ -30218,7 +30290,7 @@ var init_dist_node3 = __esm({
     init_dist_node2();
     init_dist_bundle9();
     init_dist_node2();
-    VERSION13 = "7.1.4";
+    VERSION13 = "7.1.5";
     OAuthAppOctokit = Octokit.defaults({
       userAgent: `octokit-oauth-app.js/${VERSION13} ${getUserAgent()}`
     });
@@ -31235,7 +31307,7 @@ var init_dist_node5 = __esm({
     init_dist_bundle5();
     init_dist_node3();
     init_dist_bundle13();
-    VERSION15 = "15.1.1";
+    VERSION15 = "15.1.2";
     App = class {
       static VERSION = VERSION15;
       static defaults(defaults) {
