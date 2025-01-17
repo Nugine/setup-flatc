@@ -31533,7 +31533,7 @@ async function resolveVersion(gh, version) {
 }
 async function downloadFlatc(gh, version) {
   const platformDetails = await core.platform.getDetails();
-  core.debug(JSON.stringify(platformDetails));
+  core.info(JSON.stringify(platformDetails));
   const platformMap = {
     linux: /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
     darwin: /Mac\.flatc\.binary\.zip/,

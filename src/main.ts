@@ -46,7 +46,7 @@ async function resolveVersion(gh: Octokit, version: string): Promise<string> {
 async function downloadFlatc(gh: Octokit, version: string): Promise<string> {
   // https://github.com/actions/toolkit/tree/main/packages/core#platform-helper
   const platformDetails = await core.platform.getDetails();
-  core.debug(JSON.stringify(platformDetails));
+  core.info(JSON.stringify(platformDetails));
 
   const platformMap: Record<string, RegExp | undefined> = {
     linux: /Linux\.flatc\.binary\.g\+\+-\d+\.zip/,
