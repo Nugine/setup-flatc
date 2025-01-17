@@ -31579,7 +31579,7 @@ async function downloadFlatc(gh, version) {
     await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: sourcePath });
     await exec.exec("make", ["-j"], { cwd: sourcePath });
     core.info("Built flatc from source");
-    return await tc.cacheDir(extractPath, "flatc", version);
+    return await tc.cacheDir(sourcePath, "flatc", version);
   }
 }
 async function ls(path) {

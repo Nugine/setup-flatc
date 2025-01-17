@@ -105,7 +105,7 @@ async function downloadFlatc(gh: Octokit, version: string): Promise<string> {
     await exec.exec("make", ["-j"], { cwd: sourcePath });
     core.info("Built flatc from source");
 
-    return await tc.cacheDir(extractPath, "flatc", version);
+    return await tc.cacheDir(sourcePath, "flatc", version);
   }
 }
 
