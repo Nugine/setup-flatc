@@ -31575,7 +31575,7 @@ async function downloadFlatc(gh, version) {
     const extractPath = await tc.extractTar(downloadPath);
     core.info(`Extracted to: ${extractPath}`);
     core.info("Building flatc from source");
-    await exec.exec("cmake", ["-G", "'Unix Makefiles'"], { cwd: extractPath });
+    await exec.exec("cmake", ["-G", "Unix Makefiles"], { cwd: extractPath });
     await exec.exec("make", ["-j"], { cwd: extractPath });
     core.info("Built flatc from source");
     return await tc.cacheDir(extractPath, "flatc", version);

@@ -27,6 +27,7 @@ jobs:
 
   test-default:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
@@ -42,6 +43,7 @@ jobs:
 
   test-locked:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
@@ -69,6 +71,7 @@ jobs:
 
   test-range:
     strategy:
+      fail-fast: false
       matrix:
         os:
           - ubuntu-latest
