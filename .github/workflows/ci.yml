@@ -14,17 +14,12 @@ on:
 jobs:
   deno:
     runs-on: ubuntu-latest
-    env:
-      DENO_DIR: ""
     steps:
       - uses: actions/checkout@v4
       - uses: taiki-e/install-action@just
       - uses: denoland/setup-deno@v2
-      - run: echo "DENO_DIR=$HOME/.cache/deno" >> $GITHUB_ENV
-      - uses: actions/cache@v4
         with:
-          path: ${{ env.DENO_DIR }}
-          key: deno-${{ hashFiles('deno.lock') }}
+          cache: true
       - run: just ci
 
   test-default:
