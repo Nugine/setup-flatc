@@ -10,6 +10,6 @@
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
     "@std/semver": "jsr:@std/semver@^1.0.3",
     "esbuild": "npm:esbuild@^0.24.2",
-    "octokit": "npm:octokit@^4.0.3"
+    "octokit": "npm:octokit@^4.1.4"
   }
 }

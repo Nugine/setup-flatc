@@ -23,7 +23,6 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __reExport = (target, mod, secondTarget) => (__copyProps(target, mod, "default"), secondTarget && __copyProps(secondTarget, mod, "default"));
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
   // If the importer is in node compatibility mode or this is not an ESM
   // file that has been converted to a CommonJS file using a Babel-
@@ -5296,7 +5295,7 @@ var require_body = __commonJS({
     var ReadableStream = globalThis.ReadableStream;
     var File = NativeFile ?? UndiciFile;
     var textEncoder = new TextEncoder();
-    var textDecoder = new TextDecoder();
+    var textDecoder2 = new TextDecoder();
     function extractBody(object, keepalive = false) {
       if (!ReadableStream) {
         ReadableStream = require("stream/web").ReadableStream;
@@ -5616,7 +5615,7 @@ Content-Type: ${value.type || "application/octet-stream"}\r
       if (buffer[0] === 239 && buffer[1] === 187 && buffer[2] === 191) {
         buffer = buffer.subarray(3);
       }
-      const output = textDecoder.decode(buffer);
+      const output = textDecoder2.decode(buffer);
       return output;
     }
     function parseJSONFromBytes(bytes) {
@@ -8891,6 +8890,14 @@ var require_pool = __commonJS({
         this[kOptions] = { ...util.deepClone(options), connect, allowH2 };
         this[kOptions].interceptors = options.interceptors ? { ...options.interceptors } : void 0;
         this[kFactory] = factory;
+        this.on("connectionError", (origin2, targets, error) => {
+          for (const target of targets) {
+            const idx = this[kClients].indexOf(target);
+            if (idx !== -1) {
+              this[kClients].splice(idx, 1);
+            }
+          }
+        });
       }
       [kGetDispatcher]() {
         let dispatcher = this[kClients].find((dispatcher2) => !dispatcher2[kNeedDrain]);
@@ -11561,6 +11568,7 @@ var require_headers = __commonJS({
       isValidHeaderName,
       isValidHeaderValue
     } = require_util2();
+    var util = require("util");
     var { webidl } = require_webidl();
     var assert = require("assert");
     var kHeadersMap = Symbol("headers map");
@@ -11912,6 +11920,9 @@ var require_headers = __commonJS({
       [Symbol.toStringTag]: {
         value: "Headers",
         configurable: true
+      },
+      [util.inspect.custom]: {
+        enumerable: false
       }
     });
     webidl.converters.HeadersInit = function(V) {
@@ -14486,7 +14497,7 @@ var require_util4 = __commonJS({
           if (encoding === "failure") {
             encoding = "UTF-8";
           }
-          return decode(bytes, encoding);
+          return decode2(bytes, encoding);
         }
         case "ArrayBuffer": {
           const sequence = combineByteSequences(bytes);
@@ -14503,7 +14514,7 @@ var require_util4 = __commonJS({
         }
       }
     }
-    function decode(ioQueue, encoding) {
+    function decode2(ioQueue, encoding) {
       const bytes = combineByteSequences(ioQueue);
       const BOMEncoding = BOMSniffing(bytes);
       let slice = 0;
@@ -15501,8 +15512,6 @@ var require_constants4 = __commonJS({
 var require_util6 = __commonJS({
   "npm/node_modules/undici/lib/cookies/util.js"(exports2, module2) {
     "use strict";
-    var assert = require("assert");
-    var { kHeadersList } = require_symbols();
     function isCTLExcludingHtab(value) {
       if (value.length === 0) {
         return false;
@@ -15633,25 +15642,13 @@ var require_util6 = __commonJS({
       }
       return out.join("; ");
     }
-    var kHeadersListNode;
-    function getHeadersList(headers) {
-      if (headers[kHeadersList]) {
-        return headers[kHeadersList];
-      }
-      if (!kHeadersListNode) {
-        kHeadersListNode = Object.getOwnPropertySymbols(headers).find(
-          (symbol) => symbol.description === "headers list"
-        );
-        assert(kHeadersListNode, "Headers cannot be parsed");
-      }
-      const headersList = headers[kHeadersListNode];
-      assert(headersList);
-      return headersList;
-    }
     module2.exports = {
       isCTLExcludingHtab,
-      stringify,
-      getHeadersList
+      validateCookieName,
+      validateCookiePath,
+      validateCookieValue,
+      toIMFDate,
+      stringify
     };
   }
 });
@@ -15801,7 +15798,7 @@ var require_cookies = __commonJS({
   "npm/node_modules/undici/lib/cookies/index.js"(exports2, module2) {
     "use strict";
     var { parseSetCookie } = require_parse();
-    var { stringify, getHeadersList } = require_util6();
+    var { stringify } = require_util6();
     var { webidl } = require_webidl();
     var { Headers } = require_headers();
     function getCookies(headers) {
@@ -15833,11 +15830,11 @@ var require_cookies = __commonJS({
     function getSetCookies(headers) {
       webidl.argumentLengthCheck(arguments, 1, { header: "getSetCookies" });
       webidl.brandCheck(headers, Headers, { strict: false });
-      const cookies = getHeadersList(headers).cookies;
+      const cookies = headers.getSetCookie();
       if (!cookies) {
         return [];
       }
-      return cookies.map((pair) => parseSetCookie(Array.isArray(pair) ? pair[1] : pair));
+      return cookies.map((pair) => parseSetCookie(pair));
     }
     function setCookie(headers, cookie) {
       webidl.argumentLengthCheck(arguments, 2, { header: "setCookie" });
@@ -21772,9 +21769,9 @@ var require_tool_cache = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/_shared.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/_shared.js
 var require_shared = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/_shared.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/_shared.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MAX_LENGTH = exports2.COMPARATOR_REGEXP = exports2.OPERATOR_XRANGE_REGEXP = exports2.XRANGE = exports2.FULL_REGEXP = void 0;
@@ -21870,9 +21867,9 @@ var require_shared = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/compare.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/compare.js
 var require_compare = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/compare.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/compare.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.compare = compare;
@@ -21885,9 +21882,9 @@ var require_compare = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/difference.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/difference.js
 var require_difference = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/difference.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/difference.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.difference = difference;
@@ -21910,9 +21907,9 @@ var require_difference = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/format.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/format.js
 var require_format = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/format.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/format.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.format = format;
@@ -21932,9 +21929,9 @@ var require_format = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/_test_comparator_set.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/_test_comparator_set.js
 var require_test_comparator_set = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/_test_comparator_set.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/_test_comparator_set.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.testComparatorSet = testComparatorSet;
@@ -21992,9 +21989,9 @@ var require_test_comparator_set = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/satisfies.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/satisfies.js
 var require_satisfies = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/satisfies.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/satisfies.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.satisfies = satisfies;
@@ -22005,9 +22002,9 @@ var require_satisfies = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/increment.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/increment.js
 var require_increment = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/increment.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/increment.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.increment = increment;
@@ -22123,19 +22120,12 @@ var require_increment = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/_constants.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/_constants.js
 var require_constants6 = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/_constants.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/_constants.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
-    exports2.OPERATORS = exports2.ALL = exports2.ANY = exports2.MIN = void 0;
-    exports2.MIN = {
-      major: 0,
-      minor: 0,
-      patch: 0,
-      prerelease: [],
-      build: []
-    };
+    exports2.OPERATORS = exports2.ALL = exports2.ANY = void 0;
     exports2.ANY = {
       major: Number.NaN,
       minor: Number.NaN,
@@ -22159,9 +22149,9 @@ var require_constants6 = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/is_semver.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/is_semver.js
 var require_is_semver = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/is_semver.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/is_semver.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isSemVer = isSemVer;
@@ -22182,9 +22172,9 @@ var require_is_semver = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/greater_than.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/greater_than.js
 var require_greater_than = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/greater_than.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/greater_than.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.greaterThan = greaterThan;
@@ -22195,9 +22185,9 @@ var require_greater_than = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/max_satisfying.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/max_satisfying.js
 var require_max_satisfying = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/max_satisfying.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/max_satisfying.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.maxSatisfying = maxSatisfying;
@@ -22215,9 +22205,9 @@ var require_max_satisfying = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/less_than.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/less_than.js
 var require_less_than = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/less_than.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/less_than.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.lessThan = lessThan;
@@ -22228,9 +22218,9 @@ var require_less_than = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/min_satisfying.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/min_satisfying.js
 var require_min_satisfying = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/min_satisfying.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/min_satisfying.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.minSatisfying = minSatisfying;
@@ -22248,9 +22238,9 @@ var require_min_satisfying = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/parse_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/parse_range.js
 var require_parse_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/parse_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/parse_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.parseRange = parseRange;
@@ -22345,7 +22335,7 @@ var require_parse_range = __commonJS({
         major: +rightGroups.major,
         minor: +rightGroups.minor,
         patch: +rightGroups.patch,
-        prerelease: rightGroups.prerelease ? (0, _shared_js_1.parsePrerelease)(rightGroups.prerelease) : [],
+        prerelease: [],
         build: []
       };
     }
@@ -22353,16 +22343,16 @@ var require_parse_range = __commonJS({
       const leftMatch = range.match(new RegExp(`^${_shared_js_1.XRANGE}`));
       const leftGroup = leftMatch?.groups;
       if (!leftGroup)
-        return;
+        return null;
       const leftLength = leftMatch[0].length;
       const hyphenMatch = range.slice(leftLength).match(/^\s+-\s+/);
       if (!hyphenMatch)
-        return;
+        return null;
       const hyphenLength = hyphenMatch[0].length;
       const rightMatch = range.slice(leftLength + hyphenLength).match(new RegExp(`^${_shared_js_1.XRANGE}\\s*$`));
       const rightGroups = rightMatch?.groups;
       if (!rightGroups)
-        return;
+        return null;
       const from = handleLeftHyphenRangeGroups(leftGroup);
       const to = handleRightHyphenRangeGroups(rightGroups);
       return [from, to].filter(Boolean);
@@ -22451,7 +22441,7 @@ var require_parse_range = __commonJS({
       if (minorIsWildcard) {
         if (patchIsWildcard)
           return [{ operator: "<", major, minor: 0, patch: 0 }];
-        return [{ operator: "<", major, minor, patch: 0 }];
+        return [{ operator: "<", major, minor: 0, patch: 0 }];
       }
       if (patchIsWildcard)
         return [{ operator: "<", major, minor, patch: 0 }];
@@ -22509,7 +22499,7 @@ var require_parse_range = __commonJS({
       if (minorIsWildcard) {
         if (patchIsWildcard)
           return [{ operator: ">=", major, minor: 0, patch: 0 }];
-        return [{ operator: ">=", major, minor, patch: 0 }];
+        return [{ operator: ">=", major, minor: 0, patch: 0 }];
       }
       if (patchIsWildcard)
         return [{ operator: ">=", major, minor, patch: 0 }];
@@ -22580,9 +22570,9 @@ var require_parse_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/parse.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/parse.js
 var require_parse2 = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/parse.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/parse.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.parse = parse2;
@@ -22609,9 +22599,9 @@ var require_parse2 = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/range_intersects.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/range_intersects.js
 var require_range_intersects = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/range_intersects.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/range_intersects.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.rangeIntersects = rangeIntersects;
@@ -22668,17 +22658,17 @@ var require_range_intersects = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/types.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/types.js
 var require_types = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/types.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/types.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/try_parse_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/try_parse_range.js
 var require_try_parse_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/try_parse_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/try_parse_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.tryParseRange = tryParseRange;
@@ -22693,9 +22683,9 @@ var require_try_parse_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/is_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/is_range.js
 var require_is_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/is_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/is_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isRange = isRange;
@@ -22716,9 +22706,9 @@ var require_is_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/can_parse.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/can_parse.js
 var require_can_parse = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/can_parse.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/can_parse.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.canParse = canParse;
@@ -22734,9 +22724,9 @@ var require_can_parse = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/try_parse.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/try_parse.js
 var require_try_parse = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/try_parse.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/try_parse.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.tryParse = tryParse;
@@ -22751,9 +22741,9 @@ var require_try_parse = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/format_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/format_range.js
 var require_format_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/format_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/format_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.formatRange = formatRange;
@@ -22769,9 +22759,9 @@ var require_format_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/equals.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/equals.js
 var require_equals = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/equals.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/equals.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.equals = equals;
@@ -22782,9 +22772,9 @@ var require_equals = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/not_equals.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/not_equals.js
 var require_not_equals = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/not_equals.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/not_equals.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.notEquals = notEquals;
@@ -22795,9 +22785,9 @@ var require_not_equals = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/greater_than_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/greater_than_range.js
 var require_greater_than_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/greater_than_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/greater_than_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.greaterThanRange = greaterThanRange;
@@ -22837,9 +22827,9 @@ var require_greater_than_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/greater_or_equal.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/greater_or_equal.js
 var require_greater_or_equal = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/greater_or_equal.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/greater_or_equal.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.greaterOrEqual = greaterOrEqual;
@@ -22850,9 +22840,9 @@ var require_greater_or_equal = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/less_than_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/less_than_range.js
 var require_less_than_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/less_than_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/less_than_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.lessThanRange = lessThanRange;
@@ -22892,9 +22882,9 @@ var require_less_than_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/less_or_equal.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/less_or_equal.js
 var require_less_or_equal = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/less_or_equal.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/less_or_equal.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.lessOrEqual = lessOrEqual;
@@ -22905,9 +22895,9 @@ var require_less_or_equal = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.3/mod.js
+// npm/script/deps/jsr.io/@std/semver/1.0.5/mod.js
 var require_mod = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.3/mod.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.5/mod.js"(exports2) {
     "use strict";
     var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -23168,7 +23158,7 @@ function addQueryParameters(url, parameters) {
   }).join("&");
 }
 function removeNonChars(variableName) {
-  return variableName.replace(/^\W+|\W+$/g, "").split(/,/);
+  return variableName.replace(/(?:^\W+)|(?:(?<!\W)\W+$)/g, "").split(/,/);
 }
 function extractUrlVariableNames(url) {
   const matches = url.match(urlVariableRegex);
@@ -23348,7 +23338,7 @@ function parse(options) {
     }
     if (url.endsWith("/graphql")) {
       if (options.mediaType.previews?.length) {
-        const previewsFromAcceptHeader = headers.accept.match(/[\w-]+(?=-preview)/g) || [];
+        const previewsFromAcceptHeader = headers.accept.match(/(?<![\w-])[\w-]+(?=-preview)/g) || [];
         headers.accept = previewsFromAcceptHeader.concat(options.mediaType.previews).map((preview) => {
           const format = options.mediaType.format ? `.${options.mediaType.format}` : "+json";
           return `application/vnd.github.${preview}-preview${format}`;
@@ -23409,7 +23399,7 @@ var init_dist_bundle = __esm({
         format: ""
       }
     };
-    urlVariableRegex = /\{[^}]+\}/g;
+    urlVariableRegex = /\{[^{}}]+\}/g;
     endpoint = withDefaults(null, DEFAULTS);
   }
 });
@@ -23542,7 +23532,7 @@ var init_dist_src = __esm({
         if (options.request.headers.authorization) {
           requestCopy.headers = Object.assign({}, options.request.headers, {
             authorization: options.request.headers.authorization.replace(
-              / .*$/,
+              /(?<! ) .*$/,
               " [REDACTED]"
             )
           });
@@ -23626,7 +23616,7 @@ async function fetchWrapper(requestOptions) {
     data: ""
   };
   if ("deprecation" in responseHeaders) {
-    const matches = responseHeaders.link && responseHeaders.link.match(/<([^>]+)>; rel="deprecation"/);
+    const matches = responseHeaders.link && responseHeaders.link.match(/<([^<>]+)>; rel="deprecation"/);
     const deprecationLink = matches && matches.pop();
     log.warn(
       `[@octokit/request] "${requestOptions.method} ${requestOptions.url}" is deprecated. It is scheduled to be removed on ${responseHeaders.sunset}${deprecationLink ? `. See ${deprecationLink}` : ""}`
@@ -23727,7 +23717,7 @@ var init_dist_bundle2 = __esm({
     init_universal_user_agent();
     import_fast_content_type_parse = __toESM(require_fast_content_type_parse(), 1);
     init_dist_src();
-    VERSION2 = "0.0.0-development";
+    VERSION2 = "9.2.4";
     defaults_default = {
       headers: {
         "user-agent": `octokit-request.js/${VERSION2} ${getUserAgent()}`
@@ -23836,7 +23826,8 @@ var init_dist_bundle3 = __esm({
       "headers",
       "request",
       "query",
-      "mediaType"
+      "mediaType",
+      "operationName"
     ];
     FORBIDDEN_VARIABLE_OPTIONS = ["query", "method", "url"];
     GHES_V3_SUFFIX_REGEX = /\/api\/v3\/?$/;
@@ -23852,9 +23843,9 @@ var init_dist_bundle3 = __esm({
 
 // npm/node_modules/@octokit/auth-token/dist-bundle/index.js
 async function auth(token) {
-  const isApp = token.split(/\./).length === 3;
-  const isInstallation = REGEX_IS_INSTALLATION_LEGACY.test(token) || REGEX_IS_INSTALLATION.test(token);
-  const isUserToServer = REGEX_IS_USER_TO_SERVER.test(token);
+  const isApp = isJWT(token);
+  const isInstallation = token.startsWith("v1.") || token.startsWith("ghs_");
+  const isUserToServer = token.startsWith("ghu_");
   const tokenType = isApp ? "app" : isInstallation ? "installation" : isUserToServer ? "user-to-server" : "oauth";
   return {
     type: "token",
@@ -23876,12 +23867,13 @@ async function hook(token, request2, route, parameters) {
   endpoint2.headers.authorization = withAuthorizationPrefix(token);
   return request2(endpoint2);
 }
-var REGEX_IS_INSTALLATION_LEGACY, REGEX_IS_INSTALLATION, REGEX_IS_USER_TO_SERVER, createTokenAuth;
+var b64url, sep, jwtRE, isJWT, createTokenAuth;
 var init_dist_bundle4 = __esm({
   "npm/node_modules/@octokit/auth-token/dist-bundle/index.js"() {
-    REGEX_IS_INSTALLATION_LEGACY = /^v1\./;
-    REGEX_IS_INSTALLATION = /^ghs_/;
-    REGEX_IS_USER_TO_SERVER = /^ghu_/;
+    b64url = "(?:[a-zA-Z0-9_-]+)";
+    sep = "\\.";
+    jwtRE = new RegExp(`^${b64url}${sep}${b64url}${sep}${b64url}$`);
+    isJWT = jwtRE.test.bind(jwtRE);
     createTokenAuth = function createTokenAuth2(token) {
       if (!token) {
         throw new Error("[@octokit/auth-token] No token passed to createTokenAuth");
@@ -23903,7 +23895,7 @@ var init_dist_bundle4 = __esm({
 var VERSION4;
 var init_version = __esm({
   "npm/node_modules/@octokit/core/dist-src/version.js"() {
-    VERSION4 = "6.1.3";
+    VERSION4 = "6.1.5";
   }
 });
 
@@ -24087,7 +24079,7 @@ function iterator(octokit, route, parameters) {
           const response = await requestMethod({ method, url, headers });
           const normalizedResponse = normalizePaginatedListResponse(response);
           url = ((normalizedResponse.headers.link || "").match(
-            /<([^>]+)>;\s*rel="next"/
+            /<([^<>]+)>;\s*rel="next"/
           ) || [])[1];
           return { value: normalizedResponse };
         } catch (error) {
@@ -24323,7 +24315,7 @@ var init_dist_bundle6 = __esm({
 var VERSION6;
 var init_version2 = __esm({
   "npm/node_modules/@octokit/plugin-rest-endpoint-methods/dist-src/version.js"() {
-    VERSION6 = "13.3.0";
+    VERSION6 = "14.0.0";
   }
 });
 
@@ -24357,6 +24349,7 @@ var init_endpoints = __esm({
         createEnvironmentVariable: [
           "POST /repos/{owner}/{repo}/environments/{environment_name}/variables"
         ],
+        createHostedRunnerForOrg: ["POST /orgs/{org}/actions/hosted-runners"],
         createOrUpdateEnvironmentSecret: [
           "PUT /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}"
         ],
@@ -24393,6 +24386,9 @@ var init_endpoints = __esm({
         ],
         deleteEnvironmentVariable: [
           "DELETE /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}"
+        ],
+        deleteHostedRunnerForOrg: [
+          "DELETE /orgs/{org}/actions/hosted-runners/{hosted_runner_id}"
         ],
         deleteOrgSecret: ["DELETE /orgs/{org}/actions/secrets/{secret_name}"],
         deleteOrgVariable: ["DELETE /orgs/{org}/actions/variables/{name}"],
@@ -24482,6 +24478,24 @@ var init_endpoints = __esm({
         getGithubActionsPermissionsRepository: [
           "GET /repos/{owner}/{repo}/actions/permissions"
         ],
+        getHostedRunnerForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/{hosted_runner_id}"
+        ],
+        getHostedRunnersGithubOwnedImagesForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/images/github-owned"
+        ],
+        getHostedRunnersLimitsForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/limits"
+        ],
+        getHostedRunnersMachineSpecsForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/machine-sizes"
+        ],
+        getHostedRunnersPartnerImagesForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/images/partner"
+        ],
+        getHostedRunnersPlatformsForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/platforms"
+        ],
         getJobForWorkflowRun: ["GET /repos/{owner}/{repo}/actions/jobs/{job_id}"],
         getOrgPublicKey: ["GET /orgs/{org}/actions/secrets/public-key"],
         getOrgSecret: ["GET /orgs/{org}/actions/secrets/{secret_name}"],
@@ -24525,6 +24539,10 @@ var init_endpoints = __esm({
         listEnvironmentVariables: [
           "GET /repos/{owner}/{repo}/environments/{environment_name}/variables"
         ],
+        listGithubHostedRunnersInGroupForOrg: [
+          "GET /orgs/{org}/actions/runner-groups/{runner_group_id}/hosted-runners"
+        ],
+        listHostedRunnersForOrg: ["GET /orgs/{org}/actions/hosted-runners"],
         listJobsForWorkflowRun: [
           "GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs"
         ],
@@ -24642,6 +24660,9 @@ var init_endpoints = __esm({
         ],
         updateEnvironmentVariable: [
           "PATCH /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}"
+        ],
+        updateHostedRunnerForOrg: [
+          "PATCH /orgs/{org}/actions/hosted-runners/{hosted_runner_id}"
         ],
         updateOrgVariable: ["PATCH /orgs/{org}/actions/variables/{name}"],
         updateRepoVariable: [
@@ -24783,6 +24804,13 @@ var init_endpoints = __esm({
         getSharedStorageBillingUser: [
           "GET /users/{username}/settings/billing/shared-storage"
         ]
+      },
+      campaigns: {
+        createCampaign: ["POST /orgs/{org}/campaigns"],
+        deleteCampaign: ["DELETE /orgs/{org}/campaigns/{campaign_number}"],
+        getCampaignSummary: ["GET /orgs/{org}/campaigns/{campaign_number}"],
+        listOrgCampaigns: ["GET /orgs/{org}/campaigns"],
+        updateCampaign: ["PATCH /orgs/{org}/campaigns/{campaign_number}"]
       },
       checks: {
         create: ["POST /repos/{owner}/{repo}/check-runs"],
@@ -25062,9 +25090,7 @@ var init_endpoints = __esm({
         getCopilotSeatDetailsForUser: [
           "GET /orgs/{org}/members/{username}/copilot"
         ],
-        listCopilotSeats: ["GET /orgs/{org}/copilot/billing/seats"],
-        usageMetricsForOrg: ["GET /orgs/{org}/copilot/usage"],
-        usageMetricsForTeam: ["GET /orgs/{org}/team/{team_slug}/copilot/usage"]
+        listCopilotSeats: ["GET /orgs/{org}/copilot/billing/seats"]
       },
       dependabot: {
         addSelectedRepoToOrgSecret: [
@@ -25159,6 +25185,26 @@ var init_endpoints = __esm({
       gitignore: {
         getAllTemplates: ["GET /gitignore/templates"],
         getTemplate: ["GET /gitignore/templates/{name}"]
+      },
+      hostedCompute: {
+        createNetworkConfigurationForOrg: [
+          "POST /orgs/{org}/settings/network-configurations"
+        ],
+        deleteNetworkConfigurationFromOrg: [
+          "DELETE /orgs/{org}/settings/network-configurations/{network_configuration_id}"
+        ],
+        getNetworkConfigurationForOrg: [
+          "GET /orgs/{org}/settings/network-configurations/{network_configuration_id}"
+        ],
+        getNetworkSettingsForOrg: [
+          "GET /orgs/{org}/settings/network-settings/{network_settings_id}"
+        ],
+        listNetworkConfigurationsForOrg: [
+          "GET /orgs/{org}/settings/network-configurations"
+        ],
+        updateNetworkConfigurationForOrg: [
+          "PATCH /orgs/{org}/settings/network-configurations/{network_configuration_id}"
+        ]
       },
       interactions: {
         getRestrictionsForAuthenticatedUser: ["GET /user/interaction-limits"],
@@ -25351,6 +25397,7 @@ var init_endpoints = __esm({
           "PUT /orgs/{org}/outside_collaborators/{username}"
         ],
         createInvitation: ["POST /orgs/{org}/invitations"],
+        createIssueType: ["POST /orgs/{org}/issue-types"],
         createOrUpdateCustomProperties: ["PATCH /orgs/{org}/properties/schema"],
         createOrUpdateCustomPropertiesValuesForRepos: [
           "PATCH /orgs/{org}/properties/values"
@@ -25360,6 +25407,7 @@ var init_endpoints = __esm({
         ],
         createWebhook: ["POST /orgs/{org}/hooks"],
         delete: ["DELETE /orgs/{org}"],
+        deleteIssueType: ["DELETE /orgs/{org}/issue-types/{issue_type_id}"],
         deleteWebhook: ["DELETE /orgs/{org}/hooks/{hook_id}"],
         enableOrDisableSecurityProductOnAllOrgRepos: [
           "POST /orgs/{org}/{security_product}/{enablement}",
@@ -25376,6 +25424,10 @@ var init_endpoints = __esm({
         getMembershipForAuthenticatedUser: ["GET /user/memberships/orgs/{org}"],
         getMembershipForUser: ["GET /orgs/{org}/memberships/{username}"],
         getOrgRole: ["GET /orgs/{org}/organization-roles/{role_id}"],
+        getOrgRulesetHistory: ["GET /orgs/{org}/rulesets/{ruleset_id}/history"],
+        getOrgRulesetVersion: [
+          "GET /orgs/{org}/rulesets/{ruleset_id}/history/{version_id}"
+        ],
         getWebhook: ["GET /orgs/{org}/hooks/{hook_id}"],
         getWebhookConfigForOrg: ["GET /orgs/{org}/hooks/{hook_id}/config"],
         getWebhookDelivery: [
@@ -25390,6 +25442,7 @@ var init_endpoints = __esm({
         listForAuthenticatedUser: ["GET /user/orgs"],
         listForUser: ["GET /users/{username}/orgs"],
         listInvitationTeams: ["GET /orgs/{org}/invitations/{invitation_id}/teams"],
+        listIssueTypes: ["GET /orgs/{org}/issue-types"],
         listMembers: ["GET /orgs/{org}/members"],
         listMembershipsForAuthenticatedUser: ["GET /user/memberships/orgs"],
         listOrgRoleTeams: ["GET /orgs/{org}/organization-roles/{role_id}/teams"],
@@ -25464,6 +25517,7 @@ var init_endpoints = __esm({
         ],
         unblockUser: ["DELETE /orgs/{org}/blocks/{username}"],
         update: ["PATCH /orgs/{org}"],
+        updateIssueType: ["PUT /orgs/{org}/issue-types/{issue_type_id}"],
         updateMembershipForAuthenticatedUser: [
           "PATCH /user/memberships/orgs/{org}"
         ],
@@ -25575,37 +25629,6 @@ var init_endpoints = __esm({
         updateOrgPrivateRegistry: [
           "PATCH /orgs/{org}/private-registries/{secret_name}"
         ]
-      },
-      projects: {
-        addCollaborator: ["PUT /projects/{project_id}/collaborators/{username}"],
-        createCard: ["POST /projects/columns/{column_id}/cards"],
-        createColumn: ["POST /projects/{project_id}/columns"],
-        createForAuthenticatedUser: ["POST /user/projects"],
-        createForOrg: ["POST /orgs/{org}/projects"],
-        createForRepo: ["POST /repos/{owner}/{repo}/projects"],
-        delete: ["DELETE /projects/{project_id}"],
-        deleteCard: ["DELETE /projects/columns/cards/{card_id}"],
-        deleteColumn: ["DELETE /projects/columns/{column_id}"],
-        get: ["GET /projects/{project_id}"],
-        getCard: ["GET /projects/columns/cards/{card_id}"],
-        getColumn: ["GET /projects/columns/{column_id}"],
-        getPermissionForUser: [
-          "GET /projects/{project_id}/collaborators/{username}/permission"
-        ],
-        listCards: ["GET /projects/columns/{column_id}/cards"],
-        listCollaborators: ["GET /projects/{project_id}/collaborators"],
-        listColumns: ["GET /projects/{project_id}/columns"],
-        listForOrg: ["GET /orgs/{org}/projects"],
-        listForRepo: ["GET /repos/{owner}/{repo}/projects"],
-        listForUser: ["GET /users/{username}/projects"],
-        moveCard: ["POST /projects/columns/cards/{card_id}/moves"],
-        moveColumn: ["POST /projects/columns/{column_id}/moves"],
-        removeCollaborator: [
-          "DELETE /projects/{project_id}/collaborators/{username}"
-        ],
-        update: ["PATCH /projects/{project_id}"],
-        updateCard: ["PATCH /projects/columns/cards/{card_id}"],
-        updateColumn: ["PATCH /projects/columns/{column_id}"]
       },
       pulls: {
         checkIfMerged: ["GET /repos/{owner}/{repo}/pulls/{pull_number}/merge"],
@@ -25978,6 +26001,12 @@ var init_endpoints = __esm({
         ],
         getRepoRuleSuites: ["GET /repos/{owner}/{repo}/rulesets/rule-suites"],
         getRepoRuleset: ["GET /repos/{owner}/{repo}/rulesets/{ruleset_id}"],
+        getRepoRulesetHistory: [
+          "GET /repos/{owner}/{repo}/rulesets/{ruleset_id}/history"
+        ],
+        getRepoRulesetVersion: [
+          "GET /repos/{owner}/{repo}/rulesets/{ruleset_id}/history/{version_id}"
+        ],
         getRepoRulesets: ["GET /repos/{owner}/{repo}/rulesets"],
         getStatusChecksProtection: [
           "GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks"
@@ -26151,7 +26180,13 @@ var init_endpoints = __esm({
       search: {
         code: ["GET /search/code"],
         commits: ["GET /search/commits"],
-        issuesAndPullRequests: ["GET /search/issues"],
+        issuesAndPullRequests: [
+          "GET /search/issues",
+          {},
+          {
+            deprecated: "octokit.rest.search.issuesAndPullRequests() is deprecated, see https://docs.github.com/rest/search/search#search-issues-and-pull-requests"
+          }
+        ],
         labels: ["GET /search/labels"],
         repos: ["GET /search/repositories"],
         topics: ["GET /search/topics"],
@@ -26205,14 +26240,8 @@ var init_endpoints = __esm({
         addOrUpdateMembershipForUserInOrg: [
           "PUT /orgs/{org}/teams/{team_slug}/memberships/{username}"
         ],
-        addOrUpdateProjectPermissionsInOrg: [
-          "PUT /orgs/{org}/teams/{team_slug}/projects/{project_id}"
-        ],
         addOrUpdateRepoPermissionsInOrg: [
           "PUT /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}"
-        ],
-        checkPermissionsForProjectInOrg: [
-          "GET /orgs/{org}/teams/{team_slug}/projects/{project_id}"
         ],
         checkPermissionsForRepoInOrg: [
           "GET /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}"
@@ -26250,13 +26279,9 @@ var init_endpoints = __esm({
         listPendingInvitationsInOrg: [
           "GET /orgs/{org}/teams/{team_slug}/invitations"
         ],
-        listProjectsInOrg: ["GET /orgs/{org}/teams/{team_slug}/projects"],
         listReposInOrg: ["GET /orgs/{org}/teams/{team_slug}/repos"],
         removeMembershipForUserInOrg: [
           "DELETE /orgs/{org}/teams/{team_slug}/memberships/{username}"
-        ],
-        removeProjectInOrg: [
-          "DELETE /orgs/{org}/teams/{team_slug}/projects/{project_id}"
         ],
         removeRepoInOrg: [
           "DELETE /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}"
@@ -27916,7 +27941,7 @@ function retry(octokit, octokitOptions) {
     {
       enabled: true,
       retryAfterBaseValue: 1e3,
-      doNotRetry: [400, 401, 403, 404, 422, 451],
+      doNotRetry: [400, 401, 403, 404, 410, 422, 451],
       retries: 3
     },
     octokitOptions.retry
@@ -27952,8 +27977,9 @@ function wrapRequest2(state, request2, options) {
   return state.retryLimiter.schedule(doRequest, state, request2, options);
 }
 async function doRequest(state, request2, options) {
-  const isWrite = options.method !== "GET" && options.method !== "HEAD";
   const { pathname } = new URL(options.url, "http://github.test");
+  const isAuth = isAuthRequest(options.method, pathname);
+  const isWrite = !isAuth && options.method !== "GET" && options.method !== "HEAD";
   const isSearch = options.method === "GET" && pathname.startsWith("/search/");
   const isGraphQL = pathname.startsWith("/graphql");
   const retryCount = ~~request2.retryCount;
@@ -27970,7 +27996,7 @@ async function doRequest(state, request2, options) {
   if (isSearch) {
     await state.search.key(state.id).schedule(jobOptions, noop2);
   }
-  const req = state.global.key(state.id).schedule(jobOptions, request2, options);
+  const req = (isAuth ? state.auth : state.global).key(state.id).schedule(jobOptions, request2, options);
   if (isGraphQL) {
     const res = await req;
     if (res.data.errors != null && res.data.errors.some((error) => error.type === "RATE_LIMITED")) {
@@ -27982,6 +28008,13 @@ async function doRequest(state, request2, options) {
     }
   }
   return req;
+}
+function isAuthRequest(method, pathname) {
+  return method === "PATCH" && // https://docs.github.com/en/rest/apps/apps?apiVersion=2022-11-28#create-a-scoped-access-token
+  /^\/applications\/[^/]+\/token\/scoped$/.test(pathname) || method === "POST" && // https://docs.github.com/en/rest/apps/oauth-applications?apiVersion=2022-11-28#reset-a-token
+  (/^\/applications\/[^/]+\/token$/.test(pathname) || // https://docs.github.com/en/rest/apps/apps?apiVersion=2022-11-28#create-an-installation-access-token-for-an-app
+  /^\/app\/installations\/[^/]+\/access_tokens$/.test(pathname) || // https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps
+  pathname === "/login/oauth/access_token");
 }
 function routeMatcher(paths) {
   const regexes = paths.map(
@@ -28131,6 +28164,11 @@ var init_dist_bundle8 = __esm({
         maxConcurrent: 10,
         ...common
       });
+      groups.auth = new Bottleneck2.Group({
+        id: "octokit-auth",
+        maxConcurrent: 1,
+        ...common
+      });
       groups.search = new Bottleneck2.Group({
         id: "octokit-search",
         maxConcurrent: 1,
@@ -28243,8 +28281,7 @@ function getWebFlowAuthorizationUrl({
   });
 }
 async function exchangeWebFlowCode(options) {
-  const request2 = options.request || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const response = await oauthRequest(
     request2,
     "POST /login/oauth/access_token",
@@ -28281,8 +28318,7 @@ function toTimestamp(apiTimeInMs, expirationInSeconds) {
   return new Date(apiTimeInMs + expirationInSeconds * 1e3).toISOString();
 }
 async function createDeviceCode(options) {
-  const request2 = options.request || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const parameters = {
     client_id: options.clientId
   };
@@ -28292,8 +28328,7 @@ async function createDeviceCode(options) {
   return oauthRequest(request2, "POST /login/device/code", parameters);
 }
 async function exchangeDeviceCode(options) {
-  const request2 = options.request || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const response = await oauthRequest(
     request2,
     "POST /login/oauth/access_token",
@@ -28331,8 +28366,7 @@ function toTimestamp2(apiTimeInMs, expirationInSeconds) {
   return new Date(apiTimeInMs + expirationInSeconds * 1e3).toISOString();
 }
 async function checkToken(options) {
-  const request2 = options.request || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const response = await request2("POST /applications/{client_id}/token", {
     headers: {
       authorization: `basic ${btoa(
@@ -28357,8 +28391,7 @@ async function checkToken(options) {
   return { ...response, authentication };
 }
 async function refreshToken(options) {
-  const request2 = options.request || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const response = await oauthRequest(
     request2,
     "POST /login/oauth/access_token",
@@ -28396,8 +28429,7 @@ async function scopeToken(options) {
     token,
     ...requestOptions
   } = options;
-  const request2 = optionsRequest || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const response = await request2(
     "POST /applications/{client_id}/token/scoped",
     {
@@ -28421,8 +28453,7 @@ async function scopeToken(options) {
   return { ...response, authentication };
 }
 async function resetToken(options) {
-  const request2 = options.request || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const auth7 = btoa(`${options.clientId}:${options.clientSecret}`);
   const response = await request2(
     "PATCH /applications/{client_id}/token",
@@ -28449,8 +28480,7 @@ async function resetToken(options) {
   return { ...response, authentication };
 }
 async function deleteToken(options) {
-  const request2 = options.request || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const auth7 = btoa(`${options.clientId}:${options.clientSecret}`);
   return request2(
     "DELETE /applications/{client_id}/token",
@@ -28464,8 +28494,7 @@ async function deleteToken(options) {
   );
 }
 async function deleteAuthorization(options) {
-  const request2 = options.request || /* istanbul ignore next: we always pass a custom request in tests */
-  request;
+  const request2 = options.request || request;
   const auth7 = btoa(`${options.clientId}:${options.clientSecret}`);
   return request2(
     "DELETE /applications/{client_id}/grant",
@@ -28559,7 +28588,7 @@ async function waitForAccessToken(request2, clientId, clientType, verification) 
       return waitForAccessToken(request2, clientId, clientType, verification);
     }
     if (errorType === "slow_down") {
-      await wait(verification.interval + 5);
+      await wait(verification.interval + 7);
       return waitForAccessToken(request2, clientId, clientType, verification);
     }
     throw error;
@@ -28950,22 +28979,18 @@ var init_utils = __esm({
 });
 
 // npm/node_modules/universal-github-app-jwt/lib/crypto-node.js
-var crypto_node_exports = {};
-__export(crypto_node_exports, {
-  convertPrivateKey: () => convertPrivateKey
-});
 function convertPrivateKey(privateKey) {
   if (!isPkcs1(privateKey)) return privateKey;
-  return (0, import_node_crypto.createPrivateKey)(privateKey).export({
+  return (0, import_node_crypto2.createPrivateKey)(privateKey).export({
     type: "pkcs8",
     format: "pem"
   });
 }
-var import_node_crypto;
+var import_node_crypto, import_node_crypto2;
 var init_crypto_node = __esm({
   "npm/node_modules/universal-github-app-jwt/lib/crypto-node.js"() {
-    __reExport(crypto_node_exports, require("node:crypto"));
     import_node_crypto = require("node:crypto");
+    import_node_crypto2 = require("node:crypto");
     init_utils();
   }
 });
@@ -28989,7 +29014,7 @@ async function getToken({ privateKey, payload }) {
   };
   const header = { alg: "RS256", typ: "JWT" };
   const privateKeyDER = getDERfromPEM(convertedPrivateKey);
-  const importedKey = await crypto_node_exports.subtle.importKey(
+  const importedKey = await import_node_crypto.subtle.importKey(
     "pkcs8",
     privateKeyDER,
     algorithm,
@@ -28998,7 +29023,7 @@ async function getToken({ privateKey, payload }) {
   );
   const encodedMessage = getEncodedMessage(header, payload);
   const encodedMessageArrBuf = string2ArrayBuffer(encodedMessage);
-  const signatureArrBuf = await crypto_node_exports.subtle.sign(
+  const signatureArrBuf = await import_node_crypto.subtle.sign(
     algorithm.name,
     importedKey,
     encodedMessageArrBuf
@@ -29331,15 +29356,29 @@ async function getInstallationAuthentication(state, options, customRequest) {
     };
     return factory(factoryAuthOptions);
   }
-  const optionsWithInstallationTokenFromState = Object.assign(
-    { installationId },
-    options
+  const request2 = customRequest || state.request;
+  return getInstallationAuthenticationConcurrently(
+    state,
+    { ...options, installationId },
+    request2
   );
+}
+function getInstallationAuthenticationConcurrently(state, options, request2) {
+  const cacheKey = optionsToCacheKey(options);
+  if (pendingPromises.has(cacheKey)) {
+    return pendingPromises.get(cacheKey);
+  }
+  const promise = getInstallationAuthenticationImpl(
+    state,
+    options,
+    request2
+  ).finally(() => pendingPromises.delete(cacheKey));
+  pendingPromises.set(cacheKey, promise);
+  return promise;
+}
+async function getInstallationAuthenticationImpl(state, options, request2) {
   if (!options.refresh) {
-    const result = await get2(
-      state.cache,
-      optionsWithInstallationTokenFromState
-    );
+    const result = await get2(state.cache, options);
     if (result) {
       const {
         token: token2,
@@ -29352,7 +29391,7 @@ async function getInstallationAuthentication(state, options, customRequest) {
         repositorySelection: repositorySelection2
       } = result;
       return toTokenAuthentication({
-        installationId,
+        installationId: options.installationId,
         token: token2,
         createdAt: createdAt2,
         expiresAt: expiresAt2,
@@ -29365,9 +29404,8 @@ async function getInstallationAuthentication(state, options, customRequest) {
     }
   }
   const appAuthentication = await getAppAuthentication(state);
-  const request2 = customRequest || state.request;
   const payload = {
-    installation_id: installationId,
+    installation_id: options.installationId,
     mediaType: {
       previews: ["machine-man"]
     },
@@ -29416,9 +29454,9 @@ async function getInstallationAuthentication(state, options, customRequest) {
   if (singleFileName) {
     Object.assign(payload, { singleFileName });
   }
-  await set2(state.cache, optionsWithInstallationTokenFromState, cacheOptions);
+  await set2(state.cache, options, cacheOptions);
   const cacheData = {
-    installationId,
+    installationId: options.installationId,
     token,
     createdAt,
     expiresAt,
@@ -29588,7 +29626,7 @@ function createAppAuth(options) {
     hook: hook5.bind(null, state)
   });
 }
-var PATHS, REGEX, FIVE_SECONDS_IN_MS, VERSION12;
+var pendingPromises, PATHS, REGEX, FIVE_SECONDS_IN_MS, VERSION12;
 var init_dist_node = __esm({
   "npm/node_modules/@octokit/auth-app/dist-node/index.js"() {
     init_universal_user_agent();
@@ -29597,6 +29635,7 @@ var init_dist_node = __esm({
     init_universal_github_app_jwt();
     init_toad_cache();
     init_dist_bundle11();
+    pendingPromises = /* @__PURE__ */ new Map();
     PATHS = [
       "/app",
       "/app/hook/config",
@@ -29622,7 +29661,7 @@ var init_dist_node = __esm({
     ];
     REGEX = routeMatcher2(PATHS);
     FIVE_SECONDS_IN_MS = 5 * 1e3;
-    VERSION12 = "7.1.4";
+    VERSION12 = "7.2.1";
   }
 });
 
@@ -30290,7 +30329,7 @@ var init_dist_node3 = __esm({
     init_dist_node2();
     init_dist_bundle9();
     init_dist_node2();
-    VERSION13 = "7.1.5";
+    VERSION13 = "7.1.6";
     OAuthAppOctokit = Octokit.defaults({
       userAgent: `octokit-oauth-app.js/${VERSION13} ${getUserAgent()}`
     });
@@ -30390,7 +30429,7 @@ async function sign(secret, payload) {
     throw new TypeError("[@octokit/webhooks-methods] payload must be a string");
   }
   const algorithm = "sha256";
-  return `${algorithm}=${(0, import_node_crypto2.createHmac)(algorithm, secret).update(payload).digest("hex")}`;
+  return `${algorithm}=${(0, import_node_crypto3.createHmac)(algorithm, secret).update(payload).digest("hex")}`;
 }
 async function verify(secret, eventPayload, signature) {
   if (!secret || !eventPayload || !signature) {
@@ -30408,15 +30447,30 @@ async function verify(secret, eventPayload, signature) {
   if (signatureBuffer.length !== verificationBuffer.length) {
     return false;
   }
-  return (0, import_node_crypto3.timingSafeEqual)(signatureBuffer, verificationBuffer);
+  return (0, import_node_crypto4.timingSafeEqual)(signatureBuffer, verificationBuffer);
 }
-var import_node_crypto2, import_node_crypto3, import_node_buffer, VERSION14;
+async function verifyWithFallback(secret, payload, signature, additionalSecrets) {
+  const firstPass = await verify(secret, payload, signature);
+  if (firstPass) {
+    return true;
+  }
+  if (additionalSecrets !== void 0) {
+    for (const s of additionalSecrets) {
+      const v = await verify(s, payload, signature);
+      if (v) {
+        return v;
+      }
+    }
+  }
+  return false;
+}
+var import_node_crypto3, import_node_crypto4, import_node_buffer, VERSION14;
 var init_dist_node4 = __esm({
   "npm/node_modules/@octokit/webhooks-methods/dist-node/index.js"() {
-    import_node_crypto2 = require("node:crypto");
     import_node_crypto3 = require("node:crypto");
+    import_node_crypto4 = require("node:crypto");
     import_node_buffer = require("node:buffer");
-    VERSION14 = "5.1.0";
+    VERSION14 = "5.1.1";
     sign.VERSION = VERSION14;
     verify.VERSION = VERSION14;
   }
@@ -30560,10 +30614,11 @@ function createEventHandler(options) {
   };
 }
 async function verifyAndReceive(state, event) {
-  const matchesSignature = await verify(
+  const matchesSignature = await verifyWithFallback(
     state.secret,
     event.payload,
-    event.signature
+    event.signature,
+    state.additionalSecrets
   ).catch(() => false);
   if (!matchesSignature) {
     const error = new Error(
@@ -30587,138 +30642,208 @@ async function verifyAndReceive(state, event) {
     payload
   });
 }
-function getMissingHeaders(request2) {
-  return WEBHOOK_HEADERS.filter((header) => !(header in request2.headers));
+function createMiddleware(options) {
+  const { handleResponse: handleResponse3, getRequestHeader: getRequestHeader3, getPayload: getPayload3 } = options;
+  return function middleware2(webhooks2, options2) {
+    return async function octokitWebhooksMiddleware(request2, response, next) {
+      let pathname;
+      try {
+        pathname = new URL(request2.url, "http://localhost").pathname;
+      } catch (error) {
+        return handleResponse3(
+          JSON.stringify({
+            error: `Request URL could not be parsed: ${request2.url}`
+          }),
+          422,
+          {
+            "content-type": "application/json"
+          },
+          response
+        );
+      }
+      if (pathname !== options2.path) {
+        next?.();
+        return handleResponse3(null);
+      } else if (request2.method !== "POST") {
+        return handleResponse3(
+          JSON.stringify({
+            error: `Unknown route: ${request2.method} ${pathname}`
+          }),
+          404,
+          {
+            "content-type": "application/json"
+          },
+          response
+        );
+      }
+      const contentType = getRequestHeader3(request2, "content-type");
+      if (typeof contentType !== "string" || !isApplicationJsonRE.test(contentType)) {
+        return handleResponse3(
+          JSON.stringify({
+            error: `Unsupported "Content-Type" header value. Must be "application/json"`
+          }),
+          415,
+          {
+            "content-type": "application/json",
+            accept: "application/json"
+          },
+          response
+        );
+      }
+      const missingHeaders = WEBHOOK_HEADERS.filter((header) => {
+        return getRequestHeader3(request2, header) == void 0;
+      }).join(", ");
+      if (missingHeaders) {
+        return handleResponse3(
+          JSON.stringify({
+            error: `Required headers missing: ${missingHeaders}`
+          }),
+          400,
+          {
+            "content-type": "application/json",
+            accept: "application/json"
+          },
+          response
+        );
+      }
+      const eventName = getRequestHeader3(
+        request2,
+        "x-github-event"
+      );
+      const signature = getRequestHeader3(request2, "x-hub-signature-256");
+      const id = getRequestHeader3(request2, "x-github-delivery");
+      options2.log.debug(`${eventName} event received (id: ${id})`);
+      let didTimeout = false;
+      let timeout;
+      const timeoutPromise = new Promise((resolve) => {
+        timeout = setTimeout(() => {
+          didTimeout = true;
+          resolve(
+            handleResponse3(
+              "still processing\n",
+              202,
+              {
+                "Content-Type": "text/plain",
+                accept: "application/json"
+              },
+              response
+            )
+          );
+        }, options2.timeout);
+      });
+      const processWebhook = async () => {
+        try {
+          const payload = await getPayload3(request2);
+          await webhooks2.verifyAndReceive({
+            id,
+            name: eventName,
+            payload,
+            signature
+          });
+          clearTimeout(timeout);
+          if (didTimeout) return handleResponse3(null);
+          return handleResponse3(
+            "ok\n",
+            200,
+            {
+              "content-type": "text/plain",
+              accept: "application/json"
+            },
+            response
+          );
+        } catch (error) {
+          clearTimeout(timeout);
+          if (didTimeout) return handleResponse3(null);
+          const err = Array.from(error.errors)[0];
+          const errorMessage = err.message ? `${err.name}: ${err.message}` : "Error: An Unspecified error occurred";
+          const statusCode = typeof err.status !== "undefined" ? err.status : 500;
+          options2.log.error(error);
+          return handleResponse3(
+            JSON.stringify({
+              error: errorMessage
+            }),
+            statusCode,
+            {
+              "content-type": "application/json",
+              accept: "application/json"
+            },
+            response
+          );
+        }
+      };
+      return await Promise.race([timeoutPromise, processWebhook()]);
+    };
+  };
 }
-function getPayload(request2) {
-  if (typeof request2.body === "object" && "rawBody" in request2 && request2.rawBody instanceof Buffer) {
-    return Promise.resolve(request2.rawBody.toString("utf8"));
-  } else if (typeof request2.body === "string") {
-    return Promise.resolve(request2.body);
+function handleResponse(body, status = 200, headers = {}, response) {
+  if (body === null) {
+    return false;
   }
+  headers["content-length"] = body.length.toString();
+  response.writeHead(status, headers).end(body);
+  return true;
+}
+function getRequestHeader(request2, key) {
+  return request2.headers[key];
+}
+function concatUint8Array(data) {
+  if (data.length === 0) {
+    return new Uint8Array(0);
+  }
+  let totalLength = 0;
+  for (let i = 0; i < data.length; i++) {
+    totalLength += data[i].length;
+  }
+  if (totalLength === 0) {
+    return new Uint8Array(0);
+  }
+  const result = new Uint8Array(totalLength);
+  let offset = 0;
+  for (let i = 0; i < data.length; i++) {
+    result.set(data[i], offset);
+    offset += data[i].length;
+  }
+  return result;
+}
+async function getPayload(request2) {
+  if (typeof request2.body === "object" && "rawBody" in request2 && request2.rawBody instanceof Uint8Array) {
+    return decode(request2.rawBody);
+  } else if (typeof request2.body === "string") {
+    return request2.body;
+  }
+  const payload = await getPayloadFromRequestStream(request2);
+  return decode(payload);
+}
+function getPayloadFromRequestStream(request2) {
   return new Promise((resolve, reject) => {
     let data = [];
     request2.on(
       "error",
       (error) => reject(new AggregateError([error], error.message))
     );
-    request2.on("data", (chunk) => data.push(chunk));
-    request2.on(
-      "end",
-      () => (
-        // setImmediate improves the throughput by reducing the pressure from
-        // the event loop
-        setImmediate(
-          resolve,
-          data.length === 1 ? data[0].toString("utf8") : Buffer.concat(data).toString("utf8")
-        )
-      )
-    );
+    request2.on("data", data.push.bind(data));
+    request2.on("end", () => {
+      const result = concatUint8Array(data);
+      setImmediate(resolve, result);
+    });
   });
-}
-function onUnhandledRequestDefault(request2, response) {
-  response.writeHead(404, {
-    "content-type": "application/json"
-  });
-  response.end(
-    JSON.stringify({
-      error: `Unknown route: ${request2.method} ${request2.url}`
-    })
-  );
-}
-async function middleware(webhooks2, options, request2, response, next) {
-  let pathname;
-  try {
-    pathname = new URL(request2.url, "http://localhost").pathname;
-  } catch (error) {
-    response.writeHead(422, {
-      "content-type": "application/json"
-    });
-    response.end(
-      JSON.stringify({
-        error: `Request URL could not be parsed: ${request2.url}`
-      })
-    );
-    return true;
-  }
-  if (pathname !== options.path) {
-    next?.();
-    return false;
-  } else if (request2.method !== "POST") {
-    onUnhandledRequestDefault(request2, response);
-    return true;
-  }
-  if (!request2.headers["content-type"] || !request2.headers["content-type"].startsWith("application/json")) {
-    response.writeHead(415, {
-      "content-type": "application/json",
-      accept: "application/json"
-    });
-    response.end(
-      JSON.stringify({
-        error: `Unsupported "Content-Type" header value. Must be "application/json"`
-      })
-    );
-    return true;
-  }
-  const missingHeaders = getMissingHeaders(request2).join(", ");
-  if (missingHeaders) {
-    response.writeHead(400, {
-      "content-type": "application/json"
-    });
-    response.end(
-      JSON.stringify({
-        error: `Required headers missing: ${missingHeaders}`
-      })
-    );
-    return true;
-  }
-  const eventName = request2.headers["x-github-event"];
-  const signatureSHA256 = request2.headers["x-hub-signature-256"];
-  const id = request2.headers["x-github-delivery"];
-  options.log.debug(`${eventName} event received (id: ${id})`);
-  let didTimeout = false;
-  const timeout = setTimeout(() => {
-    didTimeout = true;
-    response.statusCode = 202;
-    response.end("still processing\n");
-  }, 9e3).unref();
-  try {
-    const payload = await getPayload(request2);
-    await webhooks2.verifyAndReceive({
-      id,
-      name: eventName,
-      payload,
-      signature: signatureSHA256
-    });
-    clearTimeout(timeout);
-    if (didTimeout) return true;
-    response.end("ok\n");
-    return true;
-  } catch (error) {
-    clearTimeout(timeout);
-    if (didTimeout) return true;
-    const err = Array.from(error.errors)[0];
-    const errorMessage = err.message ? `${err.name}: ${err.message}` : "Error: An Unspecified error occurred";
-    response.statusCode = typeof err.status !== "undefined" ? err.status : 500;
-    options.log.error(error);
-    response.end(
-      JSON.stringify({
-        error: errorMessage
-      })
-    );
-    return true;
-  }
 }
 function createNodeMiddleware2(webhooks2, {
   path = "/api/github/webhooks",
-  log = createLogger()
+  log = createLogger(),
+  timeout = 9e3
 } = {}) {
-  return middleware.bind(null, webhooks2, {
+  return createMiddleware({
+    handleResponse,
+    getRequestHeader,
+    getPayload
+  })(webhooks2, {
     path,
-    log
+    log,
+    timeout
   });
 }
-var createLogger, emitterEventNames, WEBHOOK_HEADERS, Webhooks;
+var createLogger, emitterEventNames, isApplicationJsonRE, WEBHOOK_HEADERS, textDecoder, decode, Webhooks;
 var init_dist_bundle13 = __esm({
   "npm/node_modules/@octokit/webhooks/dist-bundle/index.js"() {
     init_dist_node4();
@@ -30762,6 +30887,7 @@ var init_dist_bundle13 = __esm({
       "custom_property",
       "custom_property.created",
       "custom_property.deleted",
+      "custom_property.promote_to_enterprise",
       "custom_property.updated",
       "custom_property_values",
       "custom_property_values.updated",
@@ -30839,10 +30965,12 @@ var init_dist_bundle13 = __esm({
       "issues.pinned",
       "issues.reopened",
       "issues.transferred",
+      "issues.typed",
       "issues.unassigned",
       "issues.unlabeled",
       "issues.unlocked",
       "issues.unpinned",
+      "issues.untyped",
       "label",
       "label.created",
       "label.deleted",
@@ -30998,11 +31126,14 @@ var init_dist_bundle13 = __esm({
       "repository_vulnerability_alert.resolve",
       "secret_scanning_alert",
       "secret_scanning_alert.created",
+      "secret_scanning_alert.publicly_leaked",
       "secret_scanning_alert.reopened",
       "secret_scanning_alert.resolved",
       "secret_scanning_alert.validated",
       "secret_scanning_alert_location",
       "secret_scanning_alert_location.created",
+      "secret_scanning_scan",
+      "secret_scanning_scan.completed",
       "security_advisory",
       "security_advisory.published",
       "security_advisory.updated",
@@ -31044,11 +31175,14 @@ var init_dist_bundle13 = __esm({
       "workflow_run.in_progress",
       "workflow_run.requested"
     ];
+    isApplicationJsonRE = /^\s*(application\/json)\s*(?:;|$)/u;
     WEBHOOK_HEADERS = [
       "x-github-event",
       "x-hub-signature-256",
       "x-github-delivery"
     ];
+    textDecoder = new TextDecoder("utf-8", { fatal: false });
+    decode = textDecoder.decode.bind(textDecoder);
     Webhooks = class {
       sign;
       verify;
@@ -31065,6 +31199,7 @@ var init_dist_bundle13 = __esm({
         const state = {
           eventHandler: createEventHandler(options),
           secret: options.secret,
+          additionalSecrets: options.additionalSecrets,
           hooks: {},
           log: createLogger(options.log)
         };
@@ -31270,14 +31405,14 @@ function createNodeMiddleware3(app, options = {}) {
   const oauthMiddleware = createNodeMiddleware(app.oauth, {
     pathPrefix: optionsWithDefaults.pathPrefix + "/oauth"
   });
-  return middleware2.bind(
+  return middleware.bind(
     null,
     optionsWithDefaults.pathPrefix,
     webhooksMiddleware,
     oauthMiddleware
   );
 }
-async function middleware2(pathPrefix, webhooksMiddleware, oauthMiddleware, request2, response, next) {
+async function middleware(pathPrefix, webhooksMiddleware, oauthMiddleware, request2, response, next) {
   const { pathname } = new URL(request2.url, "http://localhost");
   if (pathname.startsWith(`${pathPrefix}/`)) {
     if (pathname === `${pathPrefix}/webhooks`) {
@@ -31307,7 +31442,7 @@ var init_dist_node5 = __esm({
     init_dist_bundle5();
     init_dist_node3();
     init_dist_bundle13();
-    VERSION15 = "15.1.2";
+    VERSION15 = "15.1.6";
     App = class {
       static VERSION = VERSION15;
       static defaults(defaults) {
