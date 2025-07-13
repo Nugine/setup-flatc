@@ -2,47 +2,43 @@
   "version": "5",
   "specifiers": {
     "jsr:@david/code-block-writer@^13.0.2": "13.0.3",
-    "jsr:@deno/cache-dir@~0.10.3": "0.10.3",
-    "jsr:@deno/dnt@~0.41.3": "0.41.3",
-    "jsr:@std/assert@0.223": "0.223.0",
-    "jsr:@std/assert@0.226": "0.226.0",
-    "jsr:@std/bytes@0.223": "0.223.0",
-    "jsr:@std/fmt@0.223": "0.223.0",
-    "jsr:@std/fmt@1": "1.0.3",
-    "jsr:@std/fs@0.223": "0.223.0",
-    "jsr:@std/fs@1": "1.0.5",
-    "jsr:@std/fs@~0.229.3": "0.229.3",
-    "jsr:@std/io@0.223": "0.223.0",
-    "jsr:@std/path@0.223": "0.223.0",
-    "jsr:@std/path@1": "1.0.8",
-    "jsr:@std/path@1.0.0-rc.1": "1.0.0-rc.1",
-    "jsr:@std/path@^1.0.7": "1.0.8",
-    "jsr:@std/path@~0.225.2": "0.225.2",
+    "jsr:@deno/cache-dir@0.20": "0.20.1",
+    "jsr:@deno/dnt@~0.42.1": "0.42.1",
+    "jsr:@std/bytes@^1.0.5": "1.0.6",
+    "jsr:@std/fmt@1": "1.0.8",
+    "jsr:@std/fmt@^1.0.3": "1.0.8",
+    "jsr:@std/fs@1": "1.0.19",
+    "jsr:@std/fs@^1.0.6": "1.0.19",
+    "jsr:@std/internal@^1.0.9": "1.0.9",
+    "jsr:@std/io@0.225": "0.225.2",
+    "jsr:@std/path@1": "1.1.1",
+    "jsr:@std/path@^1.0.8": "1.1.1",
+    "jsr:@std/path@^1.1.1": "1.1.1",
     "jsr:@std/semver@^1.0.3": "1.0.5",
-    "jsr:@ts-morph/bootstrap@0.24": "0.24.0",
-    "jsr:@ts-morph/common@0.24": "0.24.0",
+    "jsr:@ts-morph/bootstrap@0.25": "0.25.0",
+    "jsr:@ts-morph/common@0.25": "0.25.0",
     "npm:@actions/core@^1.11.1": "1.11.1",
     "npm:@actions/exec@^1.1.1": "1.1.1",
     "npm:@actions/tool-cache@^2.0.2": "2.0.2",
     "npm:@types/node@*": "22.5.4",
-    "npm:esbuild@~0.24.2": "0.24.2",
-    "npm:octokit@^4.1.4": "4.1.4_@octokit+core@6.1.5"
+    "npm:esbuild@~0.25.6": "0.25.6",
+    "npm:octokit@^5.0.3": "5.0.3_@octokit+core@7.0.2"
   },
   "jsr": {
     "@david/code-block-writer@13.0.3": {
       "integrity": "f98c77d320f5957899a61bfb7a9bead7c6d83ad1515daee92dbacc861e13bb7f"
     },
-    "@deno/cache-dir@0.10.3": {
-      "integrity": "eb022f84ecc49c91d9d98131c6e6b118ff63a29e343624d058646b9d50404776",
+    "@deno/cache-dir@0.20.1": {
+      "integrity": "dc4f3add14307f3ff3b712441ea4acabcbfc9a13f67c5adc78c3aac16ac5e2a0",
       "dependencies": [
-        "jsr:@std/fmt@0.223",
-        "jsr:@std/fs@0.223",
+        "jsr:@std/fmt@^1.0.3",
+        "jsr:@std/fs@^1.0.6",
         "jsr:@std/io",
-        "jsr:@std/path@0.223"
+        "jsr:@std/path@^1.0.8"
       ]
     },
-    "@deno/dnt@0.41.3": {
-      "integrity": "b2ef2c8a5111eef86cb5bfcae103d6a2938e8e649e2461634a7befb7fc59d6d2",
+    "@deno/dnt@0.42.1": {
+      "integrity": "85322b38eb40d4e8c5216d62536152c35b1bda9dc47c8c60860610397b960223",
       "dependencies": [
         "jsr:@david/code-block-writer",
         "jsr:@deno/cache-dir",
@@ -52,75 +48,48 @@
         "jsr:@ts-morph/bootstrap"
       ]
     },
-    "@std/assert@0.223.0": {
-      "integrity": "eb8d6d879d76e1cc431205bd346ed4d88dc051c6366365b1af47034b0670be24"
+    "@std/bytes@1.0.6": {
+      "integrity": "f6ac6adbd8ccd99314045f5703e23af0a68d7f7e58364b47d2c7f408aeb5820a"
     },
-    "@std/assert@0.226.0": {
-      "integrity": "0dfb5f7c7723c18cec118e080fec76ce15b4c31154b15ad2bd74822603ef75b3"
+    "@std/fmt@1.0.8": {
+      "integrity": "71e1fc498787e4434d213647a6e43e794af4fd393ef8f52062246e06f7e372b7"
     },
-    "@std/bytes@0.223.0": {
-      "integrity": "84b75052cd8680942c397c2631318772b295019098f40aac5c36cead4cba51a8"
-    },
-    "@std/fmt@0.223.0": {
-      "integrity": "6deb37794127dfc7d7bded2586b9fc6f5d50e62a8134846608baf71ffc1a5208"
-    },
-    "@std/fmt@1.0.3": {
-      "integrity": "97765c16aa32245ff4e2204ecf7d8562496a3cb8592340a80e7e554e0bb9149f"
-    },
-    "@std/fs@0.223.0": {
-      "integrity": "3b4b0550b2c524cbaaa5a9170c90e96cbb7354e837ad1bdaf15fc9df1ae9c31c"
-    },
-    "@std/fs@0.229.3": {
-      "integrity": "783bca21f24da92e04c3893c9e79653227ab016c48e96b3078377ebd5222e6eb",
+    "@std/fs@1.0.19": {
+      "integrity": "051968c2b1eae4d2ea9f79a08a3845740ef6af10356aff43d3e2ef11ed09fb06",
       "dependencies": [
-        "jsr:@std/path@1.0.0-rc.1"
+        "jsr:@std/internal",
+        "jsr:@std/path@^1.1.1"
       ]
     },
-    "@std/fs@1.0.5": {
-      "integrity": "41806ad6823d0b5f275f9849a2640d87e4ef67c51ee1b8fb02426f55e02fd44e",
-      "dependencies": [
-        "jsr:@std/path@^1.0.7"
-      ]
+    "@std/internal@1.0.9": {
+      "integrity": "bdfb97f83e4db7a13e8faab26fb1958d1b80cc64366501af78a0aee151696eb8"
     },
-    "@std/io@0.223.0": {
-      "integrity": "2d8c3c2ab3a515619b90da2c6ff5ea7b75a94383259ef4d02116b228393f84f1",
+    "@std/io@0.225.2": {
+      "integrity": "3c740cd4ee4c082e6cfc86458f47e2ab7cb353dc6234d5e9b1f91a2de5f4d6c7",
       "dependencies": [
-        "jsr:@std/assert@0.223",
         "jsr:@std/bytes"
       ]
     },
-    "@std/path@0.223.0": {
-      "integrity": "593963402d7e6597f5a6e620931661053572c982fc014000459edc1f93cc3989",
+    "@std/path@1.1.1": {
+      "integrity": "fe00026bd3a7e6a27f73709b83c607798be40e20c81dde655ce34052fd82ec76",
       "dependencies": [
-        "jsr:@std/assert@0.223"
+        "jsr:@std/internal"
       ]
-    },
-    "@std/path@0.225.2": {
-      "integrity": "0f2db41d36b50ef048dcb0399aac720a5348638dd3cb5bf80685bf2a745aa506",
-      "dependencies": [
-        "jsr:@std/assert@0.226"
-      ]
-    },
-    "@std/path@1.0.0-rc.1": {
-      "integrity": "b8c00ae2f19106a6bb7cbf1ab9be52aa70de1605daeb2dbdc4f87a7cbaf10ff6"
-    },
-    "@std/path@1.0.8": {
-      "integrity": "548fa456bb6a04d3c1a1e7477986b6cffbce95102d0bb447c67c4ee70e0364be"
     },
     "@std/semver@1.0.5": {
       "integrity": "529f79e83705714c105ad0ba55bec0f9da0f24d2f726b6cc1c15e505cc2c0624"
     },
-    "@ts-morph/bootstrap@0.24.0": {
-      "integrity": "a826a2ef7fa8a7c3f1042df2c034d20744d94da2ee32bf29275bcd4dffd3c060",
+    "@ts-morph/bootstrap@0.25.0": {
+      "integrity": "3cd33ee80ac0aab8e5d2660c639a02187f0c8abfe454636ce86c00eb7e8407db",
       "dependencies": [
         "jsr:@ts-morph/common"
       ]
     },
-    "@ts-morph/common@0.24.0": {
-      "integrity": "12b625b8e562446ba658cdbe9ad77774b4bd96b992ae8bd34c60dbf24d06c1f3",
+    "@ts-morph/common@0.25.0": {
+      "integrity": "e3ed1771e2fb61fbc3d2cb39ebbc4f89cd686d6d9bc6d91a71372be055ac1967",
       "dependencies": [
-        "jsr:@std/fs@~0.229.3",
-        "jsr:@std/path@~0.225.2"
+        "jsr:@std/fs@1",
+        "jsr:@std/path@1"
       ]
     }
   },
@@ -169,11 +138,23 @@
       "cpu": ["ppc64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/aix-ppc64/-/aix-ppc64-0.24.2.tgz"
     },
+    "@esbuild/aix-ppc64@0.25.6": {
+      "integrity": "sha512-ShbM/3XxwuxjFiuVBHA+d3j5dyac0aEVVq1oluIDf71hUw0aRF59dV/efUsIwFnR6m8JNM2FjZOzmaZ8yG61kw==",
+      "os": ["aix"],
+      "cpu": ["ppc64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/aix-ppc64/-/aix-ppc64-0.25.6.tgz"
+    },
     "@esbuild/android-arm64@0.24.2": {
       "integrity": "sha512-cNLgeqCqV8WxfcTIOeL4OAtSmL8JjcN6m09XIgro1Wi7cF4t/THaWEa7eL5CMoMBdjoHOTh/vwTO/o2TRXIyzg==",
       "os": ["android"],
       "cpu": ["arm64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/android-arm64/-/android-arm64-0.24.2.tgz"
+    },
+    "@esbuild/android-arm64@0.25.6": {
+      "integrity": "sha512-hd5zdUarsK6strW+3Wxi5qWws+rJhCCbMiC9QZyzoxfk5uHRIE8T287giQxzVpEvCwuJ9Qjg6bEjcRJcgfLqoA==",
+      "os": ["android"],
+      "cpu": ["arm64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/android-arm64/-/android-arm64-0.25.6.tgz"
     },
     "@esbuild/android-arm@0.24.2": {
       "integrity": "sha512-tmwl4hJkCfNHwFB3nBa8z1Uy3ypZpxqxfTQOcHX+xRByyYgunVbZ9MzUUfb0RxaHIMnbHagwAxuTL+tnNM+1/Q==",
@@ -181,11 +162,23 @@
       "cpu": ["arm"],
       "tarball": "https://registry.npmmirror.com/@esbuild/android-arm/-/android-arm-0.24.2.tgz"
     },
+    "@esbuild/android-arm@0.25.6": {
+      "integrity": "sha512-S8ToEOVfg++AU/bHwdksHNnyLyVM+eMVAOf6yRKFitnwnbwwPNqKr3srzFRe7nzV69RQKb5DgchIX5pt3L53xg==",
+      "os": ["android"],
+      "cpu": ["arm"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/android-arm/-/android-arm-0.25.6.tgz"
+    },
     "@esbuild/android-x64@0.24.2": {
       "integrity": "sha512-B6Q0YQDqMx9D7rvIcsXfmJfvUYLoP722bgfBlO5cGvNVb5V/+Y7nhBE3mHV9OpxBf4eAS2S68KZztiPaWq4XYw==",
       "os": ["android"],
       "cpu": ["x64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/android-x64/-/android-x64-0.24.2.tgz"
+    },
+    "@esbuild/android-x64@0.25.6": {
+      "integrity": "sha512-0Z7KpHSr3VBIO9A/1wcT3NTy7EB4oNC4upJ5ye3R7taCc2GUdeynSLArnon5G8scPwaU866d3H4BCrE5xLW25A==",
+      "os": ["android"],
+      "cpu": ["x64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/android-x64/-/android-x64-0.25.6.tgz"
     },
     "@esbuild/darwin-arm64@0.24.2": {
       "integrity": "sha512-kj3AnYWc+CekmZnS5IPu9D+HWtUI49hbnyqk0FLEJDbzCIQt7hg7ucF1SQAilhtYpIujfaHr6O0UHlzzSPdOeA==",
@@ -193,11 +186,23 @@
       "cpu": ["arm64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/darwin-arm64/-/darwin-arm64-0.24.2.tgz"
     },
+    "@esbuild/darwin-arm64@0.25.6": {
+      "integrity": "sha512-FFCssz3XBavjxcFxKsGy2DYK5VSvJqa6y5HXljKzhRZ87LvEi13brPrf/wdyl/BbpbMKJNOr1Sd0jtW4Ge1pAA==",
+      "os": ["darwin"],
+      "cpu": ["arm64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/darwin-arm64/-/darwin-arm64-0.25.6.tgz"
+    },
     "@esbuild/darwin-x64@0.24.2": {
       "integrity": "sha512-WeSrmwwHaPkNR5H3yYfowhZcbriGqooyu3zI/3GGpF8AyUdsrrP0X6KumITGA9WOyiJavnGZUwPGvxvwfWPHIA==",
       "os": ["darwin"],
       "cpu": ["x64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/darwin-x64/-/darwin-x64-0.24.2.tgz"
+    },
+    "@esbuild/darwin-x64@0.25.6": {
+      "integrity": "sha512-GfXs5kry/TkGM2vKqK2oyiLFygJRqKVhawu3+DOCk7OxLy/6jYkWXhlHwOoTb0WqGnWGAS7sooxbZowy+pK9Yg==",
+      "os": ["darwin"],
+      "cpu": ["x64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/darwin-x64/-/darwin-x64-0.25.6.tgz"
     },
     "@esbuild/freebsd-arm64@0.24.2": {
       "integrity": "sha512-UN8HXjtJ0k/Mj6a9+5u6+2eZ2ERD7Edt1Q9IZiB5UZAIdPnVKDoG7mdTVGhHJIeEml60JteamR3qhsr1r8gXvg==",
@@ -205,11 +210,23 @@
       "cpu": ["arm64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/freebsd-arm64/-/freebsd-arm64-0.24.2.tgz"
     },
+    "@esbuild/freebsd-arm64@0.25.6": {
+      "integrity": "sha512-aoLF2c3OvDn2XDTRvn8hN6DRzVVpDlj2B/F66clWd/FHLiHaG3aVZjxQX2DYphA5y/evbdGvC6Us13tvyt4pWg==",
+      "os": ["freebsd"],
+      "cpu": ["arm64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/freebsd-arm64/-/freebsd-arm64-0.25.6.tgz"
+    },
     "@esbuild/freebsd-x64@0.24.2": {
       "integrity": "sha512-TvW7wE/89PYW+IevEJXZ5sF6gJRDY/14hyIGFXdIucxCsbRmLUcjseQu1SyTko+2idmCw94TgyaEZi9HUSOe3Q==",
       "os": ["freebsd"],
       "cpu": ["x64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/freebsd-x64/-/freebsd-x64-0.24.2.tgz"
+    },
+    "@esbuild/freebsd-x64@0.25.6": {
+      "integrity": "sha512-2SkqTjTSo2dYi/jzFbU9Plt1vk0+nNg8YC8rOXXea+iA3hfNJWebKYPs3xnOUf9+ZWhKAaxnQNUf2X9LOpeiMQ==",
+      "os": ["freebsd"],
+      "cpu": ["x64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/freebsd-x64/-/freebsd-x64-0.25.6.tgz"
     },
     "@esbuild/linux-arm64@0.24.2": {
       "integrity": "sha512-7HnAD6074BW43YvvUmE/35Id9/NB7BeX5EoNkK9obndmZBUk8xmJJeU7DwmUeN7tkysslb2eSl6CTrYz6oEMQg==",
@@ -217,11 +234,23 @@
       "cpu": ["arm64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-arm64/-/linux-arm64-0.24.2.tgz"
     },
+    "@esbuild/linux-arm64@0.25.6": {
+      "integrity": "sha512-b967hU0gqKd9Drsh/UuAm21Khpoh6mPBSgz8mKRq4P5mVK8bpA+hQzmm/ZwGVULSNBzKdZPQBRT3+WuVavcWsQ==",
+      "os": ["linux"],
+      "cpu": ["arm64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-arm64/-/linux-arm64-0.25.6.tgz"
+    },
     "@esbuild/linux-arm@0.24.2": {
       "integrity": "sha512-n0WRM/gWIdU29J57hJyUdIsk0WarGd6To0s+Y+LwvlC55wt+GT/OgkwoXCXvIue1i1sSNWblHEig00GBWiJgfA==",
       "os": ["linux"],
       "cpu": ["arm"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-arm/-/linux-arm-0.24.2.tgz"
+    },
+    "@esbuild/linux-arm@0.25.6": {
+      "integrity": "sha512-SZHQlzvqv4Du5PrKE2faN0qlbsaW/3QQfUUc6yO2EjFcA83xnwm91UbEEVx4ApZ9Z5oG8Bxz4qPE+HFwtVcfyw==",
+      "os": ["linux"],
+      "cpu": ["arm"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-arm/-/linux-arm-0.25.6.tgz"
     },
     "@esbuild/linux-ia32@0.24.2": {
       "integrity": "sha512-sfv0tGPQhcZOgTKO3oBE9xpHuUqguHvSo4jl+wjnKwFpapx+vUDcawbwPNuBIAYdRAvIDBfZVvXprIj3HA+Ugw==",
@@ -229,11 +258,23 @@
       "cpu": ["ia32"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-ia32/-/linux-ia32-0.24.2.tgz"
     },
+    "@esbuild/linux-ia32@0.25.6": {
+      "integrity": "sha512-aHWdQ2AAltRkLPOsKdi3xv0mZ8fUGPdlKEjIEhxCPm5yKEThcUjHpWB1idN74lfXGnZ5SULQSgtr5Qos5B0bPw==",
+      "os": ["linux"],
+      "cpu": ["ia32"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-ia32/-/linux-ia32-0.25.6.tgz"
+    },
     "@esbuild/linux-loong64@0.24.2": {
       "integrity": "sha512-CN9AZr8kEndGooS35ntToZLTQLHEjtVB5n7dl8ZcTZMonJ7CCfStrYhrzF97eAecqVbVJ7APOEe18RPI4KLhwQ==",
       "os": ["linux"],
       "cpu": ["loong64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-loong64/-/linux-loong64-0.24.2.tgz"
+    },
+    "@esbuild/linux-loong64@0.25.6": {
+      "integrity": "sha512-VgKCsHdXRSQ7E1+QXGdRPlQ/e08bN6WMQb27/TMfV+vPjjTImuT9PmLXupRlC90S1JeNNW5lzkAEO/McKeJ2yg==",
+      "os": ["linux"],
+      "cpu": ["loong64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-loong64/-/linux-loong64-0.25.6.tgz"
     },
     "@esbuild/linux-mips64el@0.24.2": {
       "integrity": "sha512-iMkk7qr/wl3exJATwkISxI7kTcmHKE+BlymIAbHO8xanq/TjHaaVThFF6ipWzPHryoFsesNQJPE/3wFJw4+huw==",
@@ -241,11 +282,23 @@
       "cpu": ["mips64el"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-mips64el/-/linux-mips64el-0.24.2.tgz"
     },
+    "@esbuild/linux-mips64el@0.25.6": {
+      "integrity": "sha512-WViNlpivRKT9/py3kCmkHnn44GkGXVdXfdc4drNmRl15zVQ2+D2uFwdlGh6IuK5AAnGTo2qPB1Djppj+t78rzw==",
+      "os": ["linux"],
+      "cpu": ["mips64el"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-mips64el/-/linux-mips64el-0.25.6.tgz"
+    },
     "@esbuild/linux-ppc64@0.24.2": {
       "integrity": "sha512-shsVrgCZ57Vr2L8mm39kO5PPIb+843FStGt7sGGoqiiWYconSxwTiuswC1VJZLCjNiMLAMh34jg4VSEQb+iEbw==",
       "os": ["linux"],
       "cpu": ["ppc64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-ppc64/-/linux-ppc64-0.24.2.tgz"
+    },
+    "@esbuild/linux-ppc64@0.25.6": {
+      "integrity": "sha512-wyYKZ9NTdmAMb5730I38lBqVu6cKl4ZfYXIs31Baf8aoOtB4xSGi3THmDYt4BTFHk7/EcVixkOV2uZfwU3Q2Jw==",
+      "os": ["linux"],
+      "cpu": ["ppc64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-ppc64/-/linux-ppc64-0.25.6.tgz"
     },
     "@esbuild/linux-riscv64@0.24.2": {
       "integrity": "sha512-4eSFWnU9Hhd68fW16GD0TINewo1L6dRrB+oLNNbYyMUAeOD2yCK5KXGK1GH4qD/kT+bTEXjsyTCiJGHPZ3eM9Q==",
@@ -253,11 +306,23 @@
       "cpu": ["riscv64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-riscv64/-/linux-riscv64-0.24.2.tgz"
     },
+    "@esbuild/linux-riscv64@0.25.6": {
+      "integrity": "sha512-KZh7bAGGcrinEj4qzilJ4hqTY3Dg2U82c8bv+e1xqNqZCrCyc+TL9AUEn5WGKDzm3CfC5RODE/qc96OcbIe33w==",
+      "os": ["linux"],
+      "cpu": ["riscv64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-riscv64/-/linux-riscv64-0.25.6.tgz"
+    },
     "@esbuild/linux-s390x@0.24.2": {
       "integrity": "sha512-S0Bh0A53b0YHL2XEXC20bHLuGMOhFDO6GN4b3YjRLK//Ep3ql3erpNcPlEFed93hsQAjAQDNsvcK+hV90FubSw==",
       "os": ["linux"],
       "cpu": ["s390x"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-s390x/-/linux-s390x-0.24.2.tgz"
+    },
+    "@esbuild/linux-s390x@0.25.6": {
+      "integrity": "sha512-9N1LsTwAuE9oj6lHMyyAM+ucxGiVnEqUdp4v7IaMmrwb06ZTEVCIs3oPPplVsnjPfyjmxwHxHMF8b6vzUVAUGw==",
+      "os": ["linux"],
+      "cpu": ["s390x"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-s390x/-/linux-s390x-0.25.6.tgz"
     },
     "@esbuild/linux-x64@0.24.2": {
       "integrity": "sha512-8Qi4nQcCTbLnK9WoMjdC9NiTG6/E38RNICU6sUNqK0QFxCYgoARqVqxdFmWkdonVsvGqWhmm7MO0jyTqLqwj0Q==",
@@ -265,11 +330,23 @@
       "cpu": ["x64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/linux-x64/-/linux-x64-0.24.2.tgz"
     },
+    "@esbuild/linux-x64@0.25.6": {
+      "integrity": "sha512-A6bJB41b4lKFWRKNrWoP2LHsjVzNiaurf7wyj/XtFNTsnPuxwEBWHLty+ZE0dWBKuSK1fvKgrKaNjBS7qbFKig==",
+      "os": ["linux"],
+      "cpu": ["x64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/linux-x64/-/linux-x64-0.25.6.tgz"
+    },
     "@esbuild/netbsd-arm64@0.24.2": {
       "integrity": "sha512-wuLK/VztRRpMt9zyHSazyCVdCXlpHkKm34WUyinD2lzK07FAHTq0KQvZZlXikNWkDGoT6x3TD51jKQ7gMVpopw==",
       "os": ["netbsd"],
       "cpu": ["arm64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/netbsd-arm64/-/netbsd-arm64-0.24.2.tgz"
+    },
+    "@esbuild/netbsd-arm64@0.25.6": {
+      "integrity": "sha512-IjA+DcwoVpjEvyxZddDqBY+uJ2Snc6duLpjmkXm/v4xuS3H+3FkLZlDm9ZsAbF9rsfP3zeA0/ArNDORZgrxR/Q==",
+      "os": ["netbsd"],
+      "cpu": ["arm64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/netbsd-arm64/-/netbsd-arm64-0.25.6.tgz"
     },
     "@esbuild/netbsd-x64@0.24.2": {
       "integrity": "sha512-VefFaQUc4FMmJuAxmIHgUmfNiLXY438XrL4GDNV1Y1H/RW3qow68xTwjZKfj/+Plp9NANmzbH5R40Meudu8mmw==",
@@ -277,11 +354,23 @@
       "cpu": ["x64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/netbsd-x64/-/netbsd-x64-0.24.2.tgz"
     },
+    "@esbuild/netbsd-x64@0.25.6": {
+      "integrity": "sha512-dUXuZr5WenIDlMHdMkvDc1FAu4xdWixTCRgP7RQLBOkkGgwuuzaGSYcOpW4jFxzpzL1ejb8yF620UxAqnBrR9g==",
+      "os": ["netbsd"],
+      "cpu": ["x64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/netbsd-x64/-/netbsd-x64-0.25.6.tgz"
+    },
     "@esbuild/openbsd-arm64@0.24.2": {
       "integrity": "sha512-YQbi46SBct6iKnszhSvdluqDmxCJA+Pu280Av9WICNwQmMxV7nLRHZfjQzwbPs3jeWnuAhE9Jy0NrnJ12Oz+0A==",
       "os": ["openbsd"],
       "cpu": ["arm64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/openbsd-arm64/-/openbsd-arm64-0.24.2.tgz"
+    },
+    "@esbuild/openbsd-arm64@0.25.6": {
+      "integrity": "sha512-l8ZCvXP0tbTJ3iaqdNf3pjaOSd5ex/e6/omLIQCVBLmHTlfXW3zAxQ4fnDmPLOB1x9xrcSi/xtCWFwCZRIaEwg==",
+      "os": ["openbsd"],
+      "cpu": ["arm64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/openbsd-arm64/-/openbsd-arm64-0.25.6.tgz"
     },
     "@esbuild/openbsd-x64@0.24.2": {
       "integrity": "sha512-+iDS6zpNM6EnJyWv0bMGLWSWeXGN/HTaF/LXHXHwejGsVi+ooqDfMCCTerNFxEkM3wYVcExkeGXNqshc9iMaOA==",
@@ -289,11 +378,29 @@
       "cpu": ["x64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/openbsd-x64/-/openbsd-x64-0.24.2.tgz"
     },
+    "@esbuild/openbsd-x64@0.25.6": {
+      "integrity": "sha512-hKrmDa0aOFOr71KQ/19JC7az1P0GWtCN1t2ahYAf4O007DHZt/dW8ym5+CUdJhQ/qkZmI1HAF8KkJbEFtCL7gw==",
+      "os": ["openbsd"],
+      "cpu": ["x64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/openbsd-x64/-/openbsd-x64-0.25.6.tgz"
+    },
+    "@esbuild/openharmony-arm64@0.25.6": {
+      "integrity": "sha512-+SqBcAWoB1fYKmpWoQP4pGtx+pUUC//RNYhFdbcSA16617cchuryuhOCRpPsjCblKukAckWsV+aQ3UKT/RMPcA==",
+      "os": ["openharmony"],
+      "cpu": ["arm64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/openharmony-arm64/-/openharmony-arm64-0.25.6.tgz"
+    },
     "@esbuild/sunos-x64@0.24.2": {
       "integrity": "sha512-hTdsW27jcktEvpwNHJU4ZwWFGkz2zRJUz8pvddmXPtXDzVKTTINmlmga3ZzwcuMpUvLw7JkLy9QLKyGpD2Yxig==",
       "os": ["sunos"],
       "cpu": ["x64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/sunos-x64/-/sunos-x64-0.24.2.tgz"
+    },
+    "@esbuild/sunos-x64@0.25.6": {
+      "integrity": "sha512-dyCGxv1/Br7MiSC42qinGL8KkG4kX0pEsdb0+TKhmJZgCUDBGmyo1/ArCjNGiOLiIAgdbWgmWgib4HoCi5t7kA==",
+      "os": ["sunos"],
+      "cpu": ["x64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/sunos-x64/-/sunos-x64-0.25.6.tgz"
     },
     "@esbuild/win32-arm64@0.24.2": {
       "integrity": "sha512-LihEQ2BBKVFLOC9ZItT9iFprsE9tqjDjnbulhHoFxYQtQfai7qfluVODIYxt1PgdoyQkz23+01rzwNwYfutxUQ==",
@@ -301,11 +408,23 @@
       "cpu": ["arm64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/win32-arm64/-/win32-arm64-0.24.2.tgz"
     },
+    "@esbuild/win32-arm64@0.25.6": {
+      "integrity": "sha512-42QOgcZeZOvXfsCBJF5Afw73t4veOId//XD3i+/9gSkhSV6Gk3VPlWncctI+JcOyERv85FUo7RxuxGy+z8A43Q==",
+      "os": ["win32"],
+      "cpu": ["arm64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/win32-arm64/-/win32-arm64-0.25.6.tgz"
+    },
     "@esbuild/win32-ia32@0.24.2": {
       "integrity": "sha512-q+iGUwfs8tncmFC9pcnD5IvRHAzmbwQ3GPS5/ceCyHdjXubwQWI12MKWSNSMYLJMq23/IUCvJMS76PDqXe1fxA==",
       "os": ["win32"],
       "cpu": ["ia32"],
       "tarball": "https://registry.npmmirror.com/@esbuild/win32-ia32/-/win32-ia32-0.24.2.tgz"
+    },
+    "@esbuild/win32-ia32@0.25.6": {
+      "integrity": "sha512-4AWhgXmDuYN7rJI6ORB+uU9DHLq/erBbuMoAuB4VWJTu5KtCgcKYPynF0YI1VkBNuEfjNlLrFr9KZPJzrtLkrQ==",
+      "os": ["win32"],
+      "cpu": ["ia32"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/win32-ia32/-/win32-ia32-0.25.6.tgz"
     },
     "@esbuild/win32-x64@0.24.2": {
       "integrity": "sha512-7VTgWzgMGvup6aSqDPLiW5zHaxYJGTO4OokMjIlrCtf+VpEL+cXKtCvg723iguPYI5oaUNdS+/V7OU2gvXVWEg==",
@@ -313,12 +432,18 @@
       "cpu": ["x64"],
       "tarball": "https://registry.npmmirror.com/@esbuild/win32-x64/-/win32-x64-0.24.2.tgz"
     },
+    "@esbuild/win32-x64@0.25.6": {
+      "integrity": "sha512-NgJPHHbEpLQgDH2MjQu90pzW/5vvXIZ7KOnPyNBm92A6WgZ/7b6fJyUBjoumLqeOQQGqY2QjQxRo97ah4Sj0cA==",
+      "os": ["win32"],
+      "cpu": ["x64"],
+      "tarball": "https://registry.npmmirror.com/@esbuild/win32-x64/-/win32-x64-0.25.6.tgz"
+    },
     "@fastify/busboy@2.1.1": {
       "integrity": "sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==",
       "tarball": "https://registry.npmmirror.com/@fastify/busboy/-/busboy-2.1.1.tgz"
     },
-    "@octokit/app@15.1.6_@octokit+core@6.1.5": {
-      "integrity": "sha512-WELCamoCJo9SN0lf3SWZccf68CF0sBNPQuLYmZ/n87p5qvBJDe9aBtr5dHkh7T9nxWZ608pizwsUbypSzZAiUw==",
+    "@octokit/app@16.0.1_@octokit+core@7.0.2": {
+      "integrity": "sha512-kgTeTsWmpUX+s3Fs4EK4w1K+jWCDB6ClxLSWUWTyhlw7+L3jHtuXDR4QtABu2GsmCMdk67xRhruiXotS3ay3Yw==",
       "dependencies": [
         "@octokit/auth-app",
         "@octokit/auth-unauthenticated",
@@ -328,10 +453,10 @@
         "@octokit/types",
         "@octokit/webhooks"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/app/-/app-15.1.6.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/app/-/app-16.0.1.tgz"
     },
-    "@octokit/auth-app@7.2.1": {
-      "integrity": "sha512-4jaopCVOtWN0V8qCx/1s2pkRqC6tcvIQM3kFB99eIpsP53GfsoIKO08D94b83n/V3iGihHmxWR2lXzE0NicUGg==",
+    "@octokit/auth-app@8.0.1": {
+      "integrity": "sha512-P2J5pB3pjiGwtJX4WqJVYCtNkcZ+j5T2Wm14aJAEIC3WJOrv12jvBley3G1U/XI8q9o1A7QMG54LiFED2BiFlg==",
       "dependencies": [
         "@octokit/auth-oauth-app",
         "@octokit/auth-oauth-user",
@@ -342,10 +467,10 @@
         "universal-github-app-jwt",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/auth-app/-/auth-app-7.2.1.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/auth-app/-/auth-app-8.0.1.tgz"
     },
-    "@octokit/auth-oauth-app@8.1.4": {
-      "integrity": "sha512-71iBa5SflSXcclk/OL3lJzdt4iFs56OJdpBGEBl1wULp7C58uiswZLV6TdRaiAzHP1LT8ezpbHlKuxADb+4NkQ==",
+    "@octokit/auth-oauth-app@9.0.1": {
+      "integrity": "sha512-TthWzYxuHKLAbmxdFZwFlmwVyvynpyPmjwc+2/cI3cvbT7mHtsAW9b1LvQaNnAuWL+pFnqtxdmrU8QpF633i1g==",
       "dependencies": [
         "@octokit/auth-oauth-device",
         "@octokit/auth-oauth-user",
@@ -353,20 +478,20 @@
         "@octokit/types",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/auth-oauth-app/-/auth-oauth-app-8.1.4.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/auth-oauth-app/-/auth-oauth-app-9.0.1.tgz"
     },
-    "@octokit/auth-oauth-device@7.1.5": {
-      "integrity": "sha512-lR00+k7+N6xeECj0JuXeULQ2TSBB/zjTAmNF2+vyGPDEFx1dgk1hTDmL13MjbSmzusuAmuJD8Pu39rjp9jH6yw==",
+    "@octokit/auth-oauth-device@8.0.1": {
+      "integrity": "sha512-TOqId/+am5yk9zor0RGibmlqn4V0h8vzjxlw/wYr3qzkQxl8aBPur384D1EyHtqvfz0syeXji4OUvKkHvxk/Gw==",
       "dependencies": [
         "@octokit/oauth-methods",
         "@octokit/request",
         "@octokit/types",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/auth-oauth-device/-/auth-oauth-device-7.1.5.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/auth-oauth-device/-/auth-oauth-device-8.0.1.tgz"
     },
-    "@octokit/auth-oauth-user@5.1.6": {
-      "integrity": "sha512-/R8vgeoulp7rJs+wfJ2LtXEVC7pjQTIqDab7wPKwVG6+2v/lUnCOub6vaHmysQBbb45FknM3tbHW8TOVqYHxCw==",
+    "@octokit/auth-oauth-user@6.0.0": {
+      "integrity": "sha512-GV9IW134PHsLhtUad21WIeP9mlJ+QNpFd6V9vuPWmaiN25HEJeEQUcS4y5oRuqCm9iWDLtfIs+9K8uczBXKr6A==",
       "dependencies": [
         "@octokit/auth-oauth-device",
         "@octokit/oauth-methods",
@@ -374,22 +499,22 @@
         "@octokit/types",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/auth-oauth-user/-/auth-oauth-user-5.1.6.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/auth-oauth-user/-/auth-oauth-user-6.0.0.tgz"
     },
-    "@octokit/auth-token@5.1.2": {
-      "integrity": "sha512-JcQDsBdg49Yky2w2ld20IHAlwr8d/d8N6NiOXbtuoPCqzbsiJgF633mVUw3x4mo0H5ypataQIX7SFu3yy44Mpw==",
-      "tarball": "https://registry.npmmirror.com/@octokit/auth-token/-/auth-token-5.1.2.tgz"
+    "@octokit/auth-token@6.0.0": {
+      "integrity": "sha512-P4YJBPdPSpWTQ1NU4XYdvHvXJJDxM6YwpS0FZHRgP7YFkdVxsWcpWGy/NVqlAA7PcPCnMacXlRm1y2PFZRWL/w==",
+      "tarball": "https://registry.npmmirror.com/@octokit/auth-token/-/auth-token-6.0.0.tgz"
     },
-    "@octokit/auth-unauthenticated@6.1.3": {
-      "integrity": "sha512-d5gWJla3WdSl1yjbfMpET+hUSFCE15qM0KVSB0H1shyuJihf/RL1KqWoZMIaonHvlNojkL9XtLFp8QeLe+1iwA==",
+    "@octokit/auth-unauthenticated@7.0.1": {
+      "integrity": "sha512-qVq1vdjLLZdE8kH2vDycNNjuJRCD1q2oet1nA/GXWaYlpDxlR7rdVhX/K/oszXslXiQIiqrQf+rdhDlA99JdTQ==",
       "dependencies": [
         "@octokit/request-error",
         "@octokit/types"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/auth-unauthenticated/-/auth-unauthenticated-6.1.3.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/auth-unauthenticated/-/auth-unauthenticated-7.0.1.tgz"
     },
-    "@octokit/core@6.1.5": {
-      "integrity": "sha512-vvmsN0r7rguA+FySiCsbaTTobSftpIDIpPW81trAmsv9TGxg3YCujAxRYp/Uy8xmDgYCzzgulG62H7KYUFmeIg==",
+    "@octokit/core@7.0.2": {
+      "integrity": "sha512-ODsoD39Lq6vR6aBgvjTnA3nZGliknKboc9Gtxr7E4WDNqY24MxANKcuDQSF0jzapvGb3KWOEDrKfve4HoWGK+g==",
       "dependencies": [
         "@octokit/auth-token",
         "@octokit/graphql",
@@ -399,27 +524,27 @@
         "before-after-hook",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/core/-/core-6.1.5.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/core/-/core-7.0.2.tgz"
     },
-    "@octokit/endpoint@10.1.4": {
-      "integrity": "sha512-OlYOlZIsfEVZm5HCSR8aSg02T2lbUWOsCQoPKfTXJwDzcHQBrVBGdGXb89dv2Kw2ToZaRtudp8O3ZIYoaOjKlA==",
+    "@octokit/endpoint@11.0.0": {
+      "integrity": "sha512-hoYicJZaqISMAI3JfaDr1qMNi48OctWuOih1m80bkYow/ayPw6Jj52tqWJ6GEoFTk1gBqfanSoI1iY99Z5+ekQ==",
       "dependencies": [
         "@octokit/types",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/endpoint/-/endpoint-10.1.4.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/endpoint/-/endpoint-11.0.0.tgz"
     },
-    "@octokit/graphql@8.2.2": {
-      "integrity": "sha512-Yi8hcoqsrXGdt0yObxbebHXFOiUA+2v3n53epuOg1QUgOB6c4XzvisBNVXJSl8RYA5KrDuSL2yq9Qmqe5N0ryA==",
+    "@octokit/graphql@9.0.1": {
+      "integrity": "sha512-j1nQNU1ZxNFx2ZtKmL4sMrs4egy5h65OMDmSbVyuCzjOcwsHq6EaYjOTGXPQxgfiN8dJ4CriYHk6zF050WEULg==",
       "dependencies": [
         "@octokit/request",
         "@octokit/types",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/graphql/-/graphql-8.2.2.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/graphql/-/graphql-9.0.1.tgz"
     },
-    "@octokit/oauth-app@7.1.6": {
-      "integrity": "sha512-OMcMzY2WFARg80oJNFwWbY51TBUfLH4JGTy119cqiDawSFXSIBujxmpXiKbGWQlvfn0CxE6f7/+c6+Kr5hI2YA==",
+    "@octokit/oauth-app@8.0.1": {
+      "integrity": "sha512-QnhMYEQpnYbEPn9cae+wXL2LuPMFglmfeuDJXXsyxIXdoORwkLK8y0cHhd/5du9MbO/zdG/BXixzB7EEwU63eQ==",
       "dependencies": [
         "@octokit/auth-oauth-app",
         "@octokit/auth-oauth-user",
@@ -430,81 +555,81 @@
         "@types/aws-lambda",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/oauth-app/-/oauth-app-7.1.6.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/oauth-app/-/oauth-app-8.0.1.tgz"
     },
-    "@octokit/oauth-authorization-url@7.1.1": {
-      "integrity": "sha512-ooXV8GBSabSWyhLUowlMIVd9l1s2nsOGQdlP2SQ4LnkEsGXzeCvbSbCPdZThXhEFzleGPwbapT0Sb+YhXRyjCA==",
-      "tarball": "https://registry.npmmirror.com/@octokit/oauth-authorization-url/-/oauth-authorization-url-7.1.1.tgz"
+    "@octokit/oauth-authorization-url@8.0.0": {
+      "integrity": "sha512-7QoLPRh/ssEA/HuHBHdVdSgF8xNLz/Bc5m9fZkArJE5bb6NmVkDm3anKxXPmN1zh6b5WKZPRr3697xKT/yM3qQ==",
+      "tarball": "https://registry.npmmirror.com/@octokit/oauth-authorization-url/-/oauth-authorization-url-8.0.0.tgz"
     },
-    "@octokit/oauth-methods@5.1.5": {
-      "integrity": "sha512-Ev7K8bkYrYLhoOSZGVAGsLEscZQyq7XQONCBBAl2JdMg7IT3PQn/y8P0KjloPoYpI5UylqYrLeUcScaYWXwDvw==",
+    "@octokit/oauth-methods@6.0.0": {
+      "integrity": "sha512-Q8nFIagNLIZgM2odAraelMcDssapc+lF+y3OlcIPxyAU+knefO8KmozGqfnma1xegRDP4z5M73ABsamn72bOcA==",
       "dependencies": [
         "@octokit/oauth-authorization-url",
         "@octokit/request",
         "@octokit/request-error",
         "@octokit/types"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/oauth-methods/-/oauth-methods-5.1.5.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/oauth-methods/-/oauth-methods-6.0.0.tgz"
     },
     "@octokit/openapi-types@25.1.0": {
       "integrity": "sha512-idsIggNXUKkk0+BExUn1dQ92sfysJrje03Q0bv0e+KPLrvyqZF8MnBpFz8UNfYDwB3Ie7Z0TByjWfzxt7vseaA==",
       "tarball": "https://registry.npmmirror.com/@octokit/openapi-types/-/openapi-types-25.1.0.tgz"
     },
-    "@octokit/openapi-webhooks-types@11.0.0": {
-      "integrity": "sha512-ZBzCFj98v3SuRM7oBas6BHZMJRadlnDoeFfvm1olVxZnYeU6Vh97FhPxyS5aLh5pN51GYv2I51l/hVUAVkGBlA==",
-      "tarball": "https://registry.npmmirror.com/@octokit/openapi-webhooks-types/-/openapi-webhooks-types-11.0.0.tgz"
+    "@octokit/openapi-webhooks-types@12.0.3": {
+      "integrity": "sha512-90MF5LVHjBedwoHyJsgmaFhEN1uzXyBDRLEBe7jlTYx/fEhPAk3P3DAJsfZwC54m8hAIryosJOL+UuZHB3K3yA==",
+      "tarball": "https://registry.npmmirror.com/@octokit/openapi-webhooks-types/-/openapi-webhooks-types-12.0.3.tgz"
     },
-    "@octokit/plugin-paginate-graphql@5.2.4_@octokit+core@6.1.5": {
-      "integrity": "sha512-pLZES1jWaOynXKHOqdnwZ5ULeVR6tVVCMm+AUbp0htdcyXDU95WbkYdU4R2ej1wKj5Tu94Mee2Ne0PjPO9cCyA==",
+    "@octokit/plugin-paginate-graphql@6.0.0_@octokit+core@7.0.2": {
+      "integrity": "sha512-crfpnIoFiBtRkvPqOyLOsw12XsveYuY2ieP6uYDosoUegBJpSVxGwut9sxUgFFcll3VTOTqpUf8yGd8x1OmAkQ==",
       "dependencies": [
         "@octokit/core"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/plugin-paginate-graphql/-/plugin-paginate-graphql-5.2.4.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/plugin-paginate-graphql/-/plugin-paginate-graphql-6.0.0.tgz"
     },
-    "@octokit/plugin-paginate-rest@12.0.0_@octokit+core@6.1.5": {
-      "integrity": "sha512-MPd6WK1VtZ52lFrgZ0R2FlaoiWllzgqFHaSZxvp72NmoDeZ0m8GeJdg4oB6ctqMTYyrnDYp592Xma21mrgiyDA==",
+    "@octokit/plugin-paginate-rest@13.1.1_@octokit+core@7.0.2": {
+      "integrity": "sha512-q9iQGlZlxAVNRN2jDNskJW/Cafy7/XE52wjZ5TTvyhyOD904Cvx//DNyoO3J/MXJ0ve3rPoNWKEg5iZrisQSuw==",
       "dependencies": [
         "@octokit/core",
         "@octokit/types"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-12.0.0.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/plugin-paginate-rest/-/plugin-paginate-rest-13.1.1.tgz"
     },
-    "@octokit/plugin-rest-endpoint-methods@14.0.0_@octokit+core@6.1.5": {
-      "integrity": "sha512-iQt6ovem4b7zZYZQtdv+PwgbL5VPq37th1m2x2TdkgimIDJpsi2A6Q/OI/23i/hR6z5mL0EgisNR4dcbmckSZQ==",
+    "@octokit/plugin-rest-endpoint-methods@16.0.0_@octokit+core@7.0.2": {
+      "integrity": "sha512-kJVUQk6/dx/gRNLWUnAWKFs1kVPn5O5CYZyssyEoNYaFedqZxsfYs7DwI3d67hGz4qOwaJ1dpm07hOAD1BXx6g==",
       "dependencies": [
         "@octokit/core",
         "@octokit/types"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-14.0.0.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/plugin-rest-endpoint-methods/-/plugin-rest-endpoint-methods-16.0.0.tgz"
     },
-    "@octokit/plugin-retry@7.2.1_@octokit+core@6.1.5": {
-      "integrity": "sha512-wUc3gv0D6vNHpGxSaR3FlqJpTXGWgqmk607N9L3LvPL4QjaxDgX/1nY2mGpT37Khn+nlIXdljczkRnNdTTV3/A==",
+    "@octokit/plugin-retry@8.0.1_@octokit+core@7.0.2": {
+      "integrity": "sha512-KUoYR77BjF5O3zcwDQHRRZsUvJwepobeqiSSdCJ8lWt27FZExzb0GgVxrhhfuyF6z2B2zpO0hN5pteni1sqWiw==",
       "dependencies": [
         "@octokit/core",
         "@octokit/request-error",
         "@octokit/types",
         "bottleneck"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/plugin-retry/-/plugin-retry-7.2.1.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/plugin-retry/-/plugin-retry-8.0.1.tgz"
     },
-    "@octokit/plugin-throttling@10.0.0_@octokit+core@6.1.5": {
-      "integrity": "sha512-Kuq5/qs0DVYTHZuBAzCZStCzo2nKvVRo/TDNhCcpC2TKiOGz/DisXMCvjt3/b5kr6SCI1Y8eeeJTHBxxpFvZEg==",
+    "@octokit/plugin-throttling@11.0.1_@octokit+core@7.0.2": {
+      "integrity": "sha512-S+EVhy52D/272L7up58dr3FNSMXWuNZolkL4zMJBNIfIxyZuUcczsQAU4b5w6dewJXnKYVgSHSV5wxitMSW1kw==",
       "dependencies": [
         "@octokit/core",
         "@octokit/types",
         "bottleneck"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/plugin-throttling/-/plugin-throttling-10.0.0.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/plugin-throttling/-/plugin-throttling-11.0.1.tgz"
     },
-    "@octokit/request-error@6.1.8": {
-      "integrity": "sha512-WEi/R0Jmq+IJKydWlKDmryPcmdYSVjL3ekaiEL1L9eo1sUnqMJ+grqmC9cjk7CA7+b2/T397tO5d8YLOH3qYpQ==",
+    "@octokit/request-error@7.0.0": {
+      "integrity": "sha512-KRA7VTGdVyJlh0cP5Tf94hTiYVVqmt2f3I6mnimmaVz4UG3gQV/k4mDJlJv3X67iX6rmN7gSHCF8ssqeMnmhZg==",
       "dependencies": [
         "@octokit/types"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/request-error/-/request-error-6.1.8.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/request-error/-/request-error-7.0.0.tgz"
     },
-    "@octokit/request@9.2.4": {
-      "integrity": "sha512-q8ybdytBmxa6KogWlNa818r0k1wlqzNC+yNkcQDECHvQo8Vmstrg18JwqJHdJdUiHD2sjlwBgSm9kHkOKe2iyA==",
+    "@octokit/request@10.0.3": {
+      "integrity": "sha512-V6jhKokg35vk098iBqp2FBKunk3kMTXlmq+PtbV9Gl3TfskWlebSofU9uunVKhUN7xl+0+i5vt0TGTG8/p/7HA==",
       "dependencies": [
         "@octokit/endpoint",
         "@octokit/request-error",
@@ -512,7 +637,7 @@
         "fast-content-type-parse",
         "universal-user-agent"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/request/-/request-9.2.4.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/request/-/request-10.0.3.tgz"
     },
     "@octokit/types@14.1.0": {
       "integrity": "sha512-1y6DgTy8Jomcpu33N+p5w58l6xyt55Ar2I91RPiIA0xCJBXyUAhXCcmZaDWSANiha7R9a6qJJ2CRomGPZ6f46g==",
@@ -521,18 +646,18 @@
       ],
       "tarball": "https://registry.npmmirror.com/@octokit/types/-/types-14.1.0.tgz"
     },
-    "@octokit/webhooks-methods@5.1.1": {
-      "integrity": "sha512-NGlEHZDseJTCj8TMMFehzwa9g7On4KJMPVHDSrHxCQumL6uSQR8wIkP/qesv52fXqV1BPf4pTxwtS31ldAt9Xg==",
-      "tarball": "https://registry.npmmirror.com/@octokit/webhooks-methods/-/webhooks-methods-5.1.1.tgz"
+    "@octokit/webhooks-methods@6.0.0": {
+      "integrity": "sha512-MFlzzoDJVw/GcbfzVC1RLR36QqkTLUf79vLVO3D+xn7r0QgxnFoLZgtrzxiQErAjFUOdH6fas2KeQJ1yr/qaXQ==",
+      "tarball": "https://registry.npmmirror.com/@octokit/webhooks-methods/-/webhooks-methods-6.0.0.tgz"
     },
-    "@octokit/webhooks@13.9.0": {
-      "integrity": "sha512-5Kva+/Gi7c+39d0/0MM/v/5RCZuwqm75fUD+t7Es3Iz/adui54GnjfNmJpkkPkXGC+5IWnEvgqwY6gstK/JlUQ==",
+    "@octokit/webhooks@14.1.0": {
+      "integrity": "sha512-X6zFa01TR6yLvgTepABozuQRAs7sDIr+M+Msk6z9RVH77RW8Lu06Q4FcH1tXVpTXR13BBrmN1Wez7LDofj46UQ==",
       "dependencies": [
         "@octokit/openapi-webhooks-types",
         "@octokit/request-error",
         "@octokit/webhooks-methods"
       ],
-      "tarball": "https://registry.npmmirror.com/@octokit/webhooks/-/webhooks-13.9.0.tgz"
+      "tarball": "https://registry.npmmirror.com/@octokit/webhooks/-/webhooks-14.1.0.tgz"
     },
     "@types/aws-lambda@8.10.150": {
       "integrity": "sha512-AX+AbjH/rH5ezX1fbK8onC/a+HyQHo7QGmvoxAE42n22OsciAxvZoZNEr22tbXs8WfP1nIsBjKDpgPm3HjOZbA==",
@@ -545,53 +670,54 @@
       ],
       "tarball": "https://registry.npmmirror.com/@types/node/-/node-22.5.4.tgz"
     },
-    "before-after-hook@3.0.2": {
-      "integrity": "sha512-Nik3Sc0ncrMK4UUdXQmAnRtzmNQTAAXmXIopizwZ1W1t8QmfJj+zL4OA2I7XPTPW5z5TDqv4hRo/JzouDJnX3A==",
-      "tarball": "https://registry.npmmirror.com/before-after-hook/-/before-after-hook-3.0.2.tgz"
+    "before-after-hook@4.0.0": {
+      "integrity": "sha512-q6tR3RPqIB1pMiTRMFcZwuG5T8vwp+vUvEG0vuI6B+Rikh5BfPp2fQ82c925FOs+b0lcFQ8CFrL+KbilfZFhOQ==",
+      "tarball": "https://registry.npmmirror.com/before-after-hook/-/before-after-hook-4.0.0.tgz"
     },
     "bottleneck@2.19.5": {
       "integrity": "sha512-VHiNCbI1lKdl44tGrhNfU3lup0Tj/ZBMJB5/2ZbNXRCPuRCO7ed2mgcK4r17y+KB2EfuYuRaVlwNbAeaWGSpbw==",
       "tarball": "https://registry.npmmirror.com/bottleneck/-/bottleneck-2.19.5.tgz"
     },
-    "esbuild@0.24.2": {
-      "integrity": "sha512-+9egpBW8I3CD5XPe0n6BfT5fxLzxrlDzqydF3aviG+9ni1lDC/OvMHcxqEFV0+LANZG5R1bFMWfUrjVsdwxJvA==",
+    "esbuild@0.25.6": {
+      "integrity": "sha512-GVuzuUwtdsghE3ocJ9Bs8PNoF13HNQ5TXbEi2AhvVb8xU1Iwt9Fos9FEamfoee+u/TOsn7GUWc04lz46n2bbTg==",
       "optionalDependencies": [
-        "@esbuild/aix-ppc64",
-        "@esbuild/android-arm",
-        "@esbuild/android-arm64",
-        "@esbuild/android-x64",
-        "@esbuild/darwin-arm64",
-        "@esbuild/darwin-x64",
-        "@esbuild/freebsd-arm64",
-        "@esbuild/freebsd-x64",
-        "@esbuild/linux-arm",
-        "@esbuild/linux-arm64",
-        "@esbuild/linux-ia32",
-        "@esbuild/linux-loong64",
-        "@esbuild/linux-mips64el",
-        "@esbuild/linux-ppc64",
-        "@esbuild/linux-riscv64",
-        "@esbuild/linux-s390x",
-        "@esbuild/linux-x64",
-        "@esbuild/netbsd-arm64",
-        "@esbuild/netbsd-x64",
-        "@esbuild/openbsd-arm64",
-        "@esbuild/openbsd-x64",
-        "@esbuild/sunos-x64",
-        "@esbuild/win32-arm64",
-        "@esbuild/win32-ia32",
-        "@esbuild/win32-x64"
+        "@esbuild/aix-ppc64@0.25.6",
+        "@esbuild/android-arm@0.25.6",
+        "@esbuild/android-arm64@0.25.6",
+        "@esbuild/android-x64@0.25.6",
+        "@esbuild/darwin-arm64@0.25.6",
+        "@esbuild/darwin-x64@0.25.6",
+        "@esbuild/freebsd-arm64@0.25.6",
+        "@esbuild/freebsd-x64@0.25.6",
+        "@esbuild/linux-arm@0.25.6",
+        "@esbuild/linux-arm64@0.25.6",
+        "@esbuild/linux-ia32@0.25.6",
+        "@esbuild/linux-loong64@0.25.6",
+        "@esbuild/linux-mips64el@0.25.6",
+        "@esbuild/linux-ppc64@0.25.6",
+        "@esbuild/linux-riscv64@0.25.6",
+        "@esbuild/linux-s390x@0.25.6",
+        "@esbuild/linux-x64@0.25.6",
+        "@esbuild/netbsd-arm64@0.25.6",
+        "@esbuild/netbsd-x64@0.25.6",
+        "@esbuild/openbsd-arm64@0.25.6",
+        "@esbuild/openbsd-x64@0.25.6",
+        "@esbuild/openharmony-arm64",
+        "@esbuild/sunos-x64@0.25.6",
+        "@esbuild/win32-arm64@0.25.6",
+        "@esbuild/win32-ia32@0.25.6",
+        "@esbuild/win32-x64@0.25.6"
       ],
       "scripts": true,
       "bin": true,
-      "tarball": "https://registry.npmmirror.com/esbuild/-/esbuild-0.24.2.tgz"
+      "tarball": "https://registry.npmmirror.com/esbuild/-/esbuild-0.25.6.tgz"
     },
-    "fast-content-type-parse@2.0.1": {
-      "integrity": "sha512-nGqtvLrj5w0naR6tDPfB4cUmYCqouzyQiz6C5y/LtcDllJdrcc6WaWW6iXyIIOErTa/XRybj28aasdn4LkVk6Q==",
-      "tarball": "https://registry.npmmirror.com/fast-content-type-parse/-/fast-content-type-parse-2.0.1.tgz"
+    "fast-content-type-parse@3.0.0": {
+      "integrity": "sha512-ZvLdcY8P+N8mGQJahJV5G4U88CSvT1rP8ApL6uETe88MBXrBHAkZlSEySdUlyztF7ccb+Znos3TFqaepHxdhBg==",
+      "tarball": "https://registry.npmmirror.com/fast-content-type-parse/-/fast-content-type-parse-3.0.0.tgz"
     },
-    "octokit@4.1.4_@octokit+core@6.1.5": {
-      "integrity": "sha512-cRvxRte6FU3vAHRC9+PMSY3D+mRAs2Rd9emMoqp70UGRvJRM3sbAoim2IXRZNNsf8wVfn4sGxVBHRAP+JBVX/g==",
+    "octokit@5.0.3_@octokit+core@7.0.2": {
+      "integrity": "sha512-+bwYsAIRmYv30NTmBysPIlgH23ekVDriB07oRxlPIAH5PI0yTMSxg5i5Xy0OetcnZw+nk/caD4szD7a9YZ3QyQ==",
       "dependencies": [
         "@octokit/app",
         "@octokit/core",
@@ -605,7 +731,7 @@
         "@octokit/types",
         "@octokit/webhooks"
       ],
-      "tarball": "https://registry.npmmirror.com/octokit/-/octokit-4.1.4.tgz"
+      "tarball": "https://registry.npmmirror.com/octokit/-/octokit-5.0.3.tgz"
     },
     "semver@6.3.1": {
       "integrity": "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==",
@@ -642,13 +768,13 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@deno/dnt@~0.41.3",
+      "jsr:@deno/dnt@~0.42.1",
       "jsr:@std/semver@^1.0.3",
       "npm:@actions/core@^1.11.1",
       "npm:@actions/exec@^1.1.1",
       "npm:@actions/tool-cache@^2.0.2",
-      "npm:esbuild@~0.24.2",
-      "npm:octokit@^4.1.4"
+      "npm:esbuild@~0.25.6",
+      "npm:octokit@^5.0.3"
     ]
   }
 }

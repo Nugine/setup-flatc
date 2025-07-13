@@ -2,10 +2,6 @@ dev:
     deno fmt
     deno lint
     deno check .
-    just test
-
-test:
-    # deno test -A
 
 bundle:
     deno run -A scripts/bundle.ts
