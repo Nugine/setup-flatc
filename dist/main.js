@@ -35,9 +35,103 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 
 // npm/script/_dnt.polyfills.js
 var require_dnt_polyfills = __commonJS({
-  "npm/script/_dnt.polyfills.js"(exports2) {
+  "npm/script/_dnt.polyfills.js"(exports2, module2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
+    exports2.import_meta_ponyfill = exports2.import_meta_ponyfill_esmodule = exports2.import_meta_ponyfill_commonjs = void 0;
+    var node_module_1 = require("node:module");
+    var node_url_1 = require("node:url");
+    var node_path_1 = require("node:path");
+    var defineGlobalPonyfill = (symbolFor, fn) => {
+      if (!Reflect.has(globalThis, Symbol.for(symbolFor))) {
+        Object.defineProperty(globalThis, Symbol.for(symbolFor), {
+          configurable: true,
+          get() {
+            return fn;
+          }
+        });
+      }
+    };
+    exports2.import_meta_ponyfill_commonjs = Reflect.get(globalThis, Symbol.for("import-meta-ponyfill-commonjs")) ?? /* @__PURE__ */ (() => {
+      const moduleImportMetaWM = /* @__PURE__ */ new WeakMap();
+      return (require2, module3) => {
+        let importMetaCache = moduleImportMetaWM.get(module3);
+        if (importMetaCache == null) {
+          const importMeta = Object.assign(/* @__PURE__ */ Object.create(null), {
+            url: (0, node_url_1.pathToFileURL)(module3.filename).href,
+            main: require2.main == module3,
+            resolve: (specifier, parentURL = importMeta.url) => {
+              return (0, node_url_1.pathToFileURL)((importMeta.url === parentURL ? require2 : (0, node_module_1.createRequire)(parentURL)).resolve(specifier)).href;
+            },
+            filename: module3.filename,
+            dirname: module3.path
+          });
+          moduleImportMetaWM.set(module3, importMeta);
+          importMetaCache = importMeta;
+        }
+        return importMetaCache;
+      };
+    })();
+    defineGlobalPonyfill("import-meta-ponyfill-commonjs", exports2.import_meta_ponyfill_commonjs);
+    exports2.import_meta_ponyfill_esmodule = Reflect.get(globalThis, Symbol.for("import-meta-ponyfill-esmodule")) ?? ((importMeta) => {
+      const resolveFunStr = String(importMeta.resolve);
+      const shimWs = /* @__PURE__ */ new WeakSet();
+      const mainUrl = ("file:///" + process.argv[1].replace(/\\/g, "/")).replace(/\/{3,}/, "///");
+      const commonShim = (importMeta2) => {
+        if (typeof importMeta2.main !== "boolean") {
+          importMeta2.main = importMeta2.url === mainUrl;
+        }
+        if (typeof importMeta2.filename !== "string") {
+          importMeta2.filename = (0, node_url_1.fileURLToPath)(importMeta2.url);
+          importMeta2.dirname = (0, node_path_1.dirname)(importMeta2.filename);
+        }
+      };
+      if (
+        // v16.2.0+, v14.18.0+: Add support for WHATWG URL object to parentURL parameter.
+        resolveFunStr === "undefined" || // v20.0.0+, v18.19.0+"" This API now returns a string synchronously instead of a Promise.
+        resolveFunStr.startsWith("async")
+      ) {
+        exports2.import_meta_ponyfill_esmodule = (importMeta2) => {
+          if (!shimWs.has(importMeta2)) {
+            shimWs.add(importMeta2);
+            const importMetaUrlRequire = {
+              url: importMeta2.url,
+              require: (0, node_module_1.createRequire)(importMeta2.url)
+            };
+            importMeta2.resolve = function resolve(specifier, parentURL = importMeta2.url) {
+              return (0, node_url_1.pathToFileURL)((importMetaUrlRequire.url === parentURL ? importMetaUrlRequire.require : (0, node_module_1.createRequire)(parentURL)).resolve(specifier)).href;
+            };
+            commonShim(importMeta2);
+          }
+          return importMeta2;
+        };
+      } else {
+        exports2.import_meta_ponyfill_esmodule = (importMeta2) => {
+          if (!shimWs.has(importMeta2)) {
+            shimWs.add(importMeta2);
+            commonShim(importMeta2);
+          }
+          return importMeta2;
+        };
+      }
+      return (0, exports2.import_meta_ponyfill_esmodule)(importMeta);
+    });
+    defineGlobalPonyfill("import-meta-ponyfill-esmodule", exports2.import_meta_ponyfill_esmodule);
+    exports2.import_meta_ponyfill = (...args) => {
+      const _MODULE = (() => {
+        if (typeof require === "function" && typeof module2 === "object") {
+          return "commonjs";
+        } else {
+          return "esmodule";
+        }
+      })();
+      if (_MODULE === "commonjs") {
+        exports2.import_meta_ponyfill = (r, m) => (0, exports2.import_meta_ponyfill_commonjs)(r, m);
+      } else {
+        exports2.import_meta_ponyfill = (im) => (0, exports2.import_meta_ponyfill_esmodule)(im);
+      }
+      return (0, exports2.import_meta_ponyfill)(...args);
+    };
   }
 });
 
@@ -23717,7 +23811,7 @@ var init_dist_bundle2 = __esm({
     init_universal_user_agent();
     import_fast_content_type_parse = __toESM(require_fast_content_type_parse(), 1);
     init_dist_src();
-    VERSION2 = "9.2.4";
+    VERSION2 = "10.0.3";
     defaults_default = {
       headers: {
         "user-agent": `octokit-request.js/${VERSION2} ${getUserAgent()}`
@@ -23895,11 +23989,26 @@ var init_dist_bundle4 = __esm({
 var VERSION4;
 var init_version = __esm({
   "npm/node_modules/@octokit/core/dist-src/version.js"() {
-    VERSION4 = "6.1.5";
+    VERSION4 = "7.0.3";
   }
 });
 
 // npm/node_modules/@octokit/core/dist-src/index.js
+function createLogger(logger = {}) {
+  if (typeof logger.debug !== "function") {
+    logger.debug = noop;
+  }
+  if (typeof logger.info !== "function") {
+    logger.info = noop;
+  }
+  if (typeof logger.warn !== "function") {
+    logger.warn = consoleWarn;
+  }
+  if (typeof logger.error !== "function") {
+    logger.error = consoleError;
+  }
+  return logger;
+}
 var noop, consoleWarn, consoleError, userAgentTrail, Octokit;
 var init_dist_src2 = __esm({
   "npm/node_modules/@octokit/core/dist-src/index.js"() {
@@ -23980,15 +24089,7 @@ var init_dist_src2 = __esm({
         }
         this.request = request.defaults(requestDefaults);
         this.graphql = withCustomRequest(this.request).defaults(requestDefaults);
-        this.log = Object.assign(
-          {
-            debug: noop,
-            info: noop,
-            warn: consoleWarn,
-            error: consoleError
-          },
-          options.log
-        );
+        this.log = createLogger(options.log);
         this.hook = hook7;
         if (!options.authStrategy) {
           if (!options.auth) {
@@ -24045,14 +24146,16 @@ function normalizePaginatedListResponse(response) {
       data: []
     };
   }
-  const responseNeedsNormalization = "total_count" in response.data && !("url" in response.data);
+  const responseNeedsNormalization = ("total_count" in response.data || "total_commits" in response.data) && !("url" in response.data);
   if (!responseNeedsNormalization) return response;
   const incompleteResults = response.data.incomplete_results;
   const repositorySelection = response.data.repository_selection;
   const totalCount = response.data.total_count;
+  const totalCommits = response.data.total_commits;
   delete response.data.incomplete_results;
   delete response.data.repository_selection;
   delete response.data.total_count;
+  delete response.data.total_commits;
   const namespaceKey = Object.keys(response.data)[0];
   const data = response.data[namespaceKey];
   response.data = data;
@@ -24063,6 +24166,7 @@ function normalizePaginatedListResponse(response) {
     response.data.repository_selection = repositorySelection;
   }
   response.data.total_count = totalCount;
+  response.data.total_commits = totalCommits;
   return response;
 }
 function iterator(octokit, route, parameters) {
@@ -24081,6 +24185,16 @@ function iterator(octokit, route, parameters) {
           url = ((normalizedResponse.headers.link || "").match(
             /<([^<>]+)>;\s*rel="next"/
           ) || [])[1];
+          if (!url && "total_commits" in normalizedResponse.data) {
+            const parsedUrl = new URL(normalizedResponse.url);
+            const params = parsedUrl.searchParams;
+            const page = parseInt(params.get("page") || "1", 10);
+            const per_page = parseInt(params.get("per_page") || "250", 10);
+            if (page * per_page < normalizedResponse.data.total_commits) {
+              params.set("page", String(page + 1));
+              url = parsedUrl.toString();
+            }
+          }
           return { value: normalizedResponse };
         } catch (error) {
           if (error.status !== 409) throw error;
@@ -24315,7 +24429,7 @@ var init_dist_bundle6 = __esm({
 var VERSION6;
 var init_version2 = __esm({
   "npm/node_modules/@octokit/plugin-rest-endpoint-methods/dist-src/version.js"() {
-    VERSION6 = "14.0.0";
+    VERSION6 = "16.0.0";
   }
 });
 
@@ -24794,6 +24908,9 @@ var init_endpoints = __esm({
         getGithubBillingUsageReportOrg: [
           "GET /organizations/{org}/settings/billing/usage"
         ],
+        getGithubBillingUsageReportUser: [
+          "GET /users/{username}/settings/billing/usage"
+        ],
         getGithubPackagesBillingOrg: ["GET /orgs/{org}/settings/billing/packages"],
         getGithubPackagesBillingUser: [
           "GET /users/{username}/settings/billing/packages"
@@ -25092,6 +25209,7 @@ var init_endpoints = __esm({
         ],
         listCopilotSeats: ["GET /orgs/{org}/copilot/billing/seats"]
       },
+      credentials: { revoke: ["POST /credentials/revoke"] },
       dependabot: {
         addSelectedRepoToOrgSecret: [
           "PUT /orgs/{org}/dependabot/secrets/{secret_name}/repositories/{repository_id}"
@@ -28224,10 +28342,8 @@ function urlBuilderAuthorize(base, options) {
   };
   let url = base;
   Object.keys(map).filter((k) => options[k] !== null).filter((k) => {
-    if (k !== "scopes")
-      return true;
-    if (options.clientType === "github-app")
-      return false;
+    if (k !== "scopes") return true;
+    if (options.clientType === "github-app") return false;
     return !Array.isArray(options[k]) || options[k].length > 0;
   }).map((key) => [map[key], `${options[key]}`]).forEach(([key, value], index) => {
     url += index === 0 ? `?` : "&";
@@ -29594,12 +29710,10 @@ function createAppAuth(options) {
       "[@octokit/auth-app] installationId is set to a falsy value"
     );
   }
-  const log = Object.assign(
-    {
-      warn: console.warn.bind(console)
-    },
-    options.log
-  );
+  const log = options.log || {};
+  if (typeof log.warn !== "function") {
+    log.warn = console.warn.bind(console);
+  }
   const request2 = options.request || request.defaults({
     headers: {
       "user-agent": `octokit-auth-app.js/${VERSION12} ${getUserAgent()}`
@@ -29661,7 +29775,7 @@ var init_dist_node = __esm({
     ];
     REGEX = routeMatcher2(PATHS);
     FIVE_SECONDS_IN_MS = 5 * 1e3;
-    VERSION12 = "7.2.1";
+    VERSION12 = "8.0.2";
   }
 });
 
@@ -30329,7 +30443,7 @@ var init_dist_node3 = __esm({
     init_dist_node2();
     init_dist_bundle9();
     init_dist_node2();
-    VERSION13 = "7.1.6";
+    VERSION13 = "8.0.1";
     OAuthAppOctokit = Octokit.defaults({
       userAgent: `octokit-oauth-app.js/${VERSION13} ${getUserAgent()}`
     });
@@ -30470,13 +30584,42 @@ var init_dist_node4 = __esm({
     import_node_crypto3 = require("node:crypto");
     import_node_crypto4 = require("node:crypto");
     import_node_buffer = require("node:buffer");
-    VERSION14 = "5.1.1";
+    VERSION14 = "6.0.0";
     sign.VERSION = VERSION14;
     verify.VERSION = VERSION14;
   }
 });
 
 // npm/node_modules/@octokit/webhooks/dist-bundle/index.js
+function validateEventName(eventName, options = {}) {
+  if (typeof eventName !== "string") {
+    throw new TypeError("eventName must be of type string");
+  }
+  if (eventName === "*") {
+    throw new TypeError(
+      `Using the "*" event with the regular Webhooks.on() function is not supported. Please use the Webhooks.onAny() method instead`
+    );
+  }
+  if (eventName === "error") {
+    throw new TypeError(
+      `Using the "error" event with the regular Webhooks.on() function is not supported. Please use the Webhooks.onError() method instead`
+    );
+  }
+  if (options.onUnknownEventName === "ignore") {
+    return;
+  }
+  if (!emitterEventNames.includes(eventName)) {
+    if (options.onUnknownEventName !== "warn") {
+      throw new TypeError(
+        `"${eventName}" is not a known webhook name (https://developer.github.com/v3/activity/events/types/)`
+      );
+    } else {
+      (options.log || console).warn(
+        `"${eventName}" is not a known webhook name (https://developer.github.com/v3/activity/events/types/)`
+      );
+    }
+  }
+}
 function handleEventHandlers(state, webhookName, handler2) {
   if (!state.hooks[webhookName]) {
     state.hooks[webhookName] = [];
@@ -30490,16 +30633,10 @@ function receiverOn(state, webhookNameOrNames, handler2) {
     );
     return;
   }
-  if (["*", "error"].includes(webhookNameOrNames)) {
-    const webhookName = webhookNameOrNames === "*" ? "any" : webhookNameOrNames;
-    const message = `Using the "${webhookNameOrNames}" event with the regular Webhooks.on() function is not supported. Please use the Webhooks.on${webhookName.charAt(0).toUpperCase() + webhookName.slice(1)}() method instead`;
-    throw new Error(message);
-  }
-  if (!emitterEventNames.includes(webhookNameOrNames)) {
-    state.log.warn(
-      `"${webhookNameOrNames}" is not a known webhook name (https://developer.github.com/v3/activity/events/types/)`
-    );
-  }
+  validateEventName(webhookNameOrNames, {
+    onUnknownEventName: "warn",
+    log: state.log
+  });
   handleEventHandlers(state, webhookNameOrNames, handler2);
 }
 function receiverOnAny(state, handler2) {
@@ -30600,7 +30737,7 @@ function removeListener(state, webhookNameOrNames, handler2) {
 function createEventHandler(options) {
   const state = {
     hooks: {},
-    log: createLogger(options && options.log)
+    log: createLogger2(options && options.log)
   };
   if (options && options.transform) {
     state.transform = options.transform;
@@ -30824,13 +30961,13 @@ function getPayloadFromRequestStream(request2) {
     request2.on("data", data.push.bind(data));
     request2.on("end", () => {
       const result = concatUint8Array(data);
-      setImmediate(resolve, result);
+      queueMicrotask(() => resolve(result));
     });
   });
 }
 function createNodeMiddleware2(webhooks2, {
   path = "/api/github/webhooks",
-  log = createLogger(),
+  log = createLogger2(),
   timeout = 9e3
 } = {}) {
   return createMiddleware({
@@ -30843,20 +30980,28 @@ function createNodeMiddleware2(webhooks2, {
     timeout
   });
 }
-var createLogger, emitterEventNames, isApplicationJsonRE, WEBHOOK_HEADERS, textDecoder, decode, Webhooks;
+var createLogger2, emitterEventNames, isApplicationJsonRE, WEBHOOK_HEADERS, textDecoder, decode, Webhooks;
 var init_dist_bundle13 = __esm({
   "npm/node_modules/@octokit/webhooks/dist-bundle/index.js"() {
     init_dist_node4();
     init_dist_node4();
-    createLogger = (logger) => ({
-      debug: () => {
-      },
-      info: () => {
-      },
-      warn: console.warn.bind(console),
-      error: console.error.bind(console),
-      ...logger
-    });
+    createLogger2 = (logger = {}) => {
+      if (typeof logger.debug !== "function") {
+        logger.debug = () => {
+        };
+      }
+      if (typeof logger.info !== "function") {
+        logger.info = () => {
+        };
+      }
+      if (typeof logger.warn !== "function") {
+        logger.warn = console.warn.bind(console);
+      }
+      if (typeof logger.error !== "function") {
+        logger.error = console.error.bind(console);
+      }
+      return logger;
+    };
     emitterEventNames = [
       "branch_protection_configuration",
       "branch_protection_configuration.disabled",
@@ -31201,7 +31346,7 @@ var init_dist_bundle13 = __esm({
           secret: options.secret,
           additionalSecrets: options.additionalSecrets,
           hooks: {},
-          log: createLogger(options.log)
+          log: createLogger2(options.log)
         };
         this.sign = sign.bind(null, options.secret);
         this.verify = verify.bind(null, options.secret);
@@ -31442,7 +31587,7 @@ var init_dist_node5 = __esm({
     init_dist_bundle5();
     init_dist_node3();
     init_dist_bundle13();
-    VERSION15 = "15.1.6";
+    VERSION15 = "16.0.1";
     App = class {
       static VERSION = VERSION15;
       static defaults(defaults) {
@@ -31744,7 +31889,7 @@ async function main() {
   core.addPath(cachedPath);
   core.info("Added cached path to environment variables");
 }
-if (require.main === module) {
+if (globalThis[Symbol.for("import-meta-ponyfill-commonjs")](require, module).main) {
   try {
     main();
   } catch (error) {
