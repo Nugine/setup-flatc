@@ -41,7 +41,7 @@ jobs:
         with:
           token: ${{ secrets.GH_ACTION_PAT }}
           commit-message: "build: auto-update dependencies and bundle"
-          title: "Auto Update"
+          title: "Auto Update - ${{ steps.set_date.outputs.date }}"
           body: This PR is created automatically by the auto-update workflow.
           branch: auto/update
           delete-branch: true
