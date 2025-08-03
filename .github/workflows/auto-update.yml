@@ -1,0 +1,47 @@
+name: Auto Update
+
+on:
+  schedule:
+    - cron: "0 0 1 * *" # at midnight on the first day of each month
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_ACTION_PAT }}
+
+      - uses: taiki-e/install-action@just
+      - uses: denoland/setup-deno@v2
+        with:
+          cache: true
+
+      - run: deno update
+      - run: just dev
+      - run: just bundle
+
+      - name: Check for changes
+        id: changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request
+        if: steps.changes.outputs.changes == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GH_ACTION_PAT }}
+          commit-message: "build: auto-update dependencies and bundle"
+          title: "Auto Update - ${{ steps.set_date.outputs.date }}"
+          body: This PR is created automatically by the auto-update workflow.
+          branch: auto/update
+          delete-branch: true
