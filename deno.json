@@ -7,9 +7,9 @@
     "@actions/core": "npm:@actions/core@^1.11.1",
     "@actions/exec": "npm:@actions/exec@^1.1.1",
     "@actions/tool-cache": "npm:@actions/tool-cache@^2.0.2",
-    "@deno/dnt": "jsr:@deno/dnt@^0.42.1",
+    "@deno/dnt": "jsr:@deno/dnt@^0.42.3",
     "@std/semver": "jsr:@std/semver@^1.0.3",
-    "esbuild": "npm:esbuild@^0.25.6",
+    "esbuild": "npm:esbuild@^0.25.8",
     "octokit": "npm:octokit@^5.0.3"
   }
 }

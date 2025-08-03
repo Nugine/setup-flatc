@@ -30761,9 +30761,9 @@ async function verifyAndReceive(state, event) {
     const error = new Error(
       "[@octokit/webhooks] signature does not match event payload and secret"
     );
-    return state.eventHandler.receive(
-      Object.assign(error, { event, status: 400 })
-    );
+    error.event = event;
+    error.status = 400;
+    return state.eventHandler.receive(error);
   }
   let payload;
   try {
@@ -30779,13 +30779,32 @@ async function verifyAndReceive(state, event) {
     payload
   });
 }
+function normalizeTrailingSlashes(path) {
+  let i = path.length;
+  if (i === 0) {
+    return "/";
+  }
+  while (i > 0) {
+    if (path.charCodeAt(--i) !== 47) {
+      break;
+    }
+  }
+  if (i === -1) {
+    return "/";
+  }
+  return path.slice(0, i + 1);
+}
 function createMiddleware(options) {
   const { handleResponse: handleResponse3, getRequestHeader: getRequestHeader3, getPayload: getPayload3 } = options;
   return function middleware2(webhooks2, options2) {
+    const middlewarePath = normalizeTrailingSlashes(options2.path);
     return async function octokitWebhooksMiddleware(request2, response, next) {
       let pathname;
       try {
-        pathname = new URL(request2.url, "http://localhost").pathname;
+        pathname = new URL(
+          normalizeTrailingSlashes(request2.url),
+          "http://localhost"
+        ).pathname;
       } catch (error) {
         return handleResponse3(
           JSON.stringify({
@@ -30798,7 +30817,7 @@ function createMiddleware(options) {
           response
         );
       }
-      if (pathname !== options2.path) {
+      if (pathname !== middlewarePath) {
         next?.();
         return handleResponse3(null);
       } else if (request2.method !== "POST") {
@@ -31760,15 +31779,25 @@ var __setModuleDefault = exports && exports.__setModuleDefault || (Object.create
 } : function(o, v) {
   o["default"] = v;
 });
-var __importStar = exports && exports.__importStar || function(mod) {
-  if (mod && mod.__esModule) return mod;
-  var result = {};
-  if (mod != null) {
-    for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-  }
-  __setModuleDefault(result, mod);
-  return result;
-};
+var __importStar = exports && exports.__importStar || /* @__PURE__ */ function() {
+  var ownKeys = function(o) {
+    ownKeys = Object.getOwnPropertyNames || function(o2) {
+      var ar = [];
+      for (var k in o2) if (Object.prototype.hasOwnProperty.call(o2, k)) ar[ar.length] = k;
+      return ar;
+    };
+    return ownKeys(o);
+  };
+  return function(mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) {
+      for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+    }
+    __setModuleDefault(result, mod);
+    return result;
+  };
+}();
 Object.defineProperty(exports, "__esModule", { value: true });
 require_dnt_polyfills();
 var core = __importStar(require_core());
