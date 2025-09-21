@@ -26,6 +26,10 @@ jobs:
       - run: just dev
       - run: just bundle
 
+      - name: Set date
+        id: set_date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
       - name: Check for changes
         id: changes
         run: |
