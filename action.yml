@@ -1,5 +1,5 @@
-name: "Setup flatc"
-description: "Setup flatc for use in actions"
+name: "Setup FlatBuffers Compiler (flatc)"
+description: "Set up FlatBuffers compiler (flatc) for GitHub Actions workflows"
 author: "Nugine"
 branding:
   icon: "arrow-down"

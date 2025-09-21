@@ -1,7 +1,7 @@
-# setup-flatc
+# Setup FlatBuffers Compiler (flatc)
 
-This action installs the [flatc](https://github.com/google/flatbuffers) compiler
-for use in your workflows.
+This GitHub Action installs the [flatc](https://github.com/google/flatbuffers) compiler
+for use in your workflows, enabling FlatBuffers schema compilation in CI/CD pipelines.
 
 ## Usage
 
