@@ -23811,7 +23811,7 @@ var init_dist_bundle2 = __esm({
     init_universal_user_agent();
     import_fast_content_type_parse = __toESM(require_fast_content_type_parse(), 1);
     init_dist_src();
-    VERSION2 = "10.0.3";
+    VERSION2 = "10.0.5";
     defaults_default = {
       headers: {
         "user-agent": `octokit-request.js/${VERSION2} ${getUserAgent()}`
@@ -23989,7 +23989,7 @@ var init_dist_bundle4 = __esm({
 var VERSION4;
 var init_version = __esm({
   "npm/node_modules/@octokit/core/dist-src/version.js"() {
-    VERSION4 = "7.0.4";
+    VERSION4 = "7.0.5";
   }
 });
 
@@ -29876,7 +29876,7 @@ var init_dist_node = __esm({
     ];
     REGEX = routeMatcher2(PATHS);
     FIVE_SECONDS_IN_MS = 5 * 1e3;
-    VERSION12 = "8.1.0";
+    VERSION12 = "8.1.1";
   }
 });
 
@@ -30544,7 +30544,7 @@ var init_dist_node3 = __esm({
     init_dist_node2();
     init_dist_bundle9();
     init_dist_node2();
-    VERSION13 = "8.0.1";
+    VERSION13 = "8.0.2";
     OAuthAppOctokit = Octokit.defaults({
       userAgent: `octokit-oauth-app.js/${VERSION13} ${getUserAgent()}`
     });
@@ -30588,7 +30588,10 @@ var init_dist_node3 = __esm({
         };
         this.on = addEventHandler.bind(null, state);
         this.octokit = octokit;
-        this.getUserOctokit = getUserOctokitWithState.bind(null, state);
+        this.getUserOctokit = getUserOctokitWithState.bind(
+          null,
+          state
+        );
         this.getWebFlowAuthorizationUrl = getWebFlowAuthorizationUrlWithState.bind(
           null,
           state
@@ -31707,7 +31710,7 @@ var init_dist_node5 = __esm({
     init_dist_bundle5();
     init_dist_node3();
     init_dist_bundle13();
-    VERSION15 = "16.1.0";
+    VERSION15 = "16.1.1";
     App = class {
       static VERSION = VERSION15;
       static defaults(defaults) {
