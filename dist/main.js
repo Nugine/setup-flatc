@@ -23815,7 +23815,7 @@ var init_dist_bundle2 = __esm({
     init_universal_user_agent();
     import_fast_content_type_parse = __toESM(require_fast_content_type_parse(), 1);
     init_dist_src();
-    VERSION2 = "10.0.5";
+    VERSION2 = "10.0.6";
     defaults_default = {
       headers: {
         "user-agent": `octokit-request.js/${VERSION2} ${getUserAgent()}`
@@ -23993,7 +23993,7 @@ var init_dist_bundle4 = __esm({
 var VERSION4;
 var init_version = __esm({
   "npm/node_modules/@octokit/core/dist-src/version.js"() {
-    VERSION4 = "7.0.5";
+    VERSION4 = "7.0.6";
   }
 });
 
@@ -24433,7 +24433,7 @@ var init_dist_bundle6 = __esm({
 var VERSION6;
 var init_version2 = __esm({
   "npm/node_modules/@octokit/plugin-rest-endpoint-methods/dist-src/version.js"() {
-    VERSION6 = "16.1.0";
+    VERSION6 = "17.0.0";
   }
 });
 
@@ -24498,6 +24498,12 @@ var init_endpoints = __esm({
         ],
         deleteArtifact: [
           "DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}"
+        ],
+        deleteCustomImageFromOrg: [
+          "DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}"
+        ],
+        deleteCustomImageVersionFromOrg: [
+          "DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}"
         ],
         deleteEnvironmentSecret: [
           "DELETE /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}"
@@ -24572,6 +24578,12 @@ var init_endpoints = __esm({
           "GET /repos/{owner}/{repo}/actions/permissions/selected-actions"
         ],
         getArtifact: ["GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}"],
+        getCustomImageForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}"
+        ],
+        getCustomImageVersionForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}"
+        ],
         getCustomOidcSubClaimForRepo: [
           "GET /repos/{owner}/{repo}/actions/oidc/customization/sub"
         ],
@@ -24651,6 +24663,12 @@ var init_endpoints = __esm({
           "GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/timing"
         ],
         listArtifactsForRepo: ["GET /repos/{owner}/{repo}/actions/artifacts"],
+        listCustomImageVersionsForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions"
+        ],
+        listCustomImagesForOrg: [
+          "GET /orgs/{org}/actions/hosted-runners/images/custom"
+        ],
         listEnvironmentSecrets: [
           "GET /repos/{owner}/{repo}/environments/{environment_name}/secrets"
         ],
@@ -24908,6 +24926,12 @@ var init_endpoints = __esm({
         getGithubActionsBillingOrg: ["GET /orgs/{org}/settings/billing/actions"],
         getGithubActionsBillingUser: [
           "GET /users/{username}/settings/billing/actions"
+        ],
+        getGithubBillingPremiumRequestUsageReportOrg: [
+          "GET /organizations/{org}/settings/billing/premium_request/usage"
+        ],
+        getGithubBillingPremiumRequestUsageReportUser: [
+          "GET /users/{username}/settings/billing/premium_request/usage"
         ],
         getGithubBillingUsageReportOrg: [
           "GET /organizations/{org}/settings/billing/usage"
@@ -25276,6 +25300,51 @@ var init_endpoints = __esm({
         exportSbom: ["GET /repos/{owner}/{repo}/dependency-graph/sbom"]
       },
       emojis: { get: ["GET /emojis"] },
+      enterpriseTeamMemberships: {
+        add: [
+          "PUT /enterprises/{enterprise}/teams/{enterprise-team}/memberships/{username}"
+        ],
+        bulkAdd: [
+          "POST /enterprises/{enterprise}/teams/{enterprise-team}/memberships/add"
+        ],
+        bulkRemove: [
+          "POST /enterprises/{enterprise}/teams/{enterprise-team}/memberships/remove"
+        ],
+        get: [
+          "GET /enterprises/{enterprise}/teams/{enterprise-team}/memberships/{username}"
+        ],
+        list: ["GET /enterprises/{enterprise}/teams/{enterprise-team}/memberships"],
+        remove: [
+          "DELETE /enterprises/{enterprise}/teams/{enterprise-team}/memberships/{username}"
+        ]
+      },
+      enterpriseTeamOrganizations: {
+        add: [
+          "PUT /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}"
+        ],
+        bulkAdd: [
+          "POST /enterprises/{enterprise}/teams/{enterprise-team}/organizations/add"
+        ],
+        bulkRemove: [
+          "POST /enterprises/{enterprise}/teams/{enterprise-team}/organizations/remove"
+        ],
+        delete: [
+          "DELETE /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}"
+        ],
+        getAssignment: [
+          "GET /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}"
+        ],
+        getAssignments: [
+          "GET /enterprises/{enterprise}/teams/{enterprise-team}/organizations"
+        ]
+      },
+      enterpriseTeams: {
+        create: ["POST /enterprises/{enterprise}/teams"],
+        delete: ["DELETE /enterprises/{enterprise}/teams/{team_slug}"],
+        get: ["GET /enterprises/{enterprise}/teams/{team_slug}"],
+        list: ["GET /enterprises/{enterprise}/teams"],
+        update: ["PATCH /enterprises/{enterprise}/teams/{team_slug}"]
+      },
       gists: {
         checkIsStarred: ["GET /gists/{gist_id}/star"],
         create: ["POST /gists"],
@@ -25545,14 +25614,34 @@ var init_endpoints = __esm({
         ],
         createInvitation: ["POST /orgs/{org}/invitations"],
         createIssueType: ["POST /orgs/{org}/issue-types"],
-        createOrUpdateCustomProperties: ["PATCH /orgs/{org}/properties/schema"],
-        createOrUpdateCustomPropertiesValuesForRepos: [
-          "PATCH /orgs/{org}/properties/values"
+        createWebhook: ["POST /orgs/{org}/hooks"],
+        customPropertiesForOrgsCreateOrUpdateOrganizationValues: [
+          "PATCH /organizations/{org}/org-properties/values"
         ],
-        createOrUpdateCustomProperty: [
+        customPropertiesForOrgsGetOrganizationValues: [
+          "GET /organizations/{org}/org-properties/values"
+        ],
+        customPropertiesForReposCreateOrUpdateOrganizationDefinition: [
           "PUT /orgs/{org}/properties/schema/{custom_property_name}"
         ],
-        createWebhook: ["POST /orgs/{org}/hooks"],
+        customPropertiesForReposCreateOrUpdateOrganizationDefinitions: [
+          "PATCH /orgs/{org}/properties/schema"
+        ],
+        customPropertiesForReposCreateOrUpdateOrganizationValues: [
+          "PATCH /orgs/{org}/properties/values"
+        ],
+        customPropertiesForReposDeleteOrganizationDefinition: [
+          "DELETE /orgs/{org}/properties/schema/{custom_property_name}"
+        ],
+        customPropertiesForReposGetOrganizationDefinition: [
+          "GET /orgs/{org}/properties/schema/{custom_property_name}"
+        ],
+        customPropertiesForReposGetOrganizationDefinitions: [
+          "GET /orgs/{org}/properties/schema"
+        ],
+        customPropertiesForReposGetOrganizationValues: [
+          "GET /orgs/{org}/properties/values"
+        ],
         delete: ["DELETE /orgs/{org}"],
         deleteAttestationsBulk: ["POST /orgs/{org}/attestations/delete-request"],
         deleteAttestationsById: [
@@ -25563,10 +25652,18 @@ var init_endpoints = __esm({
         ],
         deleteIssueType: ["DELETE /orgs/{org}/issue-types/{issue_type_id}"],
         deleteWebhook: ["DELETE /orgs/{org}/hooks/{hook_id}"],
+        disableSelectedRepositoryImmutableReleasesOrganization: [
+          "DELETE /orgs/{org}/settings/immutable-releases/repositories/{repository_id}"
+        ],
+        enableSelectedRepositoryImmutableReleasesOrganization: [
+          "PUT /orgs/{org}/settings/immutable-releases/repositories/{repository_id}"
+        ],
         get: ["GET /orgs/{org}"],
-        getAllCustomProperties: ["GET /orgs/{org}/properties/schema"],
-        getCustomProperty: [
-          "GET /orgs/{org}/properties/schema/{custom_property_name}"
+        getImmutableReleasesSettings: [
+          "GET /orgs/{org}/settings/immutable-releases"
+        ],
+        getImmutableReleasesSettingsRepositories: [
+          "GET /orgs/{org}/settings/immutable-releases/repositories"
         ],
         getMembershipForAuthenticatedUser: ["GET /user/memberships/orgs/{org}"],
         getMembershipForUser: ["GET /orgs/{org}/memberships/{username}"],
@@ -25585,12 +25682,12 @@ var init_endpoints = __esm({
         listArtifactStorageRecords: [
           "GET /orgs/{org}/artifacts/{subject_digest}/metadata/storage-records"
         ],
+        listAttestationRepositories: ["GET /orgs/{org}/attestations/repositories"],
         listAttestations: ["GET /orgs/{org}/attestations/{subject_digest}"],
         listAttestationsBulk: [
           "POST /orgs/{org}/attestations/bulk-list{?per_page,before,after}"
         ],
         listBlockedUsers: ["GET /orgs/{org}/blocks"],
-        listCustomPropertiesValuesForRepos: ["GET /orgs/{org}/properties/values"],
         listFailedInvitations: ["GET /orgs/{org}/failed_invitations"],
         listForAuthenticatedUser: ["GET /user/orgs"],
         listForUser: ["GET /users/{username}/orgs"],
@@ -25628,9 +25725,6 @@ var init_endpoints = __esm({
         redeliverWebhookDelivery: [
           "POST /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}/attempts"
         ],
-        removeCustomProperty: [
-          "DELETE /orgs/{org}/properties/schema/{custom_property_name}"
-        ],
         removeMember: ["DELETE /orgs/{org}/members/{username}"],
         removeMembershipForUser: ["DELETE /orgs/{org}/memberships/{username}"],
         removeOutsideCollaborator: [
@@ -25663,6 +25757,12 @@ var init_endpoints = __esm({
         ],
         revokeOrgRoleUser: [
           "DELETE /orgs/{org}/organization-roles/users/{username}/{role_id}"
+        ],
+        setImmutableReleasesSettings: [
+          "PUT /orgs/{org}/settings/immutable-releases"
+        ],
+        setImmutableReleasesSettingsRepositories: [
+          "PUT /orgs/{org}/settings/immutable-releases/repositories"
         ],
         setMembershipForUser: ["PUT /orgs/{org}/memberships/{username}"],
         setPublicMembershipForAuthenticatedUser: [
@@ -25785,40 +25885,42 @@ var init_endpoints = __esm({
       },
       projects: {
         addItemForOrg: ["POST /orgs/{org}/projectsV2/{project_number}/items"],
-        addItemForUser: ["POST /users/{user_id}/projectsV2/{project_number}/items"],
+        addItemForUser: [
+          "POST /users/{username}/projectsV2/{project_number}/items"
+        ],
         deleteItemForOrg: [
           "DELETE /orgs/{org}/projectsV2/{project_number}/items/{item_id}"
         ],
         deleteItemForUser: [
-          "DELETE /users/{user_id}/projectsV2/{project_number}/items/{item_id}"
+          "DELETE /users/{username}/projectsV2/{project_number}/items/{item_id}"
         ],
         getFieldForOrg: [
           "GET /orgs/{org}/projectsV2/{project_number}/fields/{field_id}"
         ],
         getFieldForUser: [
-          "GET /users/{user_id}/projectsV2/{project_number}/fields/{field_id}"
+          "GET /users/{username}/projectsV2/{project_number}/fields/{field_id}"
         ],
         getForOrg: ["GET /orgs/{org}/projectsV2/{project_number}"],
-        getForUser: ["GET /users/{user_id}/projectsV2/{project_number}"],
+        getForUser: ["GET /users/{username}/projectsV2/{project_number}"],
         getOrgItem: ["GET /orgs/{org}/projectsV2/{project_number}/items/{item_id}"],
         getUserItem: [
-          "GET /users/{user_id}/projectsV2/{project_number}/items/{item_id}"
+          "GET /users/{username}/projectsV2/{project_number}/items/{item_id}"
         ],
         listFieldsForOrg: ["GET /orgs/{org}/projectsV2/{project_number}/fields"],
         listFieldsForUser: [
-          "GET /users/{user_id}/projectsV2/{project_number}/fields"
+          "GET /users/{username}/projectsV2/{project_number}/fields"
         ],
         listForOrg: ["GET /orgs/{org}/projectsV2"],
         listForUser: ["GET /users/{username}/projectsV2"],
         listItemsForOrg: ["GET /orgs/{org}/projectsV2/{project_number}/items"],
         listItemsForUser: [
-          "GET /users/{user_id}/projectsV2/{project_number}/items"
+          "GET /users/{username}/projectsV2/{project_number}/items"
         ],
         updateItemForOrg: [
           "PATCH /orgs/{org}/projectsV2/{project_number}/items/{item_id}"
         ],
         updateItemForUser: [
-          "PATCH /users/{user_id}/projectsV2/{project_number}/items/{item_id}"
+          "PATCH /users/{username}/projectsV2/{project_number}/items/{item_id}"
         ]
       },
       pulls: {
@@ -25981,6 +26083,7 @@ var init_endpoints = __esm({
           "GET /repos/{owner}/{repo}/automated-security-fixes"
         ],
         checkCollaborator: ["GET /repos/{owner}/{repo}/collaborators/{username}"],
+        checkImmutableReleases: ["GET /repos/{owner}/{repo}/immutable-releases"],
         checkPrivateVulnerabilityReporting: [
           "GET /repos/{owner}/{repo}/private-vulnerability-reporting"
         ],
@@ -26016,9 +26119,6 @@ var init_endpoints = __esm({
         createForAuthenticatedUser: ["POST /user/repos"],
         createFork: ["POST /repos/{owner}/{repo}/forks"],
         createInOrg: ["POST /orgs/{org}/repos"],
-        createOrUpdateCustomPropertiesValues: [
-          "PATCH /repos/{owner}/{repo}/properties/values"
-        ],
         createOrUpdateEnvironment: [
           "PUT /repos/{owner}/{repo}/environments/{environment_name}"
         ],
@@ -26032,6 +26132,12 @@ var init_endpoints = __esm({
           "POST /repos/{template_owner}/{template_repo}/generate"
         ],
         createWebhook: ["POST /repos/{owner}/{repo}/hooks"],
+        customPropertiesForReposCreateOrUpdateRepositoryValues: [
+          "PATCH /repos/{owner}/{repo}/properties/values"
+        ],
+        customPropertiesForReposGetRepositoryValues: [
+          "GET /repos/{owner}/{repo}/properties/values"
+        ],
         declineInvitation: [
           "DELETE /user/repository_invitations/{invitation_id}",
           {},
@@ -26086,6 +26192,9 @@ var init_endpoints = __esm({
         disableDeploymentProtectionRule: [
           "DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}"
         ],
+        disableImmutableReleases: [
+          "DELETE /repos/{owner}/{repo}/immutable-releases"
+        ],
         disablePrivateVulnerabilityReporting: [
           "DELETE /repos/{owner}/{repo}/private-vulnerability-reporting"
         ],
@@ -26102,6 +26211,7 @@ var init_endpoints = __esm({
         enableAutomatedSecurityFixes: [
           "PUT /repos/{owner}/{repo}/automated-security-fixes"
         ],
+        enableImmutableReleases: ["PUT /repos/{owner}/{repo}/immutable-releases"],
         enablePrivateVulnerabilityReporting: [
           "PUT /repos/{owner}/{repo}/private-vulnerability-reporting"
         ],
@@ -26153,7 +26263,6 @@ var init_endpoints = __esm({
         getCustomDeploymentProtectionRule: [
           "GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}"
         ],
-        getCustomPropertiesValues: ["GET /repos/{owner}/{repo}/properties/values"],
         getDeployKey: ["GET /repos/{owner}/{repo}/keys/{key_id}"],
         getDeployment: ["GET /repos/{owner}/{repo}/deployments/{deployment_id}"],
         getDeploymentBranchPolicy: [
@@ -26371,13 +26480,7 @@ var init_endpoints = __esm({
       search: {
         code: ["GET /search/code"],
         commits: ["GET /search/commits"],
-        issuesAndPullRequests: [
-          "GET /search/issues",
-          {},
-          {
-            deprecated: "octokit.rest.search.issuesAndPullRequests() is deprecated, see https://docs.github.com/rest/search/search#search-issues-and-pull-requests"
-          }
-        ],
+        issuesAndPullRequests: ["GET /search/issues"],
         labels: ["GET /search/labels"],
         repos: ["GET /search/repositories"],
         topics: ["GET /search/topics"],
@@ -26391,9 +26494,6 @@ var init_endpoints = __esm({
           "GET /repos/{owner}/{repo}/secret-scanning/alerts/{alert_number}"
         ],
         getScanHistory: ["GET /repos/{owner}/{repo}/secret-scanning/scan-history"],
-        listAlertsForEnterprise: [
-          "GET /enterprises/{enterprise}/secret-scanning/alerts"
-        ],
         listAlertsForOrg: ["GET /orgs/{org}/secret-scanning/alerts"],
         listAlertsForRepo: ["GET /repos/{owner}/{repo}/secret-scanning/alerts"],
         listLocationsForAlert: [
@@ -29880,7 +29980,7 @@ var init_dist_node = __esm({
     ];
     REGEX = routeMatcher2(PATHS);
     FIVE_SECONDS_IN_MS = 5 * 1e3;
-    VERSION12 = "8.1.1";
+    VERSION12 = "8.1.2";
   }
 });
 
@@ -31714,7 +31814,7 @@ var init_dist_node5 = __esm({
     init_dist_bundle5();
     init_dist_node3();
     init_dist_bundle13();
-    VERSION15 = "16.1.1";
+    VERSION15 = "16.1.2";
     App = class {
       static VERSION = VERSION15;
       static defaults(defaults) {
@@ -32053,4 +32153,7 @@ toad-cache/dist/toad-cache.mjs:
    * @license MIT
    * @version 3.7.0
    *)
+
+octokit/dist-bundle/index.js:
+  (* v8 ignore next no need to test internals of the throttle plugin -- @preserve *)
 */
