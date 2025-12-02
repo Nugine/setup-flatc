@@ -9319,7 +9319,7 @@ var require_readable = __commonJS({
     var kBody = Symbol("kBody");
     var kAbort = Symbol("abort");
     var kContentType = Symbol("kContentType");
-    var noop4 = () => {
+    var noop5 = () => {
     };
     module2.exports = class BodyReadable extends Readable {
       constructor({
@@ -9441,7 +9441,7 @@ var require_readable = __commonJS({
         return new Promise((resolve, reject) => {
           const signalListenerCleanup = signal ? util.addAbortListener(signal, () => {
             this.destroy();
-          }) : noop4;
+          }) : noop5;
           this.on("close", function() {
             signalListenerCleanup();
             if (signal && signal.aborted) {
@@ -9449,7 +9449,7 @@ var require_readable = __commonJS({
             } else {
               resolve(null);
             }
-          }).on("error", noop4).on("data", function(chunk) {
+          }).on("error", noop5).on("data", function(chunk) {
             limit -= chunk.length;
             if (limit <= 0) {
               this.destroy();
@@ -21863,9 +21863,9 @@ var require_tool_cache = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/_shared.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/_shared.js
 var require_shared = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/_shared.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/_shared.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.MAX_LENGTH = exports2.COMPARATOR_REGEXP = exports2.OPERATOR_XRANGE_REGEXP = exports2.XRANGE = exports2.FULL_REGEXP = void 0;
@@ -21961,9 +21961,9 @@ var require_shared = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/compare.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/compare.js
 var require_compare = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/compare.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/compare.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.compare = compare;
@@ -21976,9 +21976,9 @@ var require_compare = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/difference.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/difference.js
 var require_difference = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/difference.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/difference.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.difference = difference;
@@ -22001,9 +22001,9 @@ var require_difference = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/format.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/format.js
 var require_format = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/format.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/format.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.format = format;
@@ -22023,9 +22023,9 @@ var require_format = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/_test_comparator_set.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/_test_comparator_set.js
 var require_test_comparator_set = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/_test_comparator_set.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/_test_comparator_set.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.testComparatorSet = testComparatorSet;
@@ -22060,32 +22060,29 @@ var require_test_comparator_set = __commonJS({
     }
     function testComparatorSet(version, set3) {
       for (const comparator of set3) {
-        if (!testComparator(version, comparator)) {
+        if (!testComparator(version, comparator))
           return false;
+      }
+      if (!version.prerelease?.length)
+        return true;
+      for (const comparator of set3) {
+        if ((0, _shared_js_1.isWildcardComparator)(comparator))
+          continue;
+        if (!comparator.prerelease?.length)
+          continue;
+        const { major, minor, patch } = comparator;
+        if (version.major === major && version.minor === minor && version.patch === patch) {
+          return true;
         }
       }
-      if (version.prerelease && version.prerelease.length > 0) {
-        for (const comparator of set3) {
-          if ((0, _shared_js_1.isWildcardComparator)(comparator)) {
-            continue;
-          }
-          const { major, minor, patch, prerelease } = comparator;
-          if (prerelease && prerelease.length > 0) {
-            if (version.major === major && version.minor === minor && version.patch === patch) {
-              return true;
-            }
-          }
-        }
-        return false;
-      }
-      return true;
+      return false;
     }
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/satisfies.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/satisfies.js
 var require_satisfies = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/satisfies.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/satisfies.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.satisfies = satisfies;
@@ -22096,9 +22093,9 @@ var require_satisfies = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/increment.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/increment.js
 var require_increment = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/increment.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/increment.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.increment = increment;
@@ -22218,9 +22215,9 @@ var require_increment = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/_constants.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/_constants.js
 var require_constants6 = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/_constants.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/_constants.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.OPERATORS = exports2.ALL = exports2.ANY = void 0;
@@ -22247,9 +22244,9 @@ var require_constants6 = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/is_semver.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/is_semver.js
 var require_is_semver = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/is_semver.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/is_semver.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isSemVer = isSemVer;
@@ -22270,9 +22267,9 @@ var require_is_semver = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/greater_than.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/greater_than.js
 var require_greater_than = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/greater_than.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/greater_than.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.greaterThan = greaterThan;
@@ -22283,9 +22280,9 @@ var require_greater_than = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/max_satisfying.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/max_satisfying.js
 var require_max_satisfying = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/max_satisfying.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/max_satisfying.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.maxSatisfying = maxSatisfying;
@@ -22303,9 +22300,9 @@ var require_max_satisfying = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/less_than.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/less_than.js
 var require_less_than = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/less_than.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/less_than.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.lessThan = lessThan;
@@ -22316,9 +22313,9 @@ var require_less_than = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/min_satisfying.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/min_satisfying.js
 var require_min_satisfying = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/min_satisfying.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/min_satisfying.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.minSatisfying = minSatisfying;
@@ -22336,9 +22333,9 @@ var require_min_satisfying = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/parse_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/parse_range.js
 var require_parse_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/parse_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/parse_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.parseRange = parseRange;
@@ -22668,9 +22665,9 @@ var require_parse_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/parse.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/parse.js
 var require_parse2 = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/parse.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/parse.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.parse = parse2;
@@ -22697,9 +22694,9 @@ var require_parse2 = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/range_intersects.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/range_intersects.js
 var require_range_intersects = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/range_intersects.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/range_intersects.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.rangeIntersects = rangeIntersects;
@@ -22756,17 +22753,17 @@ var require_range_intersects = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/types.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/types.js
 var require_types = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/types.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/types.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/try_parse_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/try_parse_range.js
 var require_try_parse_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/try_parse_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/try_parse_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.tryParseRange = tryParseRange;
@@ -22781,9 +22778,9 @@ var require_try_parse_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/is_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/is_range.js
 var require_is_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/is_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/is_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.isRange = isRange;
@@ -22804,9 +22801,9 @@ var require_is_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/can_parse.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/can_parse.js
 var require_can_parse = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/can_parse.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/can_parse.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.canParse = canParse;
@@ -22822,9 +22819,9 @@ var require_can_parse = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/try_parse.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/try_parse.js
 var require_try_parse = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/try_parse.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/try_parse.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.tryParse = tryParse;
@@ -22839,9 +22836,9 @@ var require_try_parse = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/format_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/format_range.js
 var require_format_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/format_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/format_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.formatRange = formatRange;
@@ -22857,9 +22854,9 @@ var require_format_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/equals.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/equals.js
 var require_equals = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/equals.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/equals.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.equals = equals;
@@ -22870,9 +22867,9 @@ var require_equals = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/not_equals.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/not_equals.js
 var require_not_equals = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/not_equals.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/not_equals.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.notEquals = notEquals;
@@ -22883,9 +22880,9 @@ var require_not_equals = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/greater_than_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/greater_than_range.js
 var require_greater_than_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/greater_than_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/greater_than_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.greaterThanRange = greaterThanRange;
@@ -22925,9 +22922,9 @@ var require_greater_than_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/greater_or_equal.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/greater_or_equal.js
 var require_greater_or_equal = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/greater_or_equal.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/greater_or_equal.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.greaterOrEqual = greaterOrEqual;
@@ -22938,9 +22935,9 @@ var require_greater_or_equal = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/less_than_range.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/less_than_range.js
 var require_less_than_range = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/less_than_range.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/less_than_range.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.lessThanRange = lessThanRange;
@@ -22980,9 +22977,9 @@ var require_less_than_range = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/less_or_equal.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/less_or_equal.js
 var require_less_or_equal = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/less_or_equal.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/less_or_equal.js"(exports2) {
     "use strict";
     Object.defineProperty(exports2, "__esModule", { value: true });
     exports2.lessOrEqual = lessOrEqual;
@@ -22993,9 +22990,9 @@ var require_less_or_equal = __commonJS({
   }
 });
 
-// npm/script/deps/jsr.io/@std/semver/1.0.6/mod.js
+// npm/script/deps/jsr.io/@std/semver/1.0.7/mod.js
 var require_mod = __commonJS({
-  "npm/script/deps/jsr.io/@std/semver/1.0.6/mod.js"(exports2) {
+  "npm/script/deps/jsr.io/@std/semver/1.0.7/mod.js"(exports2) {
     "use strict";
     var __createBinding2 = exports2 && exports2.__createBinding || (Object.create ? (function(o, m, k, k2) {
       if (k2 === void 0) k2 = k;
@@ -23617,7 +23614,7 @@ var init_dist_src = __esm({
        */
       response;
       constructor(message, statusCode, options) {
-        super(message);
+        super(message, { cause: options.cause });
         this.name = "HttpError";
         this.status = Number.parseInt(statusCode);
         if (Number.isNaN(this.status)) {
@@ -23752,7 +23749,7 @@ async function fetchWrapper(requestOptions) {
 async function getResponseData(response) {
   const contentType = response.headers.get("content-type");
   if (!contentType) {
-    return response.text().catch(() => "");
+    return response.text().catch(noop);
   }
   const mimetype = (0, import_fast_content_type_parse.safeParse)(contentType);
   if (isJSONResponse(mimetype)) {
@@ -23764,9 +23761,12 @@ async function getResponseData(response) {
       return text;
     }
   } else if (mimetype.type.startsWith("text/") || mimetype.parameters.charset?.toLowerCase() === "utf-8") {
-    return response.text().catch(() => "");
+    return response.text().catch(noop);
   } else {
-    return response.arrayBuffer().catch(() => new ArrayBuffer(0));
+    return response.arrayBuffer().catch(
+      /* v8 ignore next -- @preserve */
+      () => new ArrayBuffer(0)
+    );
   }
 }
 function isJSONResponse(mimetype) {
@@ -23808,19 +23808,20 @@ function withDefaults2(oldEndpoint, newDefaults) {
     defaults: withDefaults2.bind(null, endpoint2)
   });
 }
-var import_fast_content_type_parse, VERSION2, defaults_default, request;
+var import_fast_content_type_parse, VERSION2, defaults_default, noop, request;
 var init_dist_bundle2 = __esm({
   "npm/node_modules/@octokit/request/dist-bundle/index.js"() {
     init_dist_bundle();
     init_universal_user_agent();
     import_fast_content_type_parse = __toESM(require_fast_content_type_parse(), 1);
     init_dist_src();
-    VERSION2 = "10.0.6";
+    VERSION2 = "10.0.7";
     defaults_default = {
       headers: {
         "user-agent": `octokit-request.js/${VERSION2} ${getUserAgent()}`
       }
     };
+    noop = () => "";
     request = withDefaults2(endpoint, defaults_default);
   }
 });
@@ -24000,10 +24001,10 @@ var init_version = __esm({
 // npm/node_modules/@octokit/core/dist-src/index.js
 function createLogger(logger = {}) {
   if (typeof logger.debug !== "function") {
-    logger.debug = noop;
+    logger.debug = noop2;
   }
   if (typeof logger.info !== "function") {
-    logger.info = noop;
+    logger.info = noop2;
   }
   if (typeof logger.warn !== "function") {
     logger.warn = consoleWarn;
@@ -24013,7 +24014,7 @@ function createLogger(logger = {}) {
   }
   return logger;
 }
-var noop, consoleWarn, consoleError, userAgentTrail, Octokit;
+var noop2, consoleWarn, consoleError, userAgentTrail, Octokit;
 var init_dist_src2 = __esm({
   "npm/node_modules/@octokit/core/dist-src/index.js"() {
     init_universal_user_agent();
@@ -24022,7 +24023,7 @@ var init_dist_src2 = __esm({
     init_dist_bundle3();
     init_dist_bundle4();
     init_version();
-    noop = () => {
+    noop2 = () => {
     };
     consoleWarn = console.warn.bind(console);
     consoleError = console.error.bind(console);
@@ -28297,13 +28298,13 @@ async function doRequest(state, request2, options) {
     jobOptions.expiration = 1e3 * 60;
   }
   if (isWrite || isGraphQL) {
-    await state.write.key(state.id).schedule(jobOptions, noop2);
+    await state.write.key(state.id).schedule(jobOptions, noop3);
   }
   if (isWrite && state.triggersNotification(pathname)) {
-    await state.notifications.key(state.id).schedule(jobOptions, noop2);
+    await state.notifications.key(state.id).schedule(jobOptions, noop3);
   }
   if (isSearch) {
-    await state.search.key(state.id).schedule(jobOptions, noop2);
+    await state.search.key(state.id).schedule(jobOptions, noop3);
   }
   const req = (isAuth ? state.auth : state.global).key(state.id).schedule(jobOptions, request2, options);
   if (isGraphQL) {
@@ -28437,12 +28438,12 @@ function throttling(octokit, octokitOptions) {
   octokit.hook.wrap("request", wrapRequest2.bind(null, state));
   return {};
 }
-var import_light2, VERSION8, noop2, triggers_notification_paths_default, regex, triggersNotification, groups, createGroups;
+var import_light2, VERSION8, noop3, triggers_notification_paths_default, regex, triggersNotification, groups, createGroups;
 var init_dist_bundle8 = __esm({
   "npm/node_modules/@octokit/plugin-throttling/dist-bundle/index.js"() {
     import_light2 = __toESM(require_light(), 1);
     VERSION8 = "0.0.0-development";
-    noop2 = () => Promise.resolve();
+    noop3 = () => Promise.resolve();
     triggers_notification_paths_default = [
       "/orgs/{org}/invitations",
       "/orgs/{org}/invitations/{invitation_id}",
@@ -31753,13 +31754,13 @@ async function getInstallationUrlBase(app) {
   }
   return `${appInfo.html_url}/installations/new`;
 }
-function noop3() {
+function noop4() {
 }
 function createNodeMiddleware3(app, options = {}) {
   const log = Object.assign(
     {
-      debug: noop3,
-      info: noop3,
+      debug: noop4,
+      info: noop4,
       warn: console.warn.bind(console),
       error: console.error.bind(console)
     },
@@ -32144,6 +32145,13 @@ undici/lib/fetch/body.js:
 
 undici/lib/websocket/frame.js:
   (*! ws. MIT License. Einar Otto Stangvik <einaros@gmail.com> *)
+
+@octokit/request-error/dist-src/index.js:
+  (* v8 ignore else -- @preserve -- Bug with vitest coverage where it sees an else branch that doesn't exist *)
+
+@octokit/request/dist-bundle/index.js:
+  (* v8 ignore next -- @preserve *)
+  (* v8 ignore else -- @preserve *)
 
 toad-cache/dist/toad-cache.mjs:
   (**
