@@ -46,7 +46,7 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-latest
-          - macos-13
+          - macos-15-intel
           - windows-latest
         version:
           - "24.12.23"
@@ -74,7 +74,7 @@ jobs:
           - ubuntu-latest
           - ubuntu-24.04-arm
           - macos-latest
-          - macos-13
+          - macos-15-intel
           - windows-latest
         version:
           - ["24.*", "24.12.23"]
