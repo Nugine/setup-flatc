@@ -8,7 +8,7 @@
     "jsr:@std/internal@^1.0.9": "1.0.9",
     "jsr:@std/path@1": "1.1.1",
     "jsr:@std/path@^1.1.1": "1.1.1",
-    "jsr:@std/semver@^1.0.7": "1.0.7",
+    "jsr:@std/semver@^1.0.8": "1.0.8",
     "jsr:@ts-morph/bootstrap@0.27": "0.27.0",
     "jsr:@ts-morph/common@0.27": "0.27.0",
     "npm:@actions/core@^1.11.1": "1.11.1",
@@ -51,8 +51,8 @@
         "jsr:@std/internal"
       ]
     },
-    "@std/semver@1.0.7": {
-      "integrity": "7d5f65391762dc4358abde80fc3354086ddb40101f140295e60f290c138887d0"
+    "@std/semver@1.0.8": {
+      "integrity": "dc830e8b8b6a380c895d53fbfd1258dc253704ca57bbe1629ac65fd7830179b7"
     },
     "@ts-morph/bootstrap@0.27.0": {
       "integrity": "b8d7bc8f7942ce853dde4161b28f9aa96769cef3d8eebafb379a81800b9e2448",
@@ -523,7 +523,7 @@
   "workspace": {
     "dependencies": [
       "jsr:@deno/dnt@~0.42.3",
-      "jsr:@std/semver@^1.0.7",
+      "jsr:@std/semver@^1.0.8",
       "npm:@actions/core@^1.11.1",
       "npm:@actions/exec@^1.1.1",
       "npm:@actions/tool-cache@^2.0.2",
