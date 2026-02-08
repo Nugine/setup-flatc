@@ -29808,6 +29808,8 @@ function requiresAppAuth(url) {
 }
 function isNotTimeSkewError(error) {
   return !(error.message.match(
+    /'Expiration time' claim \('exp'\) is too far in the future/
+  ) || error.message.match(
     /'Expiration time' claim \('exp'\) must be a numeric value representing the future time at which the assertion expires/
   ) || error.message.match(
     /'Issued at' claim \('iat'\) must be an Integer representing the time that the assertion was issued/
@@ -29967,11 +29969,12 @@ var init_dist_node = __esm({
       "/marketplace_listing/stubbed/plans/{plan_id}/accounts",
       "/orgs/{org}/installation",
       "/repos/{owner}/{repo}/installation",
-      "/users/{username}/installation"
+      "/users/{username}/installation",
+      "/enterprises/{enterprise}/installation"
     ];
     REGEX = routeMatcher2(PATHS);
     FIVE_SECONDS_IN_MS = 5 * 1e3;
-    VERSION12 = "8.1.2";
+    VERSION12 = "8.2.0";
   }
 });
 
