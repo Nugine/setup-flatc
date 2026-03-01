@@ -23291,7 +23291,7 @@ function isKeyOperator(operator) {
 function getValues(context, operator, key, modifier) {
   var value = context[key], result = [];
   if (isDefined(value) && value !== "") {
-    if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    if (typeof value === "string" || typeof value === "number" || typeof value === "bigint" || typeof value === "boolean") {
       value = value.toString();
       if (modifier && modifier !== "*") {
         value = value.substring(0, parseInt(modifier, 10));
@@ -23585,6 +23585,97 @@ var require_fast_content_type_parse = __commonJS({
   }
 });
 
+// npm/node_modules/json-with-bigint/json-with-bigint.js
+var intRegex, noiseValue, originalStringify, originalParse, customFormat, bigIntsStringify, noiseStringify, JSONStringify, isContextSourceSupported, convertMarkedBigIntsReviver, JSONParseV2, MAX_INT, MAX_DIGITS, stringsOrLargeNumbers, noiseValueWithQuotes, JSONParse;
+var init_json_with_bigint = __esm({
+  "npm/node_modules/json-with-bigint/json-with-bigint.js"() {
+    intRegex = /^-?\d+$/;
+    noiseValue = /^-?\d+n+$/;
+    originalStringify = JSON.stringify;
+    originalParse = JSON.parse;
+    customFormat = /^-?\d+n$/;
+    bigIntsStringify = /([\[:])?"(-?\d+)n"($|([\\n]|\s)*(\s|[\\n])*[,\}\]])/g;
+    noiseStringify = /([\[:])?("-?\d+n+)n("$|"([\\n]|\s)*(\s|[\\n])*[,\}\]])/g;
+    JSONStringify = (value, replacer, space) => {
+      if ("rawJSON" in JSON) {
+        return originalStringify(
+          value,
+          (key, value2) => {
+            if (typeof value2 === "bigint") return JSON.rawJSON(value2.toString());
+            if (typeof replacer === "function") return replacer(key, value2);
+            if (Array.isArray(replacer) && replacer.includes(key)) return value2;
+            return value2;
+          },
+          space
+        );
+      }
+      if (!value) return originalStringify(value, replacer, space);
+      const convertedToCustomJSON = originalStringify(
+        value,
+        (key, value2) => {
+          const isNoise = typeof value2 === "string" && Boolean(value2.match(noiseValue));
+          if (isNoise) return value2.toString() + "n";
+          if (typeof value2 === "bigint") return value2.toString() + "n";
+          if (typeof replacer === "function") return replacer(key, value2);
+          if (Array.isArray(replacer) && replacer.includes(key)) return value2;
+          return value2;
+        },
+        space
+      );
+      const processedJSON = convertedToCustomJSON.replace(
+        bigIntsStringify,
+        "$1$2$3"
+      );
+      const denoisedJSON = processedJSON.replace(noiseStringify, "$1$2$3");
+      return denoisedJSON;
+    };
+    isContextSourceSupported = () => JSON.parse("1", (_, __, context) => !!context && context.source === "1");
+    convertMarkedBigIntsReviver = (key, value, context, userReviver) => {
+      const isCustomFormatBigInt = typeof value === "string" && value.match(customFormat);
+      if (isCustomFormatBigInt) return BigInt(value.slice(0, -1));
+      const isNoiseValue = typeof value === "string" && value.match(noiseValue);
+      if (isNoiseValue) return value.slice(0, -1);
+      if (typeof userReviver !== "function") return value;
+      return userReviver(key, value, context);
+    };
+    JSONParseV2 = (text, reviver) => {
+      return JSON.parse(text, (key, value, context) => {
+        const isBigNumber = typeof value === "number" && (value > Number.MAX_SAFE_INTEGER || value < Number.MIN_SAFE_INTEGER);
+        const isInt = context && intRegex.test(context.source);
+        const isBigInt = isBigNumber && isInt;
+        if (isBigInt) return BigInt(context.source);
+        if (typeof reviver !== "function") return value;
+        return reviver(key, value, context);
+      });
+    };
+    MAX_INT = Number.MAX_SAFE_INTEGER.toString();
+    MAX_DIGITS = MAX_INT.length;
+    stringsOrLargeNumbers = /"(?:\\.|[^"])*"|-?(0|[1-9][0-9]*)(\.[0-9]+)?([eE][+-]?[0-9]+)?/g;
+    noiseValueWithQuotes = /^"-?\d+n+"$/;
+    JSONParse = (text, reviver) => {
+      if (!text) return originalParse(text, reviver);
+      if (isContextSourceSupported()) return JSONParseV2(text, reviver);
+      const serializedData = text.replace(
+        stringsOrLargeNumbers,
+        (text2, digits, fractional, exponential) => {
+          const isString = text2[0] === '"';
+          const isNoise = isString && Boolean(text2.match(noiseValueWithQuotes));
+          if (isNoise) return text2.substring(0, text2.length - 1) + 'n"';
+          const isFractionalOrExponential = fractional || exponential;
+          const isLessThanMaxSafeInt = digits && (digits.length < MAX_DIGITS || digits.length === MAX_DIGITS && digits <= MAX_INT);
+          if (isString || isFractionalOrExponential || isLessThanMaxSafeInt)
+            return text2;
+          return '"' + text2 + 'n"';
+        }
+      );
+      return originalParse(
+        serializedData,
+        (key, value, context) => convertMarkedBigIntsReviver(key, value, context, reviver)
+      );
+    };
+  }
+});
+
 // npm/node_modules/@octokit/request-error/dist-src/index.js
 var RequestError;
 var init_dist_src = __esm({
@@ -23647,7 +23738,7 @@ async function fetchWrapper(requestOptions) {
   }
   const log = requestOptions.request?.log || console;
   const parseSuccessResponseBody = requestOptions.request?.parseSuccessResponseBody !== false;
-  const body = isPlainObject2(requestOptions.body) || Array.isArray(requestOptions.body) ? JSON.stringify(requestOptions.body) : requestOptions.body;
+  const body = isPlainObject2(requestOptions.body) || Array.isArray(requestOptions.body) ? JSONStringify(requestOptions.body) : requestOptions.body;
   const requestHeaders = Object.fromEntries(
     Object.entries(requestOptions.headers).map(([name, value]) => [
       name,
@@ -23746,7 +23837,7 @@ async function getResponseData(response) {
     let text = "";
     try {
       text = await response.text();
-      return JSON.parse(text);
+      return JSONParse(text);
     } catch (err) {
       return text;
     }
@@ -23804,8 +23895,9 @@ var init_dist_bundle2 = __esm({
     init_dist_bundle();
     init_universal_user_agent();
     import_fast_content_type_parse = __toESM(require_fast_content_type_parse(), 1);
+    init_json_with_bigint();
     init_dist_src();
-    VERSION2 = "10.0.7";
+    VERSION2 = "10.0.8";
     defaults_default = {
       headers: {
         "user-agent": `octokit-request.js/${VERSION2} ${getUserAgent()}`
@@ -28197,8 +28289,11 @@ var require_light = __commonJS({
 });
 
 // npm/node_modules/@octokit/plugin-retry/dist-bundle/index.js
+function isRequestError(error) {
+  return error.request !== void 0;
+}
 async function errorRequest(state, octokit, error, options) {
-  if (!error.request || !error.request.request) {
+  if (!isRequestError(error) || !error?.request.request) {
     throw error;
   }
   if (error.status >= 400 && !state.doNotRetry.includes(error.status)) {
@@ -28211,8 +28306,8 @@ async function errorRequest(state, octokit, error, options) {
 async function wrapRequest(state, octokit, request2, options) {
   const limiter = new import_light.default();
   limiter.on("failed", function(error, info) {
-    const maxRetries = ~~error.request.request.retries;
-    const after = ~~error.request.request.retryAfter;
+    const maxRetries = ~~error.request.request?.retries;
+    const after = ~~error.request.request?.retryAfter;
     options.request.retryCount = info.retryCount + 1;
     if (maxRetries > info.retryCount) {
       return after * state.retryAfterBaseValue;
@@ -28224,7 +28319,7 @@ async function wrapRequest(state, octokit, request2, options) {
   );
 }
 async function requestWithGraphqlErrorHandling(state, octokit, request2, options) {
-  const response = await request2(request2, options);
+  const response = await request2(options);
   if (response.data && response.data.errors && response.data.errors.length > 0 && /Something went wrong while executing your query/.test(
     response.data.errors[0].message
   )) {
@@ -28246,11 +28341,7 @@ function retry(octokit, octokitOptions) {
     },
     octokitOptions.retry
   );
-  if (state.enabled) {
-    octokit.hook.error("request", errorRequest.bind(null, state, octokit));
-    octokit.hook.wrap("request", wrapRequest.bind(null, state, octokit));
-  }
-  return {
+  const retryPlugin = {
     retry: {
       retryRequest: (error, retries, retryAfter) => {
         error.request.request = Object.assign({}, error.request.request, {
@@ -28261,6 +28352,11 @@ function retry(octokit, octokitOptions) {
       }
     }
   };
+  if (state.enabled) {
+    octokit.hook.error("request", errorRequest.bind(null, state, retryPlugin));
+    octokit.hook.wrap("request", wrapRequest.bind(null, state, retryPlugin));
+  }
+  return retryPlugin;
 }
 var import_light, VERSION7;
 var init_dist_bundle7 = __esm({
