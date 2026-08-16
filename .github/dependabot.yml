@@ -13,3 +13,11 @@ updates:
       actions:
         patterns:
           - "*"
+  - package-ecosystem: "deno"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      deno:
+        patterns:
+          - "*"
