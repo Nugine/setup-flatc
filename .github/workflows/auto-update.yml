@@ -2,7 +2,7 @@ name: Auto Update
 
 on:
   schedule:
-    - cron: "0 0 1 * *" # at midnight on the first day of each month
+    - cron: "0 0 1 */3 *" # at midnight on the first day of every third month
   workflow_dispatch:
 
 permissions:
