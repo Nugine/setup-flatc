@@ -4,12 +4,12 @@
     "dist/"
   ],
   "imports": {
-    "@actions/core": "npm:@actions/core@^1.11.1",
+    "@actions/core": "npm:@actions/core@^2.0.3",
     "@actions/exec": "npm:@actions/exec@^1.1.1",
     "@actions/tool-cache": "npm:@actions/tool-cache@^2.0.2",
-    "@deno/dnt": "jsr:@deno/dnt@^0.42.3",
+    "@deno/dnt": "jsr:@deno/dnt@^0.43.2",
     "@std/semver": "jsr:@std/semver@^1.0.8",
-    "esbuild": "npm:esbuild@^0.25.12",
+    "esbuild": "npm:esbuild@^0.28.2",
     "octokit": "npm:octokit@^5.0.5"
   }
 }
