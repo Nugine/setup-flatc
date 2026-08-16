@@ -1310,14 +1310,14 @@ var require_util = __commonJS({
       if (ReadableStream.from) {
         return ReadableStream.from(convertIterableToBuffer(iterable));
       }
-      let iterator2;
+      let iterator3;
       return new ReadableStream(
         {
           async start() {
-            iterator2 = iterable[Symbol.asyncIterator]();
+            iterator3 = iterable[Symbol.asyncIterator]();
           },
           async pull(controller) {
-            const { done, value } = await iterator2.next();
+            const { done, value } = await iterator3.next();
             if (done) {
               queueMicrotask(() => {
                 controller.close();
@@ -1329,7 +1329,7 @@ var require_util = __commonJS({
             return controller.desiredSize > 0;
           },
           async cancel(reason) {
-            await iterator2.return();
+            await iterator3.return();
           }
         },
         0
@@ -4167,11 +4167,11 @@ var require_util2 = __commonJS({
       return result;
     }
     var esIteratorPrototype = Object.getPrototypeOf(Object.getPrototypeOf([][Symbol.iterator]()));
-    function makeIterator(iterator2, name, kind) {
+    function makeIterator(iterator3, name, kind) {
       const object = {
         index: 0,
         kind,
-        target: iterator2
+        target: iterator3
       };
       const i = {
         next() {
@@ -5496,13 +5496,13 @@ Content-Type: ${value.type || "application/octet-stream"}\r
         length = Buffer.byteLength(source);
       }
       if (action != null) {
-        let iterator2;
+        let iterator3;
         stream = new ReadableStream({
           async start() {
-            iterator2 = action(object)[Symbol.asyncIterator]();
+            iterator3 = action(object)[Symbol.asyncIterator]();
           },
           async pull(controller) {
-            const { value, done } = await iterator2.next();
+            const { value, done } = await iterator3.next();
             if (done) {
               queueMicrotask(() => {
                 controller.close();
@@ -5515,7 +5515,7 @@ Content-Type: ${value.type || "application/octet-stream"}\r
             return controller.desiredSize > 0;
           },
           async cancel(reason) {
-            await iterator2.return();
+            await iterator3.return();
           },
           type: void 0
         });
@@ -13854,8 +13854,8 @@ var require_fetch = __commonJS({
         if (socket) {
           response = makeResponse({ status, statusText, headersList, socket });
         } else {
-          const iterator2 = body[Symbol.asyncIterator]();
-          fetchParams.controller.next = () => iterator2.next();
+          const iterator3 = body[Symbol.asyncIterator]();
+          fetchParams.controller.next = () => iterator3.next();
           response = makeResponse({ status, statusText, headersList });
         }
       } catch (err) {
@@ -23523,14 +23523,17 @@ var require_dist = __commonJS({
       return result;
     }
     function parse3(header, options) {
+      const stopChar = options?.comma === true ? COMMA : 65536;
       const len = header.length;
-      let index = skipOWS(header, 0, len);
+      let index = skipOWS(header, options?.start ?? 0, len);
       const valueStart = index;
-      index = skipValue(header, index, len);
+      index = skipValue(header, index, len, stopChar);
       const valueEnd = trailingOWS(header, valueStart, index);
       const type = header.slice(valueStart, valueEnd).toLowerCase();
-      const parameters = options?.parameters === false ? new NullObject() : parseParameters(header, index, len);
-      return { type, parameters };
+      if (options?.parameters === false) {
+        return { type, index, parameters: new NullObject() };
+      }
+      return parseParameters(header, type, index, len, stopChar);
     }
     var SP = 32;
     var HTAB = 9;
@@ -23538,13 +23541,18 @@ var require_dist = __commonJS({
     var EQ = 61;
     var DQUOTE = 34;
     var BSLASH = 92;
-    function parseParameters(header, index, len) {
+    var COMMA = 44;
+    function parseParameters(header, type, index, len, stopChar) {
       const parameters = new NullObject();
       parameter: while (index < len) {
+        if (header.charCodeAt(index) === stopChar)
+          break;
         index = skipOWS(header, index + 1, len);
         const keyStart = index;
         while (index < len) {
           const code = header.charCodeAt(index);
+          if (code === stopChar)
+            break parameter;
           if (code === SEMI)
             continue parameter;
           if (code === EQ) {
@@ -23557,7 +23565,7 @@ var require_dist = __commonJS({
               while (index < len) {
                 const code2 = header.charCodeAt(index++);
                 if (code2 === DQUOTE) {
-                  index = skipValue(header, index, len);
+                  index = skipValue(header, index, len, stopChar);
                   if (parameters[key] === void 0)
                     parameters[key] = value;
                   break;
@@ -23571,7 +23579,7 @@ var require_dist = __commonJS({
               continue parameter;
             }
             const valueStart = index;
-            index = skipValue(header, index, len);
+            index = skipValue(header, index, len, stopChar);
             if (parameters[key] === void 0) {
               const valueEnd = trailingOWS(header, valueStart, index);
               parameters[key] = header.slice(valueStart, valueEnd);
@@ -23581,12 +23589,12 @@ var require_dist = __commonJS({
           index++;
         }
       }
-      return parameters;
+      return { type, index, parameters };
     }
-    function skipValue(str, index, len) {
+    function skipValue(str, index, len, stopChar) {
       while (index < len) {
-        const char = str.charCodeAt(index);
-        if (char === SEMI)
+        const code = str.charCodeAt(index);
+        if (code === SEMI || code === stopChar)
           break;
         index++;
       }
@@ -24125,7 +24133,10 @@ async function getResponseData(response) {
     } catch (err) {
       return text;
     }
-  } else if (mimetype.type.startsWith("text/") || mimetype.parameters.charset?.toLowerCase() === "utf-8") {
+  } else if (mimetype.type.startsWith("text/") || // `application/octet-stream` is the canonical "arbitrary binary" type
+  // (RFC 2046) and must never be decoded as text, even when the response
+  // carries a (misleading) `charset=utf-8` parameter — see #751.
+  mimetype.parameters.charset?.toLowerCase() === "utf-8" && mimetype.type !== "application/octet-stream") {
     return response.text().catch(noop);
   } else {
     return response.arrayBuffer().catch(
@@ -24182,7 +24193,7 @@ var init_dist_bundle2 = __esm({
     import_content_type = __toESM(require_dist(), 1);
     init_json_with_bigint();
     init_dist_src();
-    VERSION2 = "10.0.11";
+    VERSION2 = "10.0.13";
     defaults_default = {
       headers: {
         "user-agent": `octokit-request.js/${VERSION2} ${getUserAgent()}`
@@ -24281,6 +24292,9 @@ var init_dist_bundle3 = __esm({
           Error.captureStackTrace(this, this.constructor);
         }
       }
+      request;
+      headers;
+      response;
       name = "GraphqlResponseError";
       errors;
       data;
@@ -24361,7 +24375,7 @@ var init_dist_bundle4 = __esm({
 var VERSION4;
 var init_version = __esm({
   "npm/node_modules/@octokit/core/dist-src/version.js"() {
-    VERSION4 = "7.0.6";
+    VERSION4 = "7.0.7";
   }
 });
 
@@ -24595,8 +24609,8 @@ function paginate(octokit, route, parameters, mapFn) {
     mapFn
   );
 }
-function gather(octokit, results, iterator2, mapFn) {
-  return iterator2.next().then((result) => {
+function gather(octokit, results, iterator22, mapFn) {
+  return iterator22.next().then((result) => {
     if (result.done) {
       return results;
     }
@@ -24610,7 +24624,7 @@ function gather(octokit, results, iterator2, mapFn) {
     if (earlyExit) {
       return results;
     }
-    return gather(octokit, results, iterator2, mapFn);
+    return gather(octokit, results, iterator22, mapFn);
   });
 }
 function paginateRest(octokit) {
@@ -24782,10 +24796,10 @@ var init_dist_bundle6 = __esm({
       return response1;
     };
     createPaginate = (octokit) => {
-      const iterator2 = createIterator(octokit);
+      const iterator3 = createIterator(octokit);
       return async (query, initialParameters = {}) => {
         let mergedResponse = {};
-        for await (const response of iterator2(
+        for await (const response of iterator3(
           query,
           initialParameters
         )) {
@@ -28720,18 +28734,13 @@ function throttling(octokit, octokitOptions) {
   if (typeof connection !== "undefined") {
     common.connection = connection;
   }
-  if (groups.global == null) {
-    createGroups(Bottleneck2, common);
-  }
   const state = Object.assign(
     {
       clustering: connection != null,
       triggersNotification,
       fallbackSecondaryRateRetryAfter: 60,
       retryAfterBaseValue: 1e3,
-      retryLimiter: new Bottleneck2(),
-      id,
-      ...groups
+      id
     },
     octokitOptions.throttle
   );
@@ -28748,65 +28757,84 @@ function throttling(octokit, octokitOptions) {
         })
     `);
   }
-  const events = {};
-  const emitter = new Bottleneck2.Events(events);
-  events.on("secondary-limit", state.onSecondaryRateLimit);
-  events.on("rate-limit", state.onRateLimit);
-  events.on(
-    "error",
-    (e) => octokit.log.warn("Error in throttling-plugin limit handler", e)
-  );
-  state.retryLimiter.on("failed", async function(error, info) {
-    const [state2, request2, options] = info.args;
-    const { pathname } = new URL(options.url, "http://github.test");
-    const shouldRetryGraphQL = pathname.startsWith("/graphql") && error.status !== 401;
-    if (!(shouldRetryGraphQL || error.status === 403 || error.status === 429)) {
+  let initialized = false;
+  const initializeBottleneck = () => {
+    if (initialized) {
       return;
     }
-    const retryCount = ~~request2.retryCount;
-    request2.retryCount = retryCount;
-    options.request.retryCount = retryCount;
-    const { wantRetry, retryAfter = 0 } = await (async function() {
-      if (/\bsecondary rate\b/i.test(error.message)) {
-        const retryAfter2 = Number(error.response.headers["retry-after"]) || state2.fallbackSecondaryRateRetryAfter;
-        const wantRetry2 = await emitter.trigger(
-          "secondary-limit",
-          retryAfter2,
-          options,
-          octokit,
-          retryCount
-        );
-        return { wantRetry: wantRetry2, retryAfter: retryAfter2 };
-      }
-      if (error.response.headers != null && error.response.headers["x-ratelimit-remaining"] === "0" || (error.response.data?.errors ?? []).some(
-        (error2) => error2.type === "RATE_LIMITED"
-      )) {
-        const rateLimitReset = new Date(
-          ~~error.response.headers["x-ratelimit-reset"] * 1e3
-        ).getTime();
-        const retryAfter2 = Math.max(
-          // Add one second so we retry _after_ the reset time
-          // https://docs.github.com/en/rest/overview/resources-in-the-rest-api?apiVersion=2022-11-28#exceeding-the-rate-limit
-          Math.ceil((rateLimitReset - Date.now()) / 1e3) + 1,
-          0
-        );
-        const wantRetry2 = await emitter.trigger(
-          "rate-limit",
-          retryAfter2,
-          options,
-          octokit,
-          retryCount
-        );
-        return { wantRetry: wantRetry2, retryAfter: retryAfter2 };
-      }
-      return {};
-    })();
-    if (wantRetry) {
-      request2.retryCount++;
-      return retryAfter * state2.retryAfterBaseValue;
+    initialized = true;
+    if (groups.global == null) {
+      createGroups(Bottleneck2, common);
     }
+    state.global = state.global ?? groups.global;
+    state.auth = state.auth ?? groups.auth;
+    state.search = state.search ?? groups.search;
+    state.write = state.write ?? groups.write;
+    state.notifications = state.notifications ?? groups.notifications;
+    state.retryLimiter = state.retryLimiter ?? new Bottleneck2();
+    const events = {};
+    const emitter = new Bottleneck2.Events(events);
+    events.on("secondary-limit", state.onSecondaryRateLimit);
+    events.on("rate-limit", state.onRateLimit);
+    events.on(
+      "error",
+      (e) => octokit.log.warn("Error in throttling-plugin limit handler", e)
+    );
+    state.retryLimiter.on("failed", async function(error, info) {
+      const [state2, request2, options] = info.args;
+      const { pathname } = new URL(options.url, "http://github.test");
+      const shouldRetryGraphQL = pathname.startsWith("/graphql") && error.status !== 401;
+      if (!(shouldRetryGraphQL || error.status === 403 || error.status === 429)) {
+        return;
+      }
+      const retryCount = ~~request2.retryCount;
+      request2.retryCount = retryCount;
+      options.request.retryCount = retryCount;
+      const { wantRetry, retryAfter = 0 } = await (async function() {
+        if (/\bsecondary rate\b/i.test(error.message)) {
+          const retryAfter2 = Number(error.response.headers["retry-after"]) || state2.fallbackSecondaryRateRetryAfter;
+          const wantRetry2 = await emitter.trigger(
+            "secondary-limit",
+            retryAfter2,
+            options,
+            octokit,
+            retryCount
+          );
+          return { wantRetry: wantRetry2, retryAfter: retryAfter2 };
+        }
+        if (error.response.headers != null && error.response.headers["x-ratelimit-remaining"] === "0" || (error.response.data?.errors ?? []).some(
+          (error2) => error2.type === "RATE_LIMITED"
+        )) {
+          const rateLimitReset = new Date(
+            ~~error.response.headers["x-ratelimit-reset"] * 1e3
+          ).getTime();
+          const retryAfter2 = Math.max(
+            // Add one second so we retry _after_ the reset time
+            // https://docs.github.com/en/rest/overview/resources-in-the-rest-api?apiVersion=2022-11-28#exceeding-the-rate-limit
+            Math.ceil((rateLimitReset - Date.now()) / 1e3) + 1,
+            0
+          );
+          const wantRetry2 = await emitter.trigger(
+            "rate-limit",
+            retryAfter2,
+            options,
+            octokit,
+            retryCount
+          );
+          return { wantRetry: wantRetry2, retryAfter: retryAfter2 };
+        }
+        return {};
+      })();
+      if (wantRetry) {
+        request2.retryCount++;
+        return retryAfter * state2.retryAfterBaseValue;
+      }
+    });
+  };
+  octokit.hook.wrap("request", (request2, options) => {
+    initializeBottleneck();
+    return wrapRequest2(state, request2, options);
   });
-  octokit.hook.wrap("request", wrapRequest2.bind(null, state));
   return {};
 }
 var import_light2, VERSION8, noop3, triggers_notification_paths_default, regex, triggersNotification, groups, createGroups;
@@ -28922,7 +28950,13 @@ var init_dist_src4 = __esm({
 // npm/node_modules/@octokit/oauth-methods/dist-bundle/index.js
 function requestToOAuthBaseUrl(request2) {
   const endpointDefaults = request2.endpoint.DEFAULTS;
-  return /^https:\/\/(api\.)?github\.com$/.test(endpointDefaults.baseUrl) ? "https://github.com" : endpointDefaults.baseUrl.replace("/api/v3", "");
+  if (/^https:\/\/(api\.)?github\.com$/.test(endpointDefaults.baseUrl)) {
+    return "https://github.com";
+  }
+  if (/^https:\/\/api\..*\.ghe\.com$/.test(endpointDefaults.baseUrl)) {
+    return endpointDefaults.baseUrl.replace("api.", "");
+  }
+  return endpointDefaults.baseUrl.replace("/api/v3", "");
 }
 async function oauthRequest(request2, route, parameters) {
   const withOAuthParameters = {
@@ -30357,7 +30391,7 @@ var init_dist_node = __esm({
     ];
     REGEX = routeMatcher2(PATHS);
     FIVE_SECONDS_IN_MS = 5 * 1e3;
-    VERSION12 = "8.2.0";
+    VERSION12 = "8.3.0";
   }
 });
 
@@ -31025,7 +31059,7 @@ var init_dist_node3 = __esm({
     init_dist_node2();
     init_dist_bundle9();
     init_dist_node2();
-    VERSION13 = "8.0.3";
+    VERSION13 = "8.0.4";
     OAuthAppOctokit = Octokit.defaults({
       userAgent: `octokit-oauth-app.js/${VERSION13} ${getUserAgent()}`
     });
@@ -31972,6 +32006,127 @@ var init_dist_bundle13 = __esm({
   }
 });
 
+// npm/node_modules/@octokit/app/node_modules/@octokit/plugin-paginate-rest/dist-bundle/index.js
+function normalizePaginatedListResponse2(response) {
+  if (!response.data) {
+    return {
+      ...response,
+      data: []
+    };
+  }
+  const responseNeedsNormalization = ("total_count" in response.data || "total_commits" in response.data) && !("url" in response.data);
+  if (!responseNeedsNormalization) return response;
+  const incompleteResults = response.data.incomplete_results;
+  const repositorySelection = response.data.repository_selection;
+  const totalCount = response.data.total_count;
+  const totalCommits = response.data.total_commits;
+  delete response.data.incomplete_results;
+  delete response.data.repository_selection;
+  delete response.data.total_count;
+  delete response.data.total_commits;
+  const namespaceKey = Object.keys(response.data)[0];
+  const data = response.data[namespaceKey];
+  response.data = data;
+  if (typeof incompleteResults !== "undefined") {
+    response.data.incomplete_results = incompleteResults;
+  }
+  if (typeof repositorySelection !== "undefined") {
+    response.data.repository_selection = repositorySelection;
+  }
+  response.data.total_count = totalCount;
+  response.data.total_commits = totalCommits;
+  return response;
+}
+function iterator2(octokit, route, parameters) {
+  const options = typeof route === "function" ? route.endpoint(parameters) : octokit.request.endpoint(route, parameters);
+  const requestMethod = typeof route === "function" ? route : octokit.request;
+  const method = options.method;
+  const headers = options.headers;
+  let url = options.url;
+  return {
+    [Symbol.asyncIterator]: () => ({
+      async next() {
+        if (!url) return { done: true };
+        try {
+          const response = await requestMethod({ method, url, headers });
+          const normalizedResponse = normalizePaginatedListResponse2(response);
+          url = ((normalizedResponse.headers.link || "").match(
+            /<([^<>]+)>;\s*rel="next"/
+          ) || [])[1];
+          if (!url && "total_commits" in normalizedResponse.data) {
+            const parsedUrl = new URL(normalizedResponse.url);
+            const params = parsedUrl.searchParams;
+            const page = parseInt(params.get("page") || "1", 10);
+            const per_page = parseInt(params.get("per_page") || "250", 10);
+            if (page * per_page < normalizedResponse.data.total_commits) {
+              params.set("page", String(page + 1));
+              url = parsedUrl.toString();
+            }
+          }
+          return { value: normalizedResponse };
+        } catch (error) {
+          if (error.status !== 409) throw error;
+          url = "";
+          return {
+            value: {
+              status: 200,
+              headers: {},
+              data: []
+            }
+          };
+        }
+      }
+    })
+  };
+}
+function paginate2(octokit, route, parameters, mapFn) {
+  if (typeof parameters === "function") {
+    mapFn = parameters;
+    parameters = void 0;
+  }
+  return gather2(
+    octokit,
+    [],
+    iterator2(octokit, route, parameters)[Symbol.asyncIterator](),
+    mapFn
+  );
+}
+function gather2(octokit, results, iterator22, mapFn) {
+  return iterator22.next().then((result) => {
+    if (result.done) {
+      return results;
+    }
+    let earlyExit = false;
+    function done() {
+      earlyExit = true;
+    }
+    results = results.concat(
+      mapFn ? mapFn(result.value, done) : result.value.data
+    );
+    if (earlyExit) {
+      return results;
+    }
+    return gather2(octokit, results, iterator22, mapFn);
+  });
+}
+function paginateRest2(octokit) {
+  return {
+    paginate: Object.assign(paginate2.bind(null, octokit), {
+      iterator: iterator2.bind(null, octokit)
+    })
+  };
+}
+var VERSION15, composePaginateRest2;
+var init_dist_bundle14 = __esm({
+  "npm/node_modules/@octokit/app/node_modules/@octokit/plugin-paginate-rest/dist-bundle/index.js"() {
+    VERSION15 = "0.0.0-development";
+    composePaginateRest2 = Object.assign(paginate2, {
+      iterator: iterator2
+    });
+    paginateRest2.VERSION = VERSION15;
+  }
+});
+
 // npm/node_modules/@octokit/app/dist-node/index.js
 function webhooks(appOctokit, options) {
   return new Webhooks({
@@ -32046,11 +32201,11 @@ async function eachInstallation(app, callback) {
 function eachInstallationIterator(app) {
   return {
     async *[Symbol.asyncIterator]() {
-      const iterator2 = composePaginateRest.iterator(
+      const iterator3 = composePaginateRest2.iterator(
         app.octokit,
         "GET /app/installations"
       );
-      for await (const { data: installations } of iterator2) {
+      for await (const { data: installations } of iterator3) {
         for (const installation of installations) {
           const installationOctokit = await getInstallationOctokit(
             app,
@@ -32094,9 +32249,9 @@ function singleInstallationIterator(app, installationId) {
 function eachRepositoryIterator(app, query) {
   return {
     async *[Symbol.asyncIterator]() {
-      const iterator2 = query ? singleInstallationIterator(app, query.installationId) : app.eachInstallation.iterator();
-      for await (const { octokit } of iterator2) {
-        const repositoriesIterator = composePaginateRest.iterator(
+      const iterator3 = query ? singleInstallationIterator(app, query.installationId) : app.eachInstallation.iterator();
+      for await (const { octokit } of iterator3) {
+        const repositoriesIterator = composePaginateRest2.iterator(
           octokit,
           "GET /installation/repositories"
         );
@@ -32184,7 +32339,7 @@ async function middleware(pathPrefix, webhooksMiddleware, oauthMiddleware, reque
     return false;
   }
 }
-var VERSION15, App;
+var VERSION16, App;
 var init_dist_node5 = __esm({
   "npm/node_modules/@octokit/app/dist-node/index.js"() {
     init_dist_src2();
@@ -32193,14 +32348,14 @@ var init_dist_node5 = __esm({
     init_dist_node();
     init_dist_node2();
     init_dist_bundle13();
-    init_dist_bundle5();
+    init_dist_bundle14();
     init_dist_node();
-    init_dist_bundle5();
+    init_dist_bundle14();
     init_dist_node3();
     init_dist_bundle13();
-    VERSION15 = "16.1.2";
+    VERSION16 = "16.1.4";
     App = class {
-      static VERSION = VERSION15;
+      static VERSION = VERSION16;
       static defaults(defaults) {
         const AppWithDefaults = class extends this {
           constructor(...args) {
@@ -32320,8 +32475,8 @@ function onSecondaryRateLimit(retryAfter, options, octokit) {
     return true;
   }
 }
-var VERSION16, Octokit2, App2, OAuthApp2;
-var init_dist_bundle14 = __esm({
+var VERSION17, Octokit2, App2, OAuthApp2;
+var init_dist_bundle15 = __esm({
   "npm/node_modules/octokit/dist-bundle/index.js"() {
     init_dist_src2();
     init_dist_bundle5();
@@ -32333,7 +32488,7 @@ var init_dist_bundle14 = __esm({
     init_dist_node5();
     init_dist_node3();
     init_dist_node5();
-    VERSION16 = "0.0.0-development";
+    VERSION17 = "0.0.0-development";
     Octokit2 = Octokit.plugin(
       restEndpointMethods,
       paginateRest,
@@ -32341,7 +32496,7 @@ var init_dist_bundle14 = __esm({
       retry,
       throttling
     ).defaults({
-      userAgent: `octokit.js/${VERSION16}`,
+      userAgent: `octokit.js/${VERSION17}`,
       throttle: {
         onRateLimit,
         onSecondaryRateLimit
@@ -32396,7 +32551,7 @@ var core = __importStar(require_core());
 var exec = __importStar(require_exec());
 var tc = __importStar(require_tool_cache());
 var semver = __importStar(require_mod());
-var octokit_1 = (init_dist_bundle14(), __toCommonJS(dist_bundle_exports3));
+var octokit_1 = (init_dist_bundle15(), __toCommonJS(dist_bundle_exports3));
 async function resolveVersion(gh, version) {
   if (version === "*") {
     const resp = await gh.rest.repos.getLatestRelease({
@@ -32543,6 +32698,23 @@ content-type/dist/index.js:
   (* v8 ignore next -- @preserve *)
   (* v8 ignore else -- @preserve *)
 
+@octokit/graphql/dist-bundle/index.js:
+  (* v8 ignore if -- @preserve *)
+
+@octokit/oauth-methods/dist-bundle/index.js:
+  (* v8 ignore next: we always pass a custom request in tests -- @preserve *)
+
+@octokit/auth-oauth-device/dist-bundle/index.js:
+  (* v8 ignore next 2 -- @preserve *)
+
+@octokit/auth-oauth-user/dist-bundle/index.js:
+  (* v8 ignore if -- @preserve *)
+  (* v8 ignore next -- @preserve *)
+
+@octokit/auth-oauth-app/dist-bundle/index.js:
+@octokit/plugin-paginate-rest/dist-bundle/index.js:
+  (* v8 ignore next -- @preserve *)
+
 toad-cache/dist/toad-cache.mjs:
   (**
    * toad-cache
@@ -32551,6 +32723,12 @@ toad-cache/dist/toad-cache.mjs:
    * @license MIT
    * @version 3.7.3
    *)
+
+@octokit/auth-app/dist-node/index.js:
+  (* v8 ignore next - permissions are optional per OpenAPI spec, but we think that is incorrect -- @preserve *)
+  (* v8 ignore next - repositorySelection are optional per OpenAPI spec, but we think that is incorrect -- @preserve *)
+  (* v8 ignore start - due to skipped tests, see https://github.com/octokit/auth-app.js/pull/580 -- @preserve *)
+  (* v8 ignore end -- @preserve *)
 
 octokit/dist-bundle/index.js:
   (* v8 ignore next no need to test internals of the throttle plugin -- @preserve *)
