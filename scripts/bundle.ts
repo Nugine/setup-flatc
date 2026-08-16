@@ -26,7 +26,6 @@ await dnt.build({
   outDir: "./npm",
   shims: {
     deno: true,
-    timers: true,
   },
   package: {
     name: "setup-flatc",
