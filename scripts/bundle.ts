@@ -7,7 +7,10 @@ const lockPath = "./npm/package-lock.json";
 let lockContent: string | undefined;
 try {
   lockContent = await Deno.readTextFile(lockPath);
-} catch {
+} catch (err) {
+  if (!(err instanceof Deno.errors.NotFound)) {
+    throw err;
+  }
   // no lock file yet (first build)
 }
 
