@@ -8,7 +8,7 @@
     "@actions/exec": "npm:@actions/exec@^2.0.0",
     "@actions/tool-cache": "npm:@actions/tool-cache@^3.0.1",
     "@deno/dnt": "jsr:@deno/dnt@^0.44.0",
-    "@std/semver": "jsr:@std/semver@^1.0.8",
+    "semver": "npm:semver@^7.8.6",
     "esbuild": "npm:esbuild@^0.28.2",
     "octokit": "npm:octokit@^5.0.5"
   }

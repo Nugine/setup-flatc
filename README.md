@@ -30,4 +30,4 @@ Install by a semver range:
     version: "24.*"
 ```
 
-Semver syntax: <https://jsr.io/@std/semver>
+Semver syntax: <https://github.com/npm/node-semver#ranges>
