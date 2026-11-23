@@ -28946,7 +28946,7 @@ async function ls(path) {
 }
 // src/main.ts
 async function main() {
-	const gh = new Octokit({ auth: import_core.getInput("github-token") ?? void 0 });
+	const gh = new Octokit({ auth: import_core.getInput("github-token").trim() || void 0 });
 	const inputVersion = import_core.getInput("version") ?? "*";
 	import_core.info(`Input version: ${inputVersion}`);
 	const version = await resolveVersion(gh, inputVersion);
