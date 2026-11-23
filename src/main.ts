@@ -1,7 +1,8 @@
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
 import * as tc from "@actions/tool-cache";
-import * as semver from "@std/semver";
+// @ts-types="npm:@types/semver@^7.8.0"
+import semver from "semver";
 import { Octokit } from "octokit";
 import type { Buffer } from "node:buffer";
 
@@ -17,12 +18,13 @@ async function resolveVersion(gh: Octokit, version: string): Promise<string> {
     }
   }
 
-  if (semver.canParse(version)) {
-    return version;
+  const exact = semver.valid(version);
+  if (exact !== null) {
+    return exact;
   }
 
-  const range = semver.tryParseRange(version);
-  if (range) {
+  const range = semver.validRange(version);
+  if (range !== null) {
     const resp = await gh.rest.repos.listReleases({
       owner: "google",
       repo: "flatbuffers",
@@ -35,7 +37,7 @@ async function resolveVersion(gh: Octokit, version: string): Promise<string> {
         version = version.slice(1);
       }
       const ver = semver.parse(version);
-      if (semver.satisfies(ver, range)) {
+      if (ver !== null && semver.satisfies(ver, range)) {
         return version;
       }
     }
