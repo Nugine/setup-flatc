@@ -44,7 +44,7 @@ Semver syntax: <https://github.com/npm/node-semver#ranges>
 
 ## Development
 
-Requires Node.js 26.
+Development and CI use Node.js 26. The published action itself runs on the Node.js 24 action runtime.
 
 ```bash
 npm ci
