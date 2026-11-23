@@ -1,10 +1,10 @@
 import * as core from "@actions/core";
 import * as tc from "@actions/tool-cache";
 import { Octokit } from "octokit";
-import { downloadFlatc, resolveVersion } from "./lib.ts";
+import { downloadFlatc, resolveVersion } from "./lib";
 
 async function main() {
-  const githubToken = core.getInput("github-token") ?? undefined;
+  const githubToken = core.getInput("github-token").trim() || undefined;
   const gh = new Octokit({ auth: githubToken });
 
   const inputVersion = core.getInput("version") ?? "*";

@@ -1,7 +1,6 @@
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
 import * as tc from "@actions/tool-cache";
-// @ts-types="npm:@types/semver@^7.8.0"
 import semver from "semver";
 import { Octokit } from "octokit";
 import type { Buffer } from "node:buffer";

@@ -31,3 +31,12 @@ Install by a semver range:
 ```
 
 Semver syntax: <https://github.com/npm/node-semver#ranges>
+
+## Development
+
+Requires Node.js 26.
+
+```bash
+npm ci
+npm run ci
+```

@@ -13,11 +13,11 @@ updates:
       actions:
         patterns:
           - "*"
-  - package-ecosystem: "deno"
+  - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "monthly"
     groups:
-      deno:
+      npm:
         patterns:
           - "*"
