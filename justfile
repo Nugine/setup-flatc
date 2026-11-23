@@ -1,16 +1,20 @@
+setup:
+    npm ci
+
 dev:
-    deno fmt
-    deno lint
-    deno check .
+    npm run format:check
+    npm run lint
+    npm run typecheck
+    npm run test
+
+update:
+    npm update
 
 bundle:
-    deno run -A scripts/bundle.ts
+    npm run build
 
 assert_unchanged:
-    #!/bin/bash -ex
-    [[ -z "$(git status -s)" ]] # https://stackoverflow.com/a/9393642
+    npm run assert:unchanged
 
 ci:
-    just dev
-    just bundle
-    just assert_unchanged
+    npm run ci
